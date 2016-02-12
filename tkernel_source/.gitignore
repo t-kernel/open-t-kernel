@@ -1,0 +1,8 @@
+*.o
+*.a
+Dependencies
+Dependencies_src
+*.map
+*.sys
+*.mot
+
