@@ -20,7 +20,6 @@
  */
 
 #include "clkdrv.h"
-#include <stdlib.h>
 #include <device/em1d512_iic.h>
 
 /* RX-4581NB RTC definitions */
