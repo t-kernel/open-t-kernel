@@ -41,7 +41,7 @@ VPATH = $(S)
 HEADER += $(S)
 
 SRC = main.c accept.c common.c inthdr.c pccard.c \
-	ata.c atacmd.c ataio.c mem.c
+	ata.c atacmd.c ataio.c mem.c mmc-common.c mmc-em1d512.c
 
 SOBJ =  ../obj/mmc-common.o ../obj/mmc-em1d512.o
 OBJ = $(addsuffix .o, $(basename $(SRC)))
@@ -60,7 +60,7 @@ ALL = $(TARGET).o
 all: $(ALL)
 
 $(TARGET).o: $(OBJ)
-	$(LINK_R.o) $^ $(SOBJ) $(OUTPUT_OPTION)
+	$(LINK_R.o) $^ $(OUTPUT_OPTION)
 
 clean:
 	$(RM) $(OBJ) $(ALL) $(DEPS)
