@@ -101,14 +101,12 @@ LOCAL	ER	WaitInt(DrvTab *drv, W dcnt, W cmd)
  */
 EXPORT	void	ataAbort(DrvTab *drv)
 {
-	ER	er;
-
 	/* Main task may be in "READY" status.
 			Therefore, an abort flag shall be set up. */
 	drv->Aborted = TRUE;
 
 	/* Forcibly release the wait-for-main task (WaitInt)  */
-	er = tk_rel_wai(drv->WaitTskId);
+	tk_rel_wai(drv->WaitTskId);
 }
 
 /*

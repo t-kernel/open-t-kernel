@@ -24,34 +24,34 @@
 /*
  * System-dependent definition
  */
-#if STD_SH7727
+#ifdef STD_SH7727
 #  include <tk/sysdepend/std_sh7727/dbgspt_depend.h>
 #endif
-#if STD_SH7751R
+#ifdef STD_SH7751R
 #  include <tk/sysdepend/std_sh7751r/dbgspt_depend.h>
 #endif
-#if MIC_M32104
+#ifdef MIC_M32104
 #  include <tk/sysdepend/mic_m32104/dbgspt_depend.h>
 #endif
-#if STD_S1C38K
+#ifdef STD_S1C38K
 #  include <tk/sysdepend/std_s1c38k/dbgspt_depend.h>
 #endif
-#if STD_MC9328
+#ifdef STD_MC9328
 #  include <tk/sysdepend/std_mc9328/dbgspt_depend.h>
 #endif
-#if MIC_VR4131
+#ifdef MIC_VR4131
 #  include <tk/sysdepend/mic_vr4131/dbgspt_depend.h>
 #endif
-#if STD_VR5500
+#ifdef STD_VR5500
 #  include <tk/sysdepend/std_vr5500/dbgspt_depend.h>
 #endif
-#if STD_MB87Q1100
+#ifdef STD_MB87Q1100
 #  include <tk/sysdepend/std_mb87q1100/dbgspt_depend.h>
 #endif
-#if STD_SH7760
+#ifdef STD_SH7760
 #  include <tk/sysdepend/std_sh7760/dbgspt_depend.h>
 #endif
-#if TEF_EM1D
+#ifdef TEF_EM1D
 #  include <tk/sysdepend/tef_em1d/dbgspt_depend.h>
 #endif
 

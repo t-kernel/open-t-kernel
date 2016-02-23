@@ -132,7 +132,7 @@ EXPORT void setup_texhdr( UW *ssp )
 	FP	texhdr;
 	INT	texcd;
 	UINT	m;
-	UW	*usp;
+	UW	*usp = NULL;
 
 	/* called in interrupt-disabled state */
 

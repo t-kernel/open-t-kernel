@@ -63,13 +63,13 @@ SYSCALL ER _tk_ena_dsp( void )
 EXPORT FP hll_inthdr[N_INTVEC];
 
 /* High level programming language routine (Interrupt) */
-IMPORT void inthdr_startup();
+IMPORT void inthdr_startup( void );
 
 /* High level programming language routine (Exception) */
-IMPORT void exchdr_startup();
+IMPORT void exchdr_startup( void );
 
 /* For default handler */
-IMPORT void defaulthdr_startup();
+IMPORT void defaulthdr_startup( void );
 
 /*
  * Interrupt handler definition

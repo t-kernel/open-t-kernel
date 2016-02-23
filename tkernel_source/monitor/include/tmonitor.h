@@ -210,7 +210,7 @@ typedef struct {
 	UW	top;		/* area start address */
 	UW	end;		/* area end address */
 	UW	attr;		/* attribute */
-#if (CPU_ARM|CPU_I386) && VIRTUAL_ADDRESS
+#if CPU_ARM && VIRTUAL_ADDRESS
 	UW	pa;		/* physical address | page attribute */
 #endif
 } MEMSEG;

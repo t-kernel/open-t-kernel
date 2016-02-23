@@ -627,7 +627,7 @@ LOCAL	void	cmdFill(W unit)
 
         // extract set data
 	if (token <= tEOC) {
-		*((UW*)&dt[0]) = 0;	// 0 by default
+		memset(dt, 0, sizeof(UW)); // 0 by default
 		n = unit;
 	} else {
 		if (isnotDLM()) return;
@@ -850,7 +850,7 @@ LOCAL	void	cmdGoTrace(W trace)
 
 	B [break_addr[,break_attr][,commands]]
 */
-LOCAL	void	cmdBreak(VOID)
+LOCAL	void	cmdBreak( void )
 {
 	UW	addr;
 	W	atr, cmdlen;
@@ -933,7 +933,7 @@ LOCAL	const	struct {
 	par = 0;
 	if (tokenSym[2] == ' ')  {
 		for (i = 0; proto[i].par != 0; i++) {
-			if (*((UH*)tokenSym) == *((UH*)proto[i].nm)) {
+			if (memcmp(tokenSym, proto[i].nm, sizeof(UH)) == 0) {
 				par = proto[i].par;
 				break;
 			}
@@ -1189,7 +1189,7 @@ LOCAL	W	searchCommand(void)
 		for (i = 0; cmdTab[i].func != NULL; i++) {
 			if (memcmp(cmdTab[i].fnm, tokenSym, 12) == 0 ||
 				(tokenSym[4] == ' ' &&
-				*((UW*)cmdTab[i].snm) == *((UW*)tokenSym)) )
+				memcmp(cmdTab[i].snm, tokenSym, sizeof(UW)) == 0) )
 				return i;
 		}
 	}

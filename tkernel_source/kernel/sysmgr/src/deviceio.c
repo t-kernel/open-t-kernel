@@ -455,7 +455,6 @@ LOCAL void abort_allrequest( OpnCB *opncb )
  */
 LOCAL ER close_device( OpnCB *opncb, UINT option )
 {
-	ID	devid;
 	DevCB	*devcb;
 	INT	unitno;
 	WaitQ	waiq;
@@ -468,7 +467,6 @@ LOCAL ER close_device( OpnCB *opncb, UINT option )
 
 	devcb  = opncb->devcb;
 	unitno = opncb->unitno;
-	devid = DEVID(devcb, unitno);
 
 	/* Multiple tasks can initiate open/close processing,
 	   so ensure processing only by one task at a time. */

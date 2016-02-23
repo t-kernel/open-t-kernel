@@ -85,7 +85,7 @@ LOCAL UW *resid_bitmap;
 /*
  * Undefined extended SVC function
  */
-IMPORT INT no_support();
+IMPORT INT no_support( void *pk_para, FN fncd );
 
 /*
  * Initialization of subsystem control block

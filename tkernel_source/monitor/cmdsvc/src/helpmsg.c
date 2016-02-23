@@ -384,9 +384,9 @@ EXPORT const HELP helpFLLO	= { prSimpleHelp,
  */
 EXPORT void dispTitle( void )
 {
-	const char **p;
+	int i;
 
 	DSP_S("\n\n");
-	for ( p = Title; *p != NULL; p++ ) DSP_S(*p);
+	for ( i = 0; Title[i] != NULL; i++ ) DSP_S(Title[i]);
 	DSP_S("\n\n");
 }

@@ -112,7 +112,7 @@
  */
 Inline void force_dispatch( void )
 {
-IMPORT	void	dispatch_to_schedtsk();
+IMPORT	void	dispatch_to_schedtsk( void );
 
 	Asm("bx %0":: "r"(&dispatch_to_schedtsk));
 }

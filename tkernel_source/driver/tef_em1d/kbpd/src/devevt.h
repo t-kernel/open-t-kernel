@@ -20,15 +20,6 @@
  *       definitions for data used for additional events used only inside manager
  */
 
-/*
- *       data type for data used for additional events used only inside manager
- */
-typedef enum {
-	PIC_TIMEOUT	= -1,	/* timeout */
-	PIC_SPRESS	= -2,	/* shift press */
-	PIC_KEYUP	= -3	/* key up */
-} PseudoInputCmd;
-
 typedef struct {
 	T_MSG		head;
 	struct {

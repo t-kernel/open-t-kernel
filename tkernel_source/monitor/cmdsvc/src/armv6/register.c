@@ -388,7 +388,7 @@ EXPORT	W	isKillValid(void)
 	return 0;
 }
 
-#if REF_TKOBJECT
+#ifdef REF_TKOBJECT
 /*
         Check whether T-Kernel/DS functions can be executed?
 */

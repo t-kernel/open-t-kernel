@@ -254,7 +254,8 @@ EXPORT	ER	ataIdentify(DrvTab *drv, BOOL check)
 		if (uselba) {
 			/* When LBA is used, checking shall be required on
 		whether "Total Number of Sectors on LBA [60][61]" is correctly set or not */
-			n = CnvLeW(*((UW*)&buf[60]));
+			MEMCPY(&n, buf+60, sizeof(UW));
+			n = CnvLeW(n);
 			if (tsec == n || tsec ==
 				(((n >> 16) & 0xFFFF)|((n & 0xFFFF) << 16))) {
 				;	/* OK */

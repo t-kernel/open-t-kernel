@@ -27,9 +27,6 @@
 EXPORT	ER	sdDefIntHdr(DrvTab *drv, BOOL regist)
 {
 	ER	er;
-	T_DINT	dint;
-
-	dint.intatr = TA_HLNG;
 
 	if (drv->Spec.accif == MEM_ACCIF) return E_OK;	/* Ignore */
 

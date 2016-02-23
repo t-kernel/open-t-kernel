@@ -306,7 +306,7 @@ fin0:
 /* start processing of TP processing task ID */
 LOCAL	ER	tpstart(BOOL start)
 {
-	ER	er;
+	ER	er = E_OK;
 	W	n, par[L_DEVCONF_VAL];
 	T_DINT	dint;
 	T_CTSK	ctsk;

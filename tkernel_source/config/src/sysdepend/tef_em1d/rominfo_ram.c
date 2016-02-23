@@ -23,7 +23,7 @@
 #include <sys/rominfo.h>
 
 IMPORT UB SYSCONF[], DEVCONF[];
-IMPORT void START();
+IMPORT void START( void );
 
 /* Kernel address */
 #define RI_KERNEL_START	(FP)&START	/* Kernel start address */

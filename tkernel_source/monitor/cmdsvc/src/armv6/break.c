@@ -23,7 +23,7 @@
 
 // SW breakpoint code (BKPT instruction)
 #define	BREAK_ARM	0xE1200070
-#define	BREAK_THUMB	0xBE00
+#define	BREAK_THUMB	0xBE000000
 
 /*
 	breakpoint data
@@ -146,7 +146,7 @@ EXPORT	W	getBreakAtr(UB *name)
 
 	if (name[4] == ' ') {
 		for (i = 0; i < MAX_BPATR; i++) {
-			if (*((UW*)brkAtr[i].name) == *((UW*)name))
+			if (memcmp(brkAtr[i].name, name, sizeof(UW)) == 0)
 				return brkAtr[i].atr;
 		}
 	}
@@ -282,8 +282,8 @@ EXPORT	void	initBreak(void)
 	traceMode = traceStep = stepFlg = 0;
 
         // SW break instruction (undefined instruction)
-	*((UH*)&sbpCode.b[2]) = BREAK_THUMB;
-	*((UW*)&sbpCode.b[4]) = BREAK_ARM;
+	sbpCode.w[0] = BREAK_THUMB;
+	sbpCode.w[1] = BREAK_ARM;
 }
 /*
         release breakpoint temporarily (monitor entry)

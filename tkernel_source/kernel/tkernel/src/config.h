@@ -172,4 +172,6 @@
  */
 #define USE_KERNEL_MESSAGE	(1)
 
+#define USE_SINGLE_STACK	(0)
+
 #endif /* _CONFIG_ */

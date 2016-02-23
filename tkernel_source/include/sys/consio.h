@@ -45,7 +45,7 @@ IMPORT int cons_ioctl( int req, int arg );
 
 /* Serial port (RS_PORT) only */
 IMPORT int RS_putchar( int c );
-IMPORT int RS_getchar();
+IMPORT int RS_getchar( void );
 IMPORT int RS_ioctl( int req, int arg );
 
 /*

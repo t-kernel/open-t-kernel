@@ -35,7 +35,13 @@ typedef	enum {
 	INP_KEY = 1,		/* key data                        */
 	INP_FLG = 2,		/* event flag registration */
 	INP_PD2	= 3,		/* pd data 2            */
+
+	PIC_TIMEOUT	= 4,	/* timeout */
+	PIC_SPRESS	= 5,	/* shift press */
+	PIC_KEYUP	= 6,	/* key up */
+
 	SpecialReserve = -1	/* negative numbers are reserved for special purpose */
+
 } InputCmd;
 
 /* device error */
