@@ -126,12 +126,12 @@ IMPORT	ER	em1d512_iicxfer(W ch, UH *cmddat, W words);
 IMPORT	ER	em1d512_spixfer(W cs, UB *xmit, UB *recv, W len);
 /* [END SYSCALLS] */
 
-#define	IIC_START	(1 << 15)	// send START condition
-#define	IIC_STOP	(1 << 14)	// send STOP condition
-#define	IIC_SEND	(1 << 13)	// send data
-#define	IIC_RECV	(1 << 12)	// receive data
-#define	IIC_TOPDATA	(1 << 11)	// beginning of sent/received data
-#define	IIC_LASTDATA	(1 << 10)	// end of sent/received data
+#define	IIC_START	(1 << 15)	/* send START condition */
+#define	IIC_STOP	(1 << 14)	/* send STOP condition */
+#define	IIC_SEND	(1 << 13)	/* send data */
+#define	IIC_RECV	(1 << 12)	/* receive data */
+#define	IIC_TOPDATA	(1 << 11)	/* beginning of sent/received data */
+#define	IIC_LASTDATA	(1 << 10)	/* end of sent/received data */
 
 /* Initailize service functions */
 IMPORT	ER	em1d512_iicspi_svc(BOOL start);

@@ -21,7 +21,7 @@
 #include "sysdepend.h"
 #include <arm/em1d512.h>
 
-LOCAL	UW	delay64us;		 // wait for 64 microsec
+LOCAL	UW	delay64us;		 /* wait for 64 microsec */
 
 /*
  * wait for nanoseconds
@@ -62,18 +62,18 @@ EXPORT	void	setupWaitUsec(void)
 {
 	UW	t0, t1, t2;
 
-#define	MAX_CNT		(ACPU_CLK * 64 / 10)	// 1 Clock
-#define	MIN_CNT		(ACPU_CLK * 64 / 1280)	// 128 Clock
+#define	MAX_CNT		(ACPU_CLK * 64 / 10)	/* 1 Clock */
+#define	MIN_CNT		(ACPU_CLK * 64 / 1280)	/* 128 Clock */
 
         /* use TI0 timer, and assume clock is PLL3 / 8 */
-	out_w(Txx_OP(TI0), 0);			// Timer stop, count clear
+	out_w(Txx_OP(TI0), 0);			/* Timer stop, count clear */
 	while (in_w(Txx_RCR(TI0)));
 
-	out_w(Txx_SET(TI0), 0xffffffff);	// maximum count
-	out_w(Txx_OP(TI0), 0x00000003);		// Timer start
+	out_w(Txx_SET(TI0), 0xffffffff);	/* maximum count */
+	out_w(Txx_OP(TI0), 0x00000003);		/* Timer start */
 
 	delay64us = 64;
-	waitUsec(1000);				// wait for a while until things settle down
+	waitUsec(1000);				/* wait for a while until things settle down */
 
 	t0 = in_w(Txx_RCR(TI0));
 	waitUsec(1000);
@@ -81,12 +81,12 @@ EXPORT	void	setupWaitUsec(void)
 	waitUsec(3000);
 	t2 = in_w(Txx_RCR(TI0));
 
-	out_w(Txx_OP(TI0),0);			// Timer stop, count clear
+	out_w(Txx_OP(TI0),0);			/* Timer stop, count clear */
 	while (in_w(Txx_RCR(TI0)));
 	
-	t2 -= t1;	// count for 3000 times
-	t1 -= t0;	// count for 1000 times
-	t2 -= t1;	// count for 2000 times
+	t2 -= t1;	/* count for 3000 times */
+	t1 -= t0;	/* count for 1000 times */
+	t2 -= t1;	/* count for 2000 times */
 
 	/*
          * calculate the count for 64 microsec

@@ -20,7 +20,7 @@
 
 #include "cmdsvc.h"
 
-// control characters
+/* control characters */
 #define	BS	('H'-'@')
 #define	CAN	('X'-'@')
 #define	CTLC	('C'-'@')
@@ -33,16 +33,16 @@
 #define	CAN2	('U'-'@')
 #define	TAB	('I'-'@')
 #define	ESC	('['-'@')
-#define	CUR_UP	('P'-'@')		// or	ESC [ A
-#define	CUR_DWN	('N'-'@')		// or	ESC [ B
-#define	CUR_FWD	('F'-'@')		// or	ESC [ C
-#define	CUR_BWD	('B'-'@')		// or	ESC [ D
+#define	CUR_UP	('P'-'@')		/* or	ESC [ A */
+#define	CUR_DWN	('N'-'@')		/* or	ESC [ B */
+#define	CUR_FWD	('F'-'@')		/* or	ESC [ C */
+#define	CUR_BWD	('B'-'@')		/* or	ESC [ D */
 
-#define	HISTBUF_SZ	1024		// history buffer size
+#define	HISTBUF_SZ	1024		/* history buffer size */
 
-LOCAL	UB	hist[HISTBUF_SZ];	// history buffer
-LOCAL	W	CTRL_C_IN;		// CTRL-C input flag
-LOCAL	W	XOFF_IN;		// XOFF input flag
+LOCAL	UB	hist[HISTBUF_SZ];	/* history buffer */
+LOCAL	W	CTRL_C_IN;		/* CTRL-C input flag */
+LOCAL	W	XOFF_IN;		/* XOFF input flag */
 LOCAL	const UB	Digit[] = "0123456789ABCDEF";
 
 /*
@@ -136,7 +136,7 @@ EXPORT W putHex8( UW val )
 EXPORT W putDec( UW val )
 {
 	W	i;
-	UB	d[11];	// required columns for displaying 32-bit maximum cardinal(4,294,967,295) +1
+	UB	d[11];	/* required columns for displaying 32-bit maximum cardinal(4,294,967,295) +1 */
 
 	for (i = 0; i < sizeof(d); i++) {
 		d[i] = Digit[val % 10];
@@ -188,7 +188,7 @@ EXPORT W getString( UB *str )
 	while (ep < L_LINE - 2) {
 		if ((c = getSIO(0)) <= 0) continue;
 		len = 1;
-		if (c & 0x80) {		// EUC 2 bytes characters
+		if (c & 0x80) {		/* EUC 2 bytes characters */
 			if (c1 == 0) {c1 = c; continue;}
 			c |= c1 << 8;
 			c1 = 0;
@@ -196,7 +196,7 @@ EXPORT W getString( UB *str )
 		}
 		if (c == ESC) {esc = 1; continue;}
 
-		if (esc) {	// ESC sequence
+		if (esc) {	/* ESC sequence */
 			if (esc == 1) {
 				esc = (c == '[') ? 2 : 0;
 				continue;
@@ -222,7 +222,7 @@ EXPORT W getString( UB *str )
 			}
 			continue;
 		}
-		if (c == CUR_UP || c == CUR_DWN) {	// history is recalled
+		if (c == CUR_UP || c == CUR_DWN) {	/* history is recalled */
 			if (c == CUR_DWN) {
 				if (hp <= 0) continue;
 				for (hp--; (--hp) > 0 && hist[hp];);
@@ -277,12 +277,12 @@ EXPORT W getString( UB *str )
 		for (ep += len, i = cp; i < ep; i++) putSIO(str[i]);
 		for (cp += len; i > cp; i--) putSIO(BS);
 	}
-	putSIO(CR);		// echo back
+	putSIO(CR);		/* echo back */
 	putSIO(LF);
 	str[ep] = '\0';
 	if (c == CTLC)	return -1;
 
-	if (ep) {		// add to history buffer
+	if (ep) {		/* add to history buffer */
 		i = ep + 1;
 		memmove(&hist[i], hist, HISTBUF_SZ - i);
 		memcpy(hist, str, i);

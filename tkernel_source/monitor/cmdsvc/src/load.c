@@ -20,24 +20,24 @@
 
 #include "cmdsvc.h"
 
-LOCAL	UW	s_addr;			// start address
-LOCAL	UW	e_addr;			// end address + 1
-LOCAL	UW	offset;			// address offset
-LOCAL	UW	loaddr;			// address lower limit
-LOCAL	UW	hiaddr;			// address upper limit
-LOCAL	W	blkno;			// block number
-LOCAL	W	blkptr;			// read pointer
-#define	XBLK_SZ	1024			// XMODEM block size (extended)
-#define	BLK_SZ	128			// XMODEM block size
-#define	blkbuf	wrkBuf			// block buffer
-LOCAL	W	blksz;			// block size
+LOCAL	UW	s_addr;			/* start address */
+LOCAL	UW	e_addr;			/* end address + 1 */
+LOCAL	UW	offset;			/* address offset */
+LOCAL	UW	loaddr;			/* address lower limit */
+LOCAL	UW	hiaddr;			/* address upper limit */
+LOCAL	W	blkno;			/* block number */
+LOCAL	W	blkptr;			/* read pointer */
+#define	XBLK_SZ	1024			/* XMODEM block size (extended) */
+#define	BLK_SZ	128			/* XMODEM block size */
+#define	blkbuf	wrkBuf			/* block buffer */
+LOCAL	W	blksz;			/* block size */
 
-LOCAL	FUNCP	readFn;			// read function
+LOCAL	FUNCP	readFn;			/* read function */
 
-#define	inputByte(tmo)	getSIO(tmo)	// input one byte
-#define	outputByte(c)	putSIO(c)	// output one byte
+#define	inputByte(tmo)	getSIO(tmo)	/* input one byte */
+#define	outputByte(c)	putSIO(c)	/* output one byte */
 
-// XMODEM control codes
+/* XMODEM control codes */
 #define SOH		(0x01)
 #define STX		(0x02)
 #define EOT		(0x04)
@@ -56,11 +56,11 @@ LOCAL	FUNCP	readFn;			// read function
  *      Since the timeout value for SOH is 10 seconds, the initial transfer always seem to wait for 10 seconds.
  *       The initial timeout for SOH is set to 3 seconds (only for the very first transfer.)
  */
-#define	IDLE_TMO	( 1 * 1000)	// idle wait(milliseconds)
-#define	RECV_TMO	( 1 * 1000)	// timeout for data input (milliseconds)
-#define	SOH_TMO		(10 * 1000)	// timeout for SOH input (milliseconds)
-#define	SOH1_TMO	( 3 * 1000)	// timeout for the initial SOH input (milliseconds)
-#define	MAX_RETRY	10		// maximum number of retries
+#define	IDLE_TMO	( 1 * 1000)	/* idle wait(milliseconds) */
+#define	RECV_TMO	( 1 * 1000)	/* timeout for data input (milliseconds) */
+#define	SOH_TMO		(10 * 1000)	/* timeout for SOH input (milliseconds) */
+#define	SOH1_TMO	( 3 * 1000)	/* timeout for the initial SOH input (milliseconds) */
+#define	MAX_RETRY	10		/* maximum number of retries */
 
 /*
         skip until there is no more input
@@ -99,50 +99,50 @@ LOCAL	W	xmodemRead(void)
 	}
 
 	for (;;) {
-                // receiving block
+                /* receiving block */
 		for (i = 0;;) {
 			if (ctlch >= 0) {
-                                // ack/beginning character is transmitted
+                                /* ack/beginning character is transmitted */
 				outputByte(ctlch);
 
-                                // leading letter in the ack is extracted
+                                /* leading letter in the ack is extracted */
 				c = inputByte(SOH_TMO);
 			}
 			ctlch = NAK;
 			if (c == SOH) {blksz = BLK_SZ;	break;}
 			if (c == STX) {blksz = XBLK_SZ; break;}
-			if (c == CAN || c == CTLC) {	// cancel transfer
-                                // Is CAN followed by another CAN?
+			if (c == CAN || c == CTLC) {	/* cancel transfer */
+                                /* Is CAN followed by another CAN? */
 				c = inputByte(IDLE_TMO);
 				if (c < 0 || c == CAN || c == CTLC)
 							return E_CANCEL;
-			} else if (c == EOT) {	// end of transmission
+			} else if (c == EOT) {	/* end of transmission */
 				outputByte(ACK);
 				return E_END;
 			}
-			purgeInput();	// skip data
+			purgeInput();	/* skip data */
 			if (++i >= MAX_RETRY) return E_XMODEM;
 		}
 
-                // read a block number & check
+                /* read a block number & check */
 		if ((i = inputByte(RECV_TMO)) < 0) continue;
 		if ((c = inputByte(RECV_TMO)) < 0) continue;
 		if (i + c != 0xff) continue;
 
 		if (i != (blkno & 0xff)) {
 			if (i != ((blkno - 1) & 0xff)) return E_XMODEM;
-                        // skip if the previous block is read
+                        /* skip if the previous block is read */
 			ctlch = ACK;
 		}
 
-                // read the block itself
+                /* read the block itself */
 		for (cksum = 0, i = 0; i < blksz; i++) {
 			if ((c = inputByte(RECV_TMO)) < 0) break;
 			cksum += (blkbuf[i] = c);
 		}
 		if (c < 0) continue;
 
-                // validate checksum
+                /* validate checksum */
 		if (inputByte(RECV_TMO) == cksum && ctlch != ACK) break;
 	}
 	blkptr = 0;
@@ -153,12 +153,12 @@ LOCAL	W	xmodemRead(void)
 */
 LOCAL	void	xmodemEnd(W er)
 {
-        // finish XMODEM protocol
+        /* finish XMODEM protocol */
 	while (er >= 0) er = xmodemRead();
 
 	if (er != E_END && er != E_CANCEL) {
-		purgeInput();		// wait until there is no more data
-		outputByte(CAN);	// transmite two (or more) consecutive CANs
+		purgeInput();		/* wait until there is no more data */
+		outputByte(CAN);	/* transmite two (or more) consecutive CANs */
 		outputByte(CAN);
 		outputByte(CAN);
 	}
@@ -206,29 +206,29 @@ LOCAL	W	loadSform(void)
 	UW	addr, a_addr;
 	UB	cksum, buf[512];
 
-	a_addr = s_addr;		// real address
-	s_addr = 0xffffffff;		// highest load address
-	e_addr = 0;			// lowest load address
+	a_addr = s_addr;		/* real address */
+	s_addr = 0xffffffff;		/* highest load address */
+	e_addr = 0;			/* lowest load address */
 
 	for (;;) {
 		if ((c = (*readFn)()) < 0) return c;
 
 		if (c != 'S') {
-			if (c == CTLZ) break;	// end
+			if (c == CTLZ) break;	/* end */
 			continue;
 		}
 
 		if ((c = (*readFn)()) < 0) return c;
 		switch(c) {
-		case '0':	// header
+		case '0':	/* header */
 				rtype = 0;		break;
-		case '1':	// 2 byte address data
-		case '2':	// 3 byte address data
-		case '3':	// 4 byte address data
+		case '1':	/* 2 byte address data */
+		case '2':	/* 3 byte address data */
+		case '3':	/* 4 byte address data */
 				rtype = c - '0' + 2;	break;
-		case '7':	// 4 byte address termination
-		case '8':	// 3 byte address termination
-		case '9':	// 2 byte address termination
+		case '7':	/* 4 byte address termination */
+		case '8':	/* 3 byte address termination */
+		case '9':	/* 2 byte address termination */
 				rtype = -1;		break;
 		default:	return E_LOADFMT;
 		}
@@ -238,26 +238,26 @@ LOCAL	W	loadSform(void)
 			if ((v = readHex()) < 0)  return v;
 			cksum += (v += (v1 << 4));
 
-			if (i == 0) {		// byte counts
+			if (i == 0) {		/* byte counts */
 				if ((bcnt = v - 1) < 0) return E_LOAD;
 				addr = 0;
 				continue;
 			}
-			if (i > bcnt) {		// checksum
+			if (i > bcnt) {		/* checksum */
 				if (cksum != 0xff) return E_LOAD;
 				break;
 			}
 			if (rtype <= 0) continue;
 
-			if (i < rtype) {	// load address
+			if (i < rtype) {	/* load address */
 				addr = (addr << 8) + v;
-			} else {		// data
+			} else {		/* data */
 				buf[dcnt++] = (UB)v;
 			}
 		}
 		if (dcnt > 0) {
-                        // if we have address specification, then the first address
-                        // to be used as the designated address after suitable adjustment.
+                        /* if we have address specification, then the first address */
+                        /* to be used as the designated address after suitable adjustment. */
 			if (a_addr != 0) {
 				offset = a_addr - addr;
 				a_addr = 0;
@@ -270,7 +270,7 @@ LOCAL	W	loadSform(void)
 			if (addr < s_addr) s_addr = addr;
 			if ((addr += dcnt) > e_addr) e_addr = addr;
 		}
-		if (rtype < 0) break;	// end
+		if (rtype < 0) break;	/* end */
 	}
 	return E_OK;
 }
@@ -281,36 +281,36 @@ EXPORT	ER	doLoading(W proto, UW addr, UW *range)
 {
 	ER	er;
 
-	e_addr = s_addr = addr;		// load address
+	e_addr = s_addr = addr;		/* load address */
 
-	if (range) {	// range specification
-		loaddr = range[0];	// address lower limit
-		hiaddr = range[1];	// address upper limit
-		offset = range[2];	// address offset
+	if (range) {	/* range specification */
+		loaddr = range[0];	/* address lower limit */
+		hiaddr = range[1];	/* address upper limit */
+		offset = range[2];	/* address offset */
 	} else {
-		loaddr = 0;		// address lower limit
-		hiaddr = 0xFFFFFFFF;	// address upper limit
-		offset = 0;		// address offset
+		loaddr = 0;		/* address lower limit */
+		hiaddr = 0xFFFFFFFF;	/* address upper limit */
+		offset = 0;		/* address offset */
 	}
 
-	if (proto & P_XMODEM) {	// XMODEM
+	if (proto & P_XMODEM) {	/* XMODEM */
 		readFn = (FUNCP)xmodemRead;
 		blkptr = blkno = blksz = 0;
-	} else {		// no protocol
+	} else {		/* no protocol */
 		readFn = (FUNCP)textRead;
 	}
 
-	if (proto & P_SFORM) {	// S format
+	if (proto & P_SFORM) {	/* S format */
 		er = loadSform();
 		if (er == E_END) er = E_LOAD;
-	} else {		// memory image
+	} else {		/* memory image */
 		er = loadImage();
 	}
 
-        // read termination processing
+        /* read termination processing */
 	if (proto & P_XMODEM) xmodemEnd(er);
 
-        // wait until there is no more data
+        /* wait until there is no more data */
 	purgeInput();
 
 	if (er == E_END) er = E_OK;
@@ -318,7 +318,7 @@ EXPORT	ER	doLoading(W proto, UW addr, UW *range)
 	if (er == E_OK) {
 		e_addr--;
 		if (range) {
-			range[0] = s_addr;	// load address
+			range[0] = s_addr;	/* load address */
 			range[1] = e_addr;
 			s_addr -= offset;
 			e_addr -= offset;

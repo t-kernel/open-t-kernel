@@ -43,10 +43,10 @@ typedef struct {
 #  define IOSTEP	4
 #  define CLOCK		229376000
 
-// Unlike ordinary 16550, all registers exist and are independently accessed.
-// (No overlaid meaning/behavior per read or write, or switching of register sets is necessary.
-// also, 16-bits read/write to data register while FIFO is enabled causes two character input/output.)
-//
+/* Unlike ordinary 16550, all registers exist and are independently accessed.
+ * (No overlaid meaning/behavior per read or write, or switching of register sets is necessary.
+ * also, 16-bits read/write to data register while FIFO is enabled causes two character input/output.) */
+
 #define	UART(n)		( IOB + (n) * IOSTEP )
 #define	regDATA		UART(0)		/* data register          (RW) */
 #define	regINTE		UART(1)		/* interrupt enable register   (RW) */

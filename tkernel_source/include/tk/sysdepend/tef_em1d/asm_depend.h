@@ -84,8 +84,8 @@
 	mrs	ip, cpsr
 	and	ip, ip, #PSR_M(31)
 	cmp	ip, #PSR_IRQ
-	ldmeqfd	sp!, {r3, ip}		// for IRQ
-	ldmnefd	sp!, {ip}		// for other cases
+	ldmeqfd	sp!, {r3, ip}		/* for IRQ */
+	ldmnefd	sp!, {ip}		/* for other cases */
 	rfefd	sp!
  .endm
 
@@ -99,7 +99,7 @@
  */
  .macro ENTER_SVC_MODE
 	.arm
-	cps	#PSR_SVC		// enter SVC mode
+	cps	#PSR_SVC		/* enter SVC mode */
  .endm
 
 /*
@@ -117,9 +117,9 @@
  */
  .macro TK_RET_INT mode
 	.arm
-	mov	ip, lr				// ip = lr_svc
-	cpsid	IMASK, #\mode			// return to the original exception
-	stmfd	sp!, {ip}			// save lr_svc
+	mov	ip, lr				/* ip = lr_svc */
+	cpsid	IMASK, #\mode			/* return to the original exception */
+	stmfd	sp!, {ip}			/* save lr_svc */
 	svc	SWI_RETINT
  .endm
 
@@ -139,9 +139,9 @@
  */
  .macro TK_RET_INT_FIQ mode
 	.arm
-	mov	r3, lr				// r3 = lr_svc
-	cpsid	IMASK, #\mode			// return to the original exception
-	swp	r3, r3, [sp]			// save lr_svc, and restore r3
+	mov	r3, lr				/* r3 = lr_svc */
+	cpsid	IMASK, #\mode			/* return to the original exception */
+	swp	r3, r3, [sp]			/* save lr_svc, and restore r3 */
 	svc	SWI_RETINT
  .endm
 
@@ -158,19 +158,19 @@
 
  .macro TEXHDR_ENTRY texhdr
 	.arm
-	swp	lr, lr, [sp]		// save lr , lr = texcd
-	stmfd	sp!, {r0-r4, ip}	// save other registers
+	swp	lr, lr, [sp]		/* save lr , lr = texcd */
+	stmfd	sp!, {r0-r4, ip}	/* save other registers */
 
 	mov	r4, sp
-	bic	sp, sp, #8-1		// align (module 8 bytes) of sp
+	bic	sp, sp, #8-1		/* align (module 8 bytes) of sp */
 
 	ldr	ip, =\texhdr
 	mov	r0, lr
-	blx	ip			// call texhdr(texcd)
+	blx	ip			/* call texhdr(texcd) */
 
 	mov	sp, r4
-	ldmfd	sp!, {r0-r4, ip, lr}	// restore registers
-	svc	SWI_RETTEX		// return from task exception handler
+	ldmfd	sp!, {r0-r4, ip, lr}	/* restore registers */
+	svc	SWI_RETTEX		/* return from task exception handler */
  .endm
 
 /* ------------------------------------------------------------------------ */

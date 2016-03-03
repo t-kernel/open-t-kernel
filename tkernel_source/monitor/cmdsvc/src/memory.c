@@ -36,15 +36,15 @@ EXPORT	W	readMem(UW addr, void *buf, W len, W unit)
 	W	i, n, alen;
 	MP	pa, bp;
 
-        // address misalignment is reported as error
+        /* address misalignment is reported as error */
 	if (addr & (unit - 1)) return 0;
 
 	bp.w = buf;
 	for (alen = 0; alen < len; alen += i) {
 
-                // memory address check & conversion to physical address
+                /* memory address check & conversion to physical address */
 		n = chkMemAddr(addr + alen, &pa.a, len - alen, 0);
-		if (n < unit) break;	// illegal address
+		if (n < unit) break;	/* illegal address */
 
 		i = 0;
 		switch(unit) {
@@ -69,16 +69,16 @@ EXPORT	W	writeMem(UW addr, void *buf, W len, W unit)
 	W	i, n, sz, alen;
 	MP	pa, bp;
 
-        // address misalignment is reported as error
+        /* address misalignment is reported as error */
 	sz = unit & 0x0f;
 	if (addr & (sz - 1)) return 0;
 
 	bp.w = buf;
 	for (alen = 0; alen < len; alen += i) {
 
-                // memory address check & conversion to physical address
+                /* memory address check & conversion to physical address */
 		n = chkMemAddr(addr + alen, &pa.a, len - alen, 1);
-		if (n < sz) break;	// illegal address
+		if (n < sz) break;	/* illegal address */
 
 		i = 0;
 		switch(sz) {
@@ -115,9 +115,9 @@ EXPORT	W	readMemStr(UW addr, void *buf, W len)
 	UW	pa;
 
 	for (alen = 0; alen < len; alen += i) {
-                // memory address check & conversion to physical address
+                /* memory address check & conversion to physical address */
 		n = chkMemAddr(addr + alen, &pa, len - alen, 0);
-		if (n == 0) break;	// illegal address
+		if (n == 0) break;	/* illegal address */
 		for (i = 0; i < n; i++, buf++, pa++) {
 			if ((*(UB*)buf = rd_b((UB*)pa)) == 0) return alen + i;
 		}
@@ -132,10 +132,10 @@ EXPORT	W	readIO(UW addr, UW *data, W unit)
 	W	n;
 	UW	pa;
 
-        // address misalignment is reported as error
+        /* address misalignment is reported as error */
 	if (addr & (unit - 1)) return 0;
 
-        // I/O address check & conversion to physical address
+        /* I/O address check & conversion to physical address */
 	n = chkIOAddr(addr, &pa, unit);
 	if (n < unit) return 0;
 
@@ -154,10 +154,10 @@ EXPORT	W	writeIO(UW addr, UW data, W unit)
 	W	n;
 	UW	pa;
 
-        // address misalignment is reported as error
+        /* address misalignment is reported as error */
 	if (addr & (unit - 1)) return 0;
 
-        // I/O address check & conversion to physical address
+        /* I/O address check & conversion to physical address */
 	n = chkIOAddr(addr, &pa, unit);
 	if (n < unit) return 0;
 

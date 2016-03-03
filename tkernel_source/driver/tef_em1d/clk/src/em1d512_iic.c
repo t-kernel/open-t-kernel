@@ -68,7 +68,7 @@ LOCAL	const UW	IICVec[IICMAX] = {IV_IRQ(33), IV_IRQ(39)};
 #define	IICF_STCEN	(1 << 1)
 #define	IICF_IICRSV	(1 << 0)
 
-#define	TIMEOUT		1000000	// microsec
+#define	TIMEOUT		1000000	/* microsec */
 
 /* wait for register status */
 LOCAL	ER	wait_state(UW addr, UW mask, UW value)
@@ -237,10 +237,10 @@ EXPORT	ER	IICXfer(W ch, UH *cmddata, W words)
 	IICTskID[ch] = tk_get_tid();
 
         /* initialization */
-	out_w(IIC_IICC(ch), 0);				// halt entire operation
-	out_w(IIC_IICCL(ch), IICCL_SMC | IICCL_DFC);	// high-speed mode + filter
-	out_w(IIC_IICF(ch), IICF_STCEN | IICF_IICRSV);	// force transmission
-	out_w(IIC_IICC(ch), IICC_IICE | IICC_WTIM);	// IIC operation, 9 bits mode
+	out_w(IIC_IICC(ch), 0);				/* halt entire operation */
+	out_w(IIC_IICCL(ch), IICCL_SMC | IICCL_DFC);	/* high-speed mode + filter */
+	out_w(IIC_IICF(ch), IICF_STCEN | IICF_IICRSV);	/* force transmission */
+	out_w(IIC_IICC(ch), IICC_IICE | IICC_WTIM);	/* IIC operation, 9 bits mode */
 	tk_can_wup(TSK_SELF);
 
         /* wait for bus free (since there is one master, the bus should be free, but just in case.) */
@@ -276,7 +276,7 @@ EXPORT	ER	IICXfer(W ch, UH *cmddata, W words)
 
 	er = E_OK;
 fin1:
-	out_w(IIC_IICC(ch), 0);	// halt entire operation
+	out_w(IIC_IICC(ch), 0);	/* halt entire operation */
 	Unlock(&IICLock[ch]);
 fin0:
 	return er;

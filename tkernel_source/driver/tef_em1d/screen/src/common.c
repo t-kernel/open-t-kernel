@@ -350,18 +350,18 @@ EXPORT	ER	getSCRSPEC(DEV_SPEC *spec)
 */
 EXPORT	W	setModeStr(W mode, TC *str, W pos, W x, W y, W bpp, TC *desc)
 {
-#define	MODESTR_SIZE	16	// the number specified by VIDEOMODE needs to fit in this area
+#define	MODESTR_SIZE	16	/* the number specified by VIDEOMODE needs to fit in this area */
 #define	TK_MULT		0x215f
 #define	putTC(x, y, z)	(x)[(y)] = (z)
 
 	W	n;
 
-        // "mxxxxXyyyy:cccc  ...  " (TC)
-        //       m: video mode number
-        //       x: X width (1-4 columns)
-        //       y: Y height (1-4 rows)
-        //       c: number of colors
-        //       ' ' (space) : padding
+	/* "mxxxxXyyyy:cccc  ...  " (TC)
+		m: video mode number
+		x: X width (1-4 columns)
+		y: Y height (1-4 rows)
+		c: number of colors
+		' ' (space) : padding */
 
         /* if str = NULL, the length of the resulting string is returned */
 	if (str == NULL) goto fin0;
@@ -379,7 +379,7 @@ EXPORT	W	setModeStr(W mode, TC *str, W pos, W x, W y, W bpp, TC *desc)
 	if (x >=   10)	putTC(str, n++, TK_0 + (x /   10) % 10);
 			putTC(str, n++, TK_0 +  x         % 10);
 
-	putTC(str, n++, TK_MULT);	// (multiplication symbol in TC)
+	putTC(str, n++, TK_MULT);	/* (multiplication symbol in TC) */
 
         /* Y size */
 	if (y >= 1000)	putTC(str, n++, TK_0 + (y / 1000) % 10);
@@ -387,7 +387,7 @@ EXPORT	W	setModeStr(W mode, TC *str, W pos, W x, W y, W bpp, TC *desc)
 	if (y >=   10)	putTC(str, n++, TK_0 + (y /   10) % 10);
 			putTC(str, n++, TK_0 +  y         % 10);
 
-	putTC(str, n++, TK_COLN);	// : (TC)
+	putTC(str, n++, TK_COLN);	/* : (TC) */
 
         /* number of colors */
 	if (bpp == 4) {

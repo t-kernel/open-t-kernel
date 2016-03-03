@@ -30,19 +30,19 @@ IMPORT	ER	initMemDisk(DISKCB *, const CFGDISK *);
 
 /* memory region definition */
 EXPORT	MEMSEG	MemSeg[] = {
-	// Bank1/2/3
+	/* Bank1/2/3 */
 	{0x10000000, 0x30000000, MSA_IO,	PGA_RW|PGA_D |PGA_S|PGA_XN},
-	// DDR2 SDRAM, 64Mbyte
+	/* DDR2 SDRAM, 64Mbyte */
 	{0x30000000, 0x40000000, MSA_RAM,	PGA_RW|PGA_C},
-        // EM1 internal device (1)
+        /* EM1 internal device (1) */
 	{0x40000000, 0x70000000, MSA_IO,	PGA_RW|PGA_D |PGA_S|PGA_XN},
-	// Bank0
+	/* Bank0 */
 	{0x70000000, 0x72000000, MSA_FROM,	PGA_RO|PGA_C |0x90000000},
-        // EM1 internal SRAM
+        /* EM1 internal SRAM */
 	{0xa0000000, 0xb0000000, MSA_SRAM,	PGA_RW|PGA_NC},
-        // EM1 internal device (2)
+        /* EM1 internal device (2) */
 	{0xb0000000, 0xd0000000, MSA_IO,	PGA_RW|PGA_D |PGA_S|PGA_XN},
-        // EM1 internal Boot ROM
+        /* EM1 internal Boot ROM */
 	{0xf0000000, 0xffffffff, MSA_ROM,	PGA_RO|PGA_NC},
 
 	{0x70000000, 0x70020000, MSA_MON,	0},
@@ -77,14 +77,14 @@ EXPORT	const W	N_ConfigSIO = sizeof(ConfigSIO) / sizeof(CFGSIO);
  *	list in the order of port number
  */
 EXPORT	const CFGDISK	ConfigDisk[] = {
-	{"rda",	DA_RONLY,	initMemDisk,	0},	// FlashROM
+	{"rda",	DA_RONLY,	initMemDisk,	0},	/* FlashROM */
 };
 
 EXPORT	const W	N_ConfigDisk = sizeof(ConfigDisk) / sizeof(CFGDISK);
 
 /* boot information */
-EXPORT	const UH	BootSignature = 0xe382;		// signature
-EXPORT	UB *	const PBootAddr = (UB *)0x30200000;	// primary boot loader address
+EXPORT	const UH	BootSignature = 0xe382;		/* signature */
+EXPORT	UB *	const PBootAddr = (UB *)0x30200000;	/* primary boot loader address */
  
 /* ------------------------------------------------------------------------ */
 
@@ -110,7 +110,7 @@ EXPORT	UB *	const PBootAddr = (UB *)0x30200000;	// primary boot loader address
 #define	IIC_TOPDATA	(1 << 11)
 #define	IIC_LASTDATA	(1 << 10)
 
-#define	TIMEOUT		1000000	// microsec
+#define	TIMEOUT		1000000	/* microsec */
 
 #define	IIC2_IRQ	39
 #define	IRQbit(x)	(1 << ((x) % 32))
@@ -131,7 +131,7 @@ LOCAL	ER	wait_state(UW addr, UW mask, UW value)
 /* interrupt Raw status / clear */
 LOCAL	void	clear_int(void)
 {
-	out_w(IT0_IIR, IRQbit(IIC2_IRQ));	// IRQ39 clear
+	out_w(IT0_IIR, IRQbit(IIC2_IRQ));	/* IRQ39 clear */
 	return;
 }
 
@@ -259,10 +259,10 @@ LOCAL	ER	iic_start(void)
 	ER	er;
 
         /* initialization default */
-	out_w(IIC_IICC(IIC2), 0);			// stop completely
-	out_w(IIC_IICCL(IIC2), IICCL_SMC | IICCL_DFC);	// fast mode + filter
-	out_w(IIC_IICF(IIC2), IICF_STCEN | IICF_IICRSV);// forcibly start transmission
-	out_w(IIC_IICC(IIC2), IICC_IICE | IICC_WTIM);	// IIC mode, 9bit mode
+	out_w(IIC_IICC(IIC2), 0);			/* stop completely */
+	out_w(IIC_IICCL(IIC2), IICCL_SMC | IICCL_DFC);	/* fast mode + filter */
+	out_w(IIC_IICF(IIC2), IICF_STCEN | IICF_IICRSV);/* forcibly start transmission */
+	out_w(IIC_IICC(IIC2), IICC_IICE | IICC_WTIM);	/* IIC mode, 9bit mode */
 	clear_int();
 
         /* wait for bus to become available (since there is only one master, the bus is supposed to be unoccupied) */
@@ -274,7 +274,7 @@ LOCAL	ER	iic_start(void)
 /* stop IIC send/receive */
 LOCAL	void	iic_finish(void)
 {
-	out_w(IIC_IICC(IIC2), 0);	// stop completely
+	out_w(IIC_IICC(IIC2), 0);	/* stop completely */
 	return;
 }
 
@@ -316,9 +316,9 @@ LOCAL	void	IICGPIOWrite(W addr, W dat)
 
 IMPORT	W	pmicRead(W reg);
 IMPORT	W	pmicWrite(W reg, W dat);
-#define	pmicDelay(x)	waitUsec(4)	// about 16msec
-#define	USBPowerOn	0xe0		// GPIO13(OD), High * power is supplied to A connector only
-#define	USBPowerOff	0xe0		// GPIO13(OD), High
+#define	pmicDelay(x)	waitUsec(4)	/* about 16msec */
+#define	USBPowerOn	0xe0		/* GPIO13(OD), High * power is supplied to A connector only */
+#define	USBPowerOff	0xe0		/* GPIO13(OD), High */
 
 /* obtain DipSw status */
 EXPORT	UW	DipSwStatus(void)
@@ -350,14 +350,14 @@ EXPORT	void	powerOff(void)
 {
 	W	i;
 
-	for (i = 10; i < 14; i++) pmicWrite(i, 0xff);	// IRQ_MASK_A-D (mask)
+	for (i = 10; i < 14; i++) pmicWrite(i, 0xff);	/* IRQ_MASK_A-D (mask) */
 	pmicDelay();
 
-	for (i = 5 ; i < 9; i++) pmicWrite(i, 0xff);	// EVENT_A-D (clear)
+	for (i = 5 ; i < 9; i++) pmicWrite(i, 0xff);	/* EVENT_A-D (clear) */
 	pmicDelay();
 
 	while (1) {
-		pmicWrite(15, 0x60);	// DEEP_SLEEP
+		pmicWrite(15, 0x60);	/* DEEP_SLEEP */
 		pmicDelay();
 	}
 }
@@ -367,7 +367,7 @@ EXPORT	void	resetStart(void)
 {
 	while (1) {
                 /* reset */
-		pmicWrite(15, 0xac);		// SHUTDOWN
+		pmicWrite(15, 0xac);		/* SHUTDOWN */
 		pmicDelay();
 	}
 }
@@ -376,7 +376,7 @@ EXPORT	void	resetStart(void)
 EXPORT	void	initHardware(void)
 {
         /* enable abort switch interrupt */
-	out_w(GIO_IDT1(GIO_L), 0x00000008);	// asynchronous leading-edge high interrupt
+	out_w(GIO_IDT1(GIO_L), 0x00000008);	/* asynchronous leading-edge high interrupt */
 	out_w(GIO_IIR(GIO_L), 0x00000100);
 	out_w(GIO_IIA(GIO_L), 0x00000100);
 	out_w(GIO_IEN(GIO_L), 0x00000100);
@@ -389,10 +389,10 @@ EXPORT	void	cpuLED(UW v)
 {
 	UB	m, d, r, c;
 
-	m = ~((v >> 16) | 0xf0);	// mask (0:unmodified 1:modify)
-	d = ~((v >>  0) | 0xf0);	// set value (0:on 1:off)
+	m = ~((v >> 16) | 0xf0);	/* mask (0:unmodified 1:modify) */
+	d = ~((v >>  0) | 0xf0);	/* set value (0:on 1:off) */
 	r = IICGPIORead(0xb9);
-	c = (r ^ d) & m;		// modify flag (0:unmodified 1:modify)
+	c = (r ^ d) & m;		/* modify flag (0:unmodified 1:modify) */
 	IICGPIOWrite(0xb8, r ^ c);
 }
 
@@ -558,28 +558,28 @@ EXPORT	W	procHwInt(UW vec)
 */
 EXPORT	const UW	GPIOConfig[] __attribute__((section(".startup"))) = {
 	CHG_PINSEL_G(0),
-	0x55400C00,		// AB0_CLK,AB0_AD3-0,CAM_SCLK
+	0x55400C00,		/* AB0_CLK,AB0_AD3-0,CAM_SCLK */
 	CHG_PINSEL_G(16),
-	0x55555555,		// AB0_AD15-4,AB0_A20-17
+	0x55555555,		/* AB0_AD15-4,AB0_A20-17 */
 	CHG_PINSEL_G(32),
-	0x54555055,		// AB0_BEN1-0,AB0_CSB3,AB0_CSB1-0,
-				// AB0_WAIT,AB0_WRB,AB0_RDB,AB0_ADV,
-				// AB0_A24-21
+	0x54555055,		/* AB0_BEN1-0,AB0_CSB3,AB0_CSB1-0, */
+				/* AB0_WAIT,AB0_WRB,AB0_RDB,AB0_ADV, */
+				/* AB0_A24-21 */
 
-	CHG_CTRL_AB0_BOOT,	// AB0(AsyncBus0) pin:
-	0x00000001,		// 	configured by PINSEL
+	CHG_CTRL_AB0_BOOT,	/* AB0(AsyncBus0) pin: */
+	0x00000001,		/* 	configured by PINSEL */
 
 	CHG_PINSEL_G(48),
-	0x55555555,		// LCD,SP0_CS2-1
+	0x55555555,		/* LCD,SP0_CS2-1 */
 	CHG_PINSEL_G(64),
-	0xffc05555,		// CAM_YUV4-0,LCD
+	0xffc05555,		/* CAM_YUV4-0,LCD */
 	CHG_PINSEL_G(80),
-	0x06556940,		// SD2_CKI,CAM_CLKI,SD0_CKI,SD0_DATA3-1,
-				// PM0,URT1,IIC
+	0x06556940,		/* SD2_CKI,CAM_CLKI,SD0_CKI,SD0_DATA3-1, */
+				/* PM0,URT1,IIC */
 	CHG_PINSEL_G(96),
-	0x55555555,		// URT2,USB
+	0x55555555,		/* URT2,USB */
 	CHG_PINSEL_G(112),
-	0x00000555,		// SD2
+	0x00000555,		/* SD2 */
 	CHG_PINSEL_SP0,
 	0x00000000,
 	CHG_PINSEL_DTV,
@@ -591,79 +591,79 @@ EXPORT	const UW	GPIOConfig[] __attribute__((section(".startup"))) = {
 	CHG_PINSEL_IIC2,
 	0x00000000,
 	CHG_PULL_G(0),
-	0x55055005,		// P7,P6,P4,P3,P0: IN, pull-up/down dis
+	0x55055005,		/* P7,P6,P4,P3,P0: IN, pull-up/down dis */
 	CHG_PULL_G(8),
-	0x00000005,		// P8: IN, pull-up/down dis
+	0x00000005,		/* P8: IN, pull-up/down dis */
 	CHG_PULL_G(16),
-	0x00000000,		// (default)
+	0x00000000,		/* (default) */
 	CHG_PULL_G(24),
-	0x00000000,		// (default)
+	0x00000000,		/* (default) */
 	CHG_PULL_G(32),
-	0x00550000,		// P37,36: IN, pull-up/down dis
+	0x00550000,		/* P37,36: IN, pull-up/down dis */
 	CHG_PULL_G(40),
-	0x00050000,		// P44: IN, pull-up/down dis
+	0x00050000,		/* P44: IN, pull-up/down dis */
 	CHG_PULL_G(48),
-	0x11111111,		// (default)
+	0x11111111,		/* (default) */
 	CHG_PULL_G(56),
-	0x11111111,		// (default)
+	0x11111111,		/* (default) */
 	CHG_PULL_G(64),
-	0x11111111,		// (default)
+	0x11111111,		/* (default) */
 	CHG_PULL_G(72),
-	0x00000005,		// P72: IN, pull-up/down dis
+	0x00000005,		/* P72: IN, pull-up/down dis */
 	CHG_PULL_G(80),
-	0x00400050,		// P81: IN, pull-up/down dis
-				// URT1_SRIN: IN, pull-down
+	0x00400050,		/* P81: IN, pull-up/down dis */
+				/* URT1_SRIN: IN, pull-down */
 	CHG_PULL_G(88),
-	0x55000444,		// P95,94: IN, pull-up/down dis
-				// SD0_DATA3-1: IN, pull-down
+	0x55000444,		/* P95,94: IN, pull-up/down dis */
+				/* SD0_DATA3-1: IN, pull-down */
 	CHG_PULL_G(96),
-	0x44444444,		// USB signals: IN, pull-down
+	0x44444444,		/* USB signals: IN, pull-down */
 	CHG_PULL_G(104),
-	0x04044444,		// USB signals: IN, pull-down
-				// URT2_CTSB,URT2_SRIN: IN, pull-down
+	0x04044444,		/* USB signals: IN, pull-down */
+				/* URT2_CTSB,URT2_SRIN: IN, pull-down */
 	CHG_PULL_G(112),
-	0x00000000,		// (default)
+	0x00000000,		/* (default) */
 	CHG_PULL_G(120),
-	0x00000000,		// (default)
+	0x00000000,		/* (default) */
 
 	CHG_PULL(0),
-	0x50000004,		// URT0_SRIN: IN, pull-up/down dis
-				// DEBUG_EN: IN, pull-down
+	0x50000004,		/* URT0_SRIN: IN, pull-up/down dis */
+				/* DEBUG_EN: IN, pull-down */
 	CHG_PULL(1),
-	0x15110600,		// SP0_SO: OUT, pull-up/down dis
-				// SP0_SI: IN, pull-up/down dis
-				// SP0_CS: OUT, pull-up/down dis
-				// SP0_CK: OUT, pull-up/down dis
-				// JT0C: IN, pull-up
-				// JT0B: OUT, pull-down
-				// JT0A: OUT, pull-down
+	0x15110600,		/* SP0_SO: OUT, pull-up/down dis */
+				/* SP0_SI: IN, pull-up/down dis */
+				/* SP0_CS: OUT, pull-up/down dis */
+				/* SP0_CK: OUT, pull-up/down dis */
+				/* JT0C: IN, pull-up */
+				/* JT0B: OUT, pull-down */
+				/* JT0A: OUT, pull-down */
 	CHG_PULL(2),
-	0x60000661,		// PM0_SEN: IN, pull-up
-				// SD0_DAT: IN, pull-up
-				// SD1_CMD: IN, pull-up
-				// SD0_CLK: OUT, pull-up/down dis
+	0x60000661,		/* PM0_SEN: IN, pull-up */
+				/* SD0_DAT: IN, pull-up */
+				/* SD1_CMD: IN, pull-up */
+				/* SD0_CLK: OUT, pull-up/down dis */
 	CHG_PULL(3),
-	0x00000000,		// (default)
+	0x00000000,		/* (default) */
 
 	GIO_E0(GIO_L),
-	0x000001d9,		// P8,P7,P6,P4,P3,P0: IN
+	0x000001d9,		/* P8,P7,P6,P4,P3,P0: IN */
 	GIO_E1(GIO_L),
-	0x00000604,		// P10,P9,P2: OUT
+	0x00000604,		/* P10,P9,P2: OUT */
 	GIO_E0(GIO_H),
-	0x00001030,		// P44,P37,P36: IN
+	0x00001030,		/* P44,P37,P36: IN */
 	GIO_E1(GIO_H),
-	0x00000000,		// (default)
+	0x00000000,		/* (default) */
 	GIO_E0(GIO_HH),
-	0xc0020100,		// P95,P94,P81,P72:IN
+	0xc0020100,		/* P95,P94,P81,P72:IN */
 	GIO_E1(GIO_HH),
-	0x00040200,		// P82,P73: OUT
+	0x00040200,		/* P82,P73: OUT */
 	GIO_OL(GIO_L),
-	0x06040000,		// P10,P9,P2=0
+	0x06040000,		/* P10,P9,P2=0 */
 	GIO_OL(GIO_HH),
-	0x02000000,		// P73=0
+	0x02000000,		/* P73=0 */
 	GIO_OH(GIO_HH),
-	0x00040000,		// P82=0
+	0x00040000,		/* P82=0 */
 
-	0x00000000,		// (terminate)
+	0x00000000,		/* (terminate) */
 	0x00000000,
 };

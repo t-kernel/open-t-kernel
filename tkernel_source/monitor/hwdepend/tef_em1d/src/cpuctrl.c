@@ -44,7 +44,7 @@ EXPORT void EnableCache( void )
  */
 EXPORT void DisableCache( void )
 {
-        // MMU can NOT be turned off with this CPU.
+        /* MMU can NOT be turned off with this CPU. */
 	setCacheMMU(DIS_CACHEONLY);
 }
 

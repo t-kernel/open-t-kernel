@@ -23,59 +23,59 @@
 #include "help.h"
 #include <tk/dbgspt.h>
 
-#define	DEF_MEM_SIZE	64		// default memory dump size
-#define	DEF_DA_STEP	16		// default disassbmle size
-#define	MAX_DSP_CNT	64		// maximum cut off count for display
-#define	MAX_RANGE	0x1000000	// maximum range (16 MB)
-#define	IMPLICIT_SIZE	0x1000		// implicit size specification
+#define	DEF_MEM_SIZE	64		/* default memory dump size */
+#define	DEF_DA_STEP	16		/* default disassbmle size */
+#define	MAX_DSP_CNT	64		/* maximum cut off count for display */
+#define	MAX_RANGE	0x1000000	/* maximum range (16 MB) */
+#define	IMPLICIT_SIZE	0x1000		/* implicit size specification */
 
-EXPORT	UB	lineBuf[L_LINE];	// line buffer
-EXPORT	W	killProcReq;		// request to forcibly kill a process
+EXPORT	UB	lineBuf[L_LINE];	/* line buffer */
+EXPORT	W	killProcReq;		/* request to forcibly kill a process */
 
-#define	L_SYMBOL	23		// effective symbol length
-#define	SETDT_SZ	128		// data size
+#define	L_SYMBOL	23		/* effective symbol length */
+#define	SETDT_SZ	128		/* data size */
 
-#define	CMD_FINISH	(9999)		// command end specification
+#define	CMD_FINISH	(9999)		/* command end specification */
 
-EXPORT	W	errinfo;		// error information
-LOCAL	W	errcode;		// error code
+EXPORT	W	errinfo;		/* error information */
+LOCAL	W	errcode;		/* error code */
 
-LOCAL	UW	dAddr;			// D address command
-LOCAL	UW	mAddr;			// M command address
-LOCAL	UW	daAddr;			// DA command address
-LOCAL	UW	cAddr;			// the current start address
-LOCAL	W	cLen;			// the current memory byte length
+LOCAL	UW	dAddr;			/* D address command */
+LOCAL	UW	mAddr;			/* M command address */
+LOCAL	UW	daAddr;			/* DA command address */
+LOCAL	UW	cAddr;			/* the current start address */
+LOCAL	W	cLen;			/* the current memory byte length */
 
-LOCAL	W	token;			// token type
-LOCAL	UW	tokenVal;		// numeric token / register number
-LOCAL	UB	*tokenStr;		// character string / symbol item pointer
-LOCAL	W	tokenLen;		// character string / symbol item length
-LOCAL	UB	tokenSym[L_SYMBOL + 1];	// symbol item string(capital letters)
-LOCAL	UB	symExt[2];		// extended symbol letters
-LOCAL	UB	*lptr;			// line pointer
+LOCAL	W	token;			/* token type */
+LOCAL	UW	tokenVal;		/* numeric token / register number */
+LOCAL	UB	*tokenStr;		/* character string / symbol item pointer */
+LOCAL	W	tokenLen;		/* character string / symbol item length */
+LOCAL	UB	tokenSym[L_SYMBOL + 1];	/* symbol item string(capital letters) */
+LOCAL	UB	symExt[2];		/* extended symbol letters */
+LOCAL	UB	*lptr;			/* line pointer */
 
-#define	PROMPT	"TM> "			// prompt
+#define	PROMPT	"TM> "			/* prompt */
 
-// item type
-#define	tEOL		0x00		// line end
-#define	tEOC		0x01		// end of command
-#define	tDLM		0x02		// delimiter
-#define	tSIZ		0x11		// size specification
-#define	tOPADD		0x12		// + operator
-#define	tOPSUB		0x13		// - operator
-#define	tOPMUL		0x14		// * operator
-#define	tOPDIV		0x15		// / operator
-#define	tOPIND		0x16		// & operator
-#define	tEOD		0x17		// end of data
-#define	tUP		0x18		// previous data
-#define	tSYM		0x20		// symbol
-#define	tNUM		0x21		// numeric value
-#define	tSTR		0x22		// character string
-#define	tERRR		0x100		// error
-#define	tERCH		0x100		// error: illegal character
-#define	tERNUM		0x101		// error: illegal numeric form
+/* item type */
+#define	tEOL		0x00		/* line end */
+#define	tEOC		0x01		/* end of command */
+#define	tDLM		0x02		/* delimiter */
+#define	tSIZ		0x11		/* size specification */
+#define	tOPADD		0x12		/* + operator */
+#define	tOPSUB		0x13		/* - operator */
+#define	tOPMUL		0x14		/* * operator */
+#define	tOPDIV		0x15		/* / operator */
+#define	tOPIND		0x16		/* & operator */
+#define	tEOD		0x17		/* end of data */
+#define	tUP		0x18		/* previous data */
+#define	tSYM		0x20		/* symbol */
+#define	tNUM		0x21		/* numeric value */
+#define	tSTR		0x22		/* character string */
+#define	tERRR		0x100		/* error */
+#define	tERCH		0x100		/* error: illegal character */
+#define	tERNUM		0x101		/* error: illegal numeric form */
 
-// character classficiation
+/* character classficiation */
 #define	isSpace(c)		((c) && (c) <= ' ')
 #define	isNum(c)		((c) >= '0' && (c) <= '9')
 #define	isAlpha(c)		( ((c) >= 'A' && (c) <= 'Z') ||\
@@ -85,11 +85,11 @@ LOCAL	UB	*lptr;			// line pointer
 					c == '?' || c == '@')
 #define	isExtSym(c)		((c) && ((c) == symExt[0] || (c) == symExt[1]))
 
-// alignment adjustment
+/* alignment adjustment */
 #define	ALIGN_L(v, unit)	((v) & ~((unit) - 1))
 #define	ALIGN_U(v, unit)	(((v) + (unit) - 1) & ~((unit) - 1))
 
-// error return
+/* error return */
 #define	return_er(er)		return (errcode = er)
 #define	er_return(er)		{errcode = er; return;}
 #define	oer_return(er)		{if ((er) == E_NOEXS)\
@@ -97,7 +97,7 @@ LOCAL	UB	*lptr;			// line pointer
 				 else   errcode = er;\
 				 return;}
 
-#define	DB16		0x00000		// default base number
+#define	DB16		0x00000		/* default base number */
 #define	DB10		0x10000
 
 /*
@@ -107,7 +107,7 @@ LOCAL	void	dspError(void)
 {
 	UB	*mp = NULL;
 
-	if (token >= tERRR) {	// priortize the item error
+	if (token >= tERRR) {	/* priortize the item error */
 		switch(token) {
 		case tERCH:	mp = "Illegal Character";		break;
 		case tERNUM:	mp = "Illegal Number Format";		break;
@@ -168,9 +168,9 @@ LOCAL	void	dspError(void)
 */
 LOCAL	W	getLine(UB *msg)
 {
-	if (msg) DSP_S(msg);			// display prompt
-	memset(lineBuf, 0, sizeof(lineBuf));	// clear buffer
-	return getString(lptr = lineBuf);	// input a line and initialize the line pointer
+	if (msg) DSP_S(msg);			/* display prompt */
+	memset(lineBuf, 0, sizeof(lineBuf));	/* clear buffer */
+	return getString(lptr = lineBuf);	/* input a line and initialize the line pointer */
 }
 /*
         skip spaces
@@ -191,7 +191,7 @@ LOCAL	W	getHexVal(UB **ptr)
 	p = *ptr;
 	for (v = 0; ((c = *p) >= '0' && c <= '9') ||
 		(c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'); p++) {
-		if (v >= 0x10000000) break;	// overflow
+		if (v >= 0x10000000) break;	/* overflow */
 		v <<= 4;
 		v += (c >= 'a' ? (c - 'a' + 10) :
 			     (c >= 'A' ? (c - 'A' + 10) : ( c - '0')));
@@ -240,7 +240,7 @@ LOCAL	W	getToken(W defbase)
 	if (c == '/')		{i = tOPDIV;	goto EXIT;}
 	if (c == '&')		{i = tOPIND;	goto EXIT;}
 
-	if (c == '"') {		// character string
+	if (c == '"') {		/* character string */
 		for (tokenStr = lptr; (c = *lptr) && c != '"'; lptr++);
 		tokenLen = lptr - tokenStr;
 		if (c) lptr++;
@@ -248,7 +248,7 @@ LOCAL	W	getToken(W defbase)
 		goto EXIT;
 	}
 
-	if (*lptr == '\'') {	// number with prefix
+	if (*lptr == '\'') {	/* number with prefix */
 		if (c == 'Q' || c == 'q') {base = 8;	goto NUMVAL;}
 		if (c == 'B' || c == 'b') {base = 2;	goto NUMVAL;}
 		if (c == 'D' || c == 'd') {base = 10;
@@ -260,7 +260,7 @@ NUMVAL:
 		if (c == 'H' || c == 'h') goto HEXVAL;
 	}
 
-	if (isNum(c)) {		// simple number
+	if (isNum(c)) {		/* simple number */
 		if (c != '0' || (*lptr != 'x' && *lptr != 'X')) {
 			lptr -= 2;
 			if (defbase == DB10) {base = 10; goto NUMVAL;}
@@ -268,35 +268,35 @@ NUMVAL:
 		goto HEXVAL;
 	}
 
-	if (c == '\'') {	// hexadecimal number
+	if (c == '\'') {	/* hexadecimal number */
 		lptr--;
 HEXVAL:
 		lptr++;
 		tokenVal = getHexVal(&lptr);
 		c = *lptr;
 NUMEXIT:
-                // if the end of the numeric value is alphanumeric letter, then it is regarded as illegal numeric format.
+                /* if the end of the numeric value is alphanumeric letter, then it is regarded as illegal numeric format. */
 		i = (isSym(c) || isNum(c)) ? tERNUM : tNUM;
 		goto EXIT;
 	}
 
-	if (isSym(c)) {		// symbol
+	if (isSym(c)) {		/* symbol */
 		tokenStr = --lptr;
 		for (i = 0; isSym(c) || isNum(c) || isExtSym(c); c = *++lptr) {
-                        // set to tokenSym[] in capital letters
+                        /* set to tokenSym[] in capital letters */
 			if (i < L_SYMBOL) {
 				if (c >= 'a' && c <= 'z') c -= 'a' - 'A';
 				tokenSym[i++] = c;
 			}
 		}
-                // Fill the rest of tokenSym[] with space
+                /* Fill the rest of tokenSym[] with space */
 		while (i < L_SYMBOL) tokenSym[i++] = ' ';
 
 		tokenLen = lptr - tokenStr;
 		i = tSYM;
 		goto EXIT;
 	}
-        // other: illegal character error
+        /* other: illegal character error */
 	i = tERCH;
 EXIT:
 	return token = i;
@@ -335,37 +335,37 @@ LOCAL	W	getNumber(W defbase, W *val)
 	W	op, v;
 	UB	*p;
 
-        // process leading + and -
+        /* process leading + and - */
 	if ((op = token) == tOPADD || op == tOPSUB) getToken(defbase);
 
 	for (*val = 0; ;) {
-		if (token == tSYM) {	// register name
+		if (token == tSYM) {	/* register name */
 			if ((v = searchRegister(tokenSym, 0)) >= 0) {
 				tokenVal = getRegister(v);
-			} else {	// hexadecimal value
+			} else {	/* hexadecimal value */
 				if (tokenSym[L_SYMBOL - 1] != ' ') break;
 				p = tokenSym;
 				tokenVal = getHexVal(&p);
 				if (*p != ' ') break;
 			}
 		} else if (token != tNUM) {
-			return_er(E_LESS);	// non-numeric value
+			return_er(E_LESS);	/* non-numeric value */
 		}
 
-		// Performing + - * / operations
+		/* Performing + - * / operations */
 		if (op == tOPADD)	*val += tokenVal;
 		else if (op == tOPSUB)	*val -= tokenVal;
 		else if (op == tOPMUL)	*val *= tokenVal;
 		else if (op == tOPDIV)	*val /= tokenVal;
 		else			*val = tokenVal;
 
-                // & operation
+                /* & operation */
 		while (getToken(defbase) == tOPIND) {
 			if (readMem(*val, &v, 4, 4) != 4) return_er(E_MACV);
 			*val = v;
 		}
 
-                // extract the next item: if the next item is among "+ - * /" then continue processing
+                /* extract the next item: if the next item is among "+ - * /" then continue processing */
 		if (token < tOPADD || token > tOPDIV) break;
 		op = token;
 		getToken(defbase);
@@ -387,17 +387,17 @@ LOCAL	W	getAddrRange(W unit, W flg, W defsz)
 {
 	W	sizeflg;
 
-        // start address
+        /* start address */
 	if (token > tDLM) {
 		if (getNumber(0, &cAddr)) return E_LESS;
 	} else {
-		if (flg & 0x01) return_er(E_LESS);	// cannot be omitted
+		if (flg & 0x01) return_er(E_LESS);	/* cannot be omitted */
 	}
 
-        // align start address
+        /* align start address */
 	cAddr = ALIGN_L(cAddr, unit);
 
-        // end address
+        /* end address */
 	cLen = defsz;
 	if (token == tDLM) {
 		sizeflg = 0;
@@ -406,17 +406,17 @@ LOCAL	W	getAddrRange(W unit, W flg, W defsz)
 			sizeflg++;
 		}
 		if (getNumber(0, (UW*)&cLen)) return E_LESS;
-		if (sizeflg == 0) {	// end address: up to "+ size"
+		if (sizeflg == 0) {	/* end address: up to "+ size" */
 			if ((UW)cLen >= cAddr || (UW)cLen >= IMPLICIT_SIZE)
-                                // truncate (using the size as unit)
+                                /* truncate (using the size as unit) */
 				cLen = ((W)((UW)cLen - cAddr) + unit) / unit;
 		}
 		cLen *= unit;
 	} else {
-		if (flg & 0x02) return_er(E_LESS);	// cannot be omitted
+		if (flg & 0x02) return_er(E_LESS);	/* cannot be omitted */
 	}
 
-        // validate address range
+        /* validate address range */
 	if (cLen <= 0 || cLen > MAX_RANGE)		return_er(E_RANGE);
 	if (((cLen + cAddr - 1) ^ cAddr) & 0x80000000) {
 		cLen = (0x80000000 - (cAddr & 0x7fffffff)) / unit;
@@ -435,10 +435,10 @@ LOCAL	W	getSetData(UB *buf, W unit)
 	UW	num;
 
 	for (n = 0; ;) {
-		if (token == tSTR) {	// character string
+		if (token == tSTR) {	/* character string */
 			if (tokenLen == 0) return_er(E_EMPTY);
 
-                        // Fill with 0 using 'unit' as data unit.
+                        /* Fill with 0 using 'unit' as data unit. */
 			k = ALIGN_U(tokenLen, unit);
 			if (n + k > SETDT_SZ) return_er(E_LIMIT);
 			memcpy(&buf[n], tokenStr, tokenLen);
@@ -446,7 +446,7 @@ LOCAL	W	getSetData(UB *buf, W unit)
 			if ((k -= tokenLen) > 0) memset(&buf[n], 0, k);
 			n += k;
 			getToken(0);
-		} else {		// numeric parameter
+		} else {		/* numeric parameter */
 			if (n + unit > SETDT_SZ) return_er(E_LIMIT);
 			if (getNumber(0, &num)) return E_LESS;
 			switch (unit) {
@@ -460,7 +460,7 @@ LOCAL	W	getSetData(UB *buf, W unit)
 		if (isnotDLM()) return E_LESS;
 	}
 	if (n == 0) return_er(E_EMPTY);
-	return n;	// data length
+	return n;	/* data length */
 }
 /*
         memory read (with error message)
@@ -508,17 +508,17 @@ LOCAL	void	cmdDump(W unit)
 	W	i, n, k;
 	UB	*cp, *ep;
 
-        // extract address range
+        /* extract address range */
 	cAddr = dAddr;
 	if (getAddrRange(unit, 0x00, DEF_MEM_SIZE) || isnotEOC()) return;
 
-        // dump memory content
+        /* dump memory content */
 	ep = cp = wrkBuf;
 	for (dAddr = cAddr, i = 0; i < cLen;) {
-                // display address
+                /* display address */
 		if ((i % 16) == 0) DSP_F2(08X,dAddr, S,": ");
 
-                // obtain memory content
+                /* obtain memory content */
 		if (cp >= ep) {
 			if ((n = cLen - i) > WRKBUF_SZ) n = WRKBUF_SZ;
 			k = readMem(dAddr, cp = wrkBuf, n, unit);
@@ -528,17 +528,17 @@ LOCAL	void	cmdDump(W unit)
 			}
 			ep = cp + k;
 		}
-                // display memory content
+                /* display memory content */
 		if (i < cLen) {
 			dspMemory(cp, unit);
 			cp += unit;
 			dAddr += unit;
 			i += unit;
 		}
-                // display character
+                /* display character */
 		if ((n = i % 16) == 0 || i >= cLen) {
 			k = 16 - n;
-			if (n) {	// move forward to where we start character dump
+			if (n) {	/* move forward to where we start character dump */
 				n = k / unit * (unit * 2 + 1);
 				while (n-- > 0)	DSP_CH(' ');
 			}
@@ -568,41 +568,41 @@ LOCAL	void	cmdModify(W unit)
 	UB	*svlptr, svtoken;
 	UB	dt[SETDT_SZ];
 
-        // start address
+        /* start address */
 	cAddr = mAddr;
 	if (token > tDLM && getNumber(0, &cAddr)) return;
 
-        // align address
+        /* align address */
 	cAddr = ALIGN_L(cAddr, unit);
 
-	if (token <= tEOC) {		// interactive processing
-                // save command line
+	if (token <= tEOC) {		/* interactive processing */
+                /* save command line */
 		memcpy(svbuf, lineBuf, L_LINE);
 		svlptr = lptr;
 		svtoken = token;
 
 		for (;;) {
-			DSP_F2(08X,cAddr, S,": ");	// display address
+			DSP_F2(08X,cAddr, S,": ");	/* display address */
 			if (reaMemory(cAddr, buf, unit, unit)) break;
-			dspMemory(buf, unit);		// display data
+			dspMemory(buf, unit);		/* display data */
 
-			if (getLine("-> ") < 0) break;		// input set data
-			if (getToken(0) == tEOD) break;		// end of data
-			if (token <= tEOC) cAddr += unit;	// skip
-			else if (token == tUP) cAddr -= unit;	// previous
+			if (getLine("-> ") < 0) break;		/* input set data */
+			if (getToken(0) == tEOD) break;		/* end of data */
+			if (token <= tEOC) cAddr += unit;	/* skip */
+			else if (token == tUP) cAddr -= unit;	/* previous */
 			else if ((n = getSetData(dt, unit)) < 0) break;
 			else {
 				if (wriMemory(cAddr, dt, n, unit)) break;
 				cAddr += n;
 			}
 		}
-                // restore command line
+                /* restore command line */
 		memcpy(lineBuf, svbuf, L_LINE);
 		lptr = svlptr;
 		token = svtoken;
 		if (errcode == E_LESS) errcode = E_PAR;
 
-	} else if (! isnotDLM()) {		// set data processing
+	} else if (! isnotDLM()) {		/* set data processing */
 		if ((n = getSetData(dt, unit)) > 0) {
 			if (wriMemory(cAddr, dt, n, unit) == 0) cAddr += n;
 		}
@@ -622,22 +622,22 @@ LOCAL	void	cmdFill(W unit)
 	W	n;
 	UB	dt[SETDT_SZ];
 
-        // extract address range
+        /* extract address range */
 	if (getAddrRange(unit, 0x03, DEF_MEM_SIZE)) return;
 
-        // extract set data
+        /* extract set data */
 	if (token <= tEOC) {
-		memset(dt, 0, sizeof(UW)); // 0 by default
+		memset(dt, 0, sizeof(UW)); /* 0 by default */
 		n = unit;
 	} else {
 		if (isnotDLM()) return;
 		if ((n = getSetData(dt, unit)) < 0) return;
 	}
 
-        // embed set data into memory
-	if (n == unit) {	// fast processing
+        /* embed set data into memory */
+	if (n == unit) {	/* fast processing */
 		wriMemory(cAddr, dt, cLen, unit | 0x10);
-	} else {		// ordinary mode
+	} else {		/* ordinary mode */
 		for (; cLen > 0; cLen -= n, cAddr += n) {
 			if (n > cLen) n = cLen;
 			if (wriMemory(cAddr, dt, n, unit)) break;
@@ -658,31 +658,31 @@ LOCAL	void	cmdSearch(W unit)
 	UB	*cp, *ep;
 	UB	dt[SETDT_SZ];
 
-        // extract address range
+        /* extract address range */
 	if (getAddrRange(unit, 0x01, DEF_MEM_SIZE) || isnotDLM()) return;
 
-        // extract search data
+        /* extract search data */
 	if ((len = getSetData(dt, unit)) < 0) return;
 
 	ep = cp = wrkBuf;
 	for (ofs = cnt = 0; ; ) {
-                // obtain memory content
+                /* obtain memory content */
 		if (cp >= ep) {
 			if ((n = WRKBUF_SZ - ofs) > cLen) n = cLen;
-			if (ofs + n < len) break;	// end
+			if (ofs + n < len) break;	/* end */
 			if (reaMemory(cAddr, &wrkBuf[ofs], n, unit)) break;
 			cAddr += n;
 			cLen -= n;
 			ep = (cp = wrkBuf) + ofs + n;
 		}
-                // check if the leading byte matches
+                /* check if the leading byte matches */
 		for ( ; cp < ep && *cp != dt[0]; cp += unit);
 		if ((ofs = ep - cp) < len) {
-                        // if enough data is not there, move to the beginning of buffer.
+                        /* if enough data is not there, move to the beginning of buffer. */
 			if (ofs > 0) memcpy(wrkBuf, ep = cp, ofs);
 			continue;
 		}
-                // check for the matching of whole data
+                /* check for the matching of whole data */
 		if (memcmp(cp, dt, len) == 0) {
 			if (++cnt > MAX_DSP_CNT) {
 				DSP_S("..More..\n");
@@ -690,7 +690,7 @@ LOCAL	void	cmdSearch(W unit)
 			}
 			DSP_F2(08X,(cAddr - (ep - cp)), S,":\n");
 		}
-		// next
+		/* next */
 		cp += unit;
 		ofs = 0;
 		if (checkAbort()) break;
@@ -708,13 +708,13 @@ LOCAL	void	cmdCmpMov(W mov)
 	W	i, n, cnt;
 #define	BFSZ	(WRKBUF_SZ / 2)
 
-        // extract address range
+        /* extract address range */
 	if (getAddrRange(1, 0x01, DEF_MEM_SIZE) || isnotDLM()) return;
 
-        // transfer / compare target
+        /* transfer / compare target */
 	if (getNumber(0, &dst) || isnotEOC()) return;
 
-	if (mov) {	// memory transfer
+	if (mov) {	/* memory transfer */
 		for (; (n = cLen) > 0 && checkAbort() == 0;
 					cAddr += n, dst += n, cLen -= n) {
 			if (n > WRKBUF_SZ) n = WRKBUF_SZ;
@@ -722,7 +722,7 @@ LOCAL	void	cmdCmpMov(W mov)
 			if (wriMemory(dst, wrkBuf, n, 1)) break;
 		}
 
-	} else {	// memory comparison
+	} else {	/* memory comparison */
 		for (cnt = 0; (n = cLen) > 0 && checkAbort() == 0;
 					cAddr += n, dst += n, cLen -= n) {
 			if (n > BFSZ) n = BFSZ;
@@ -733,7 +733,7 @@ LOCAL	void	cmdCmpMov(W mov)
 				if (wrkBuf[i] == wrkBuf[BFSZ + i]) continue;
 				if (++cnt > MAX_DSP_CNT) {
 					DSP_S("..More..\n");
-					cLen = 0;	// terminate
+					cLen = 0;	/* terminate */
 					break;
 				}
 				DSP_F4(08X,(cAddr + i), S,": ",
@@ -755,20 +755,20 @@ LOCAL	void	cmdIO(W unit)
 	UW	port, data;
 	UB	*dir;
 
-        // extract port number
+        /* extract port number */
 	if (getNumber(0, &port)) return;
 
-	if (unit & 0x10) {	// output command
+	if (unit & 0x10) {	/* output command */
 		if (!isDLM()) er_return(E_LESS);
 		if (getNumber(0, &data) || isnotEOC()) return;
 		if (writeIO(port, data, unit &= 0x0f) == 0) er_return(E_MACV);
 		dir = "<--";
-	} else {		// input command
+	} else {		/* input command */
 		if (isnotEOC()) return;
 		if (readIO(port, &data, unit) == 0) er_return(E_MACV);
 		dir = "-->";
 	}
-        // display result
+        /* display result */
 	DSP_F2(S,"Port ", 08X,port);
 	switch (unit) {
 	case 4:	DSP_F5(S,":W ", S,dir, CH,' ', 08X,(UW)data, CH,'\n');
@@ -798,17 +798,17 @@ LOCAL	void	cmdRegister(void)
 	W	rno;
 	UW	num;
 
-	if (token <= tEOC) {	// ordinary register dump
+	if (token <= tEOC) {	/* ordinary register dump */
 		dispRegister(-1);
 
-	} else {		// extract register name
+	} else {		/* extract register name */
 		if (token != tSYM || (rno = searchRegister(tokenSym, 1)) < 0)
 			er_return(E_ILREG);
 
-		if (getToken(0) <= tEOC) {	// display register
+		if (getToken(0) <= tEOC) {	/* display register */
 			dispRegister(rno);
 
-		} else if (!isnotDLM() && !getNumber(0, &num)) {	// set register
+		} else if (!isnotDLM() && !getNumber(0, &num)) {	/* set register */
 			if (!isnotEOC())
 				er_return(setRegister(rno, num));
 		}
@@ -826,12 +826,12 @@ LOCAL	void	cmdGoTrace(W trace)
 {
 	UW	pc, par;
 
-        // extract execution address
+        /* extract execution address */
 	pc = getCurPC();
 	if (token > tDLM && getNumber(0, &pc)) return;
 	if (invalidPC(pc)) er_return(E_PC);
 
-        // extract end address or number of steps
+        /* extract end address or number of steps */
 	par = 0;
 	if (isDLM()) {
 		if (getNumber(0, &par)) return;
@@ -839,11 +839,11 @@ LOCAL	void	cmdGoTrace(W trace)
 	}
 	if (isnotEOC()) return;
 
-	if (trace && par <= 0) par = 1;		// number of steps
+	if (trace && par <= 0) par = 1;		/* number of steps */
 
-        //execute program
+        /*execute program */
 	errcode = goTrace(trace, pc, par);
-	if (errcode >= E_OK) errcode = CMD_FINISH;	//command process termination
+	if (errcode >= E_OK) errcode = CMD_FINISH;	/*command process termination */
 }
 /*
         display / set breakpoint command processing
@@ -856,19 +856,19 @@ LOCAL	void	cmdBreak( void )
 	W	atr, cmdlen;
 	UB	*cmd;
 
-	if (token <= tEOC) {	 // display breakpoint
+	if (token <= tEOC) {	 /* display breakpoint */
 		dspBreak();
 		return;
 	}
 
-        // extract breakpoint address
+        /* extract breakpoint address */
 	if (getNumber(0, &addr)) return;
 
-        // extract break attribute and command
+        /* extract break attribute and command */
 	atr = cmdlen = 0;
 	cmd = NULL;
 	while (token == tDLM) {
-                // "+:" are handled as symbols
+                /* "+:" are handled as symbols */
 		symExt[0] = '+'; symExt[1] = ':';
 		getToken(0);
 		symExt[0] = symExt[1] = '\0';
@@ -884,7 +884,7 @@ LOCAL	void	cmdBreak( void )
 		getToken(0);
 	}
 
-        //set breakpoint
+        /*set breakpoint */
 	if (! isnotEOC()) {
 		if ((atr = setBreak(addr, atr, cmd, cmdlen))) er_return(atr);
 	}
@@ -899,9 +899,9 @@ LOCAL	void	cmdBrkClr(void)
 	UW	addr;
 
 	if (token <= tEOC) {
-		clearBreak(0);	// clear all
+		clearBreak(0);	/* clear all */
 	} else {
-		do {	// clear individual breakpoint
+		do {	/* clear individual breakpoint */
 			if (getNumber(0, &addr)) return;
 			if (clearBreak(addr) < 0) er_return(E_BPUDF);
 		} while (isDLM());
@@ -927,7 +927,7 @@ LOCAL	const	struct {
 	{"  ", 0x00}
 };
 
-        // extract protocol
+        /* extract protocol */
 	if (token != tSYM) er_return(E_LESS);
 
 	par = 0;
@@ -941,7 +941,7 @@ LOCAL	const	struct {
 	}
 	if (par == 0) er_return(E_PROTO);
 
-        // extract start address
+        /* extract start address */
 	getToken(0);
 	if (isDLM()) {
 		if (getNumber(0, &addr)) return;
@@ -951,7 +951,7 @@ LOCAL	const	struct {
 	}
 	if (isnotEOC()) return;
 
-        // execute loading
+        /* execute loading */
 	errcode = doLoading(par, addr, NULL);
 }
 /*
@@ -977,13 +977,13 @@ LOCAL	void	cmdDisk(W kind)
 	UW	par[3], blksz, nblks;
 	UB	c, devnm[L_DEVNM + 1];
 
-        // extract device name
+        /* extract device name */
 	if (token <= tEOC) {
 		if (kind != 3) er_return(E_LESS);
 		devnm[0] = '\0';
 	} else {
 		if (token != tSYM || tokenLen > L_DEVNM) er_return(E_LESS);
-                // device names are to be given in lower case letters
+                /* device names are to be given in lower case letters */
 		for (i = 0; i < tokenLen; i++) {
 			c = tokenSym[i];
 			if (c >= 'A' && c <= 'Z') c += 'a' - 'A';
@@ -993,7 +993,7 @@ LOCAL	void	cmdDisk(W kind)
 		getToken(0);
 	}
 
-        // extract parameters
+        /* extract parameters */
 	if (kind <= 1) {
 		for (i = 0; i < 3; i++) {
 			if (isnotDLM()) return;
@@ -1003,11 +1003,11 @@ LOCAL	void	cmdDisk(W kind)
 	if (isnotEOC()) return;
 
 	switch(kind) {
-	case 0:		// ReadDisk
-	case 1:		// WriteDisk
+	case 0:		/* ReadDisk */
+	case 1:		/* WriteDisk */
 		errcode = rwDisk(devnm, par[0], par[1], (void*)par[2], kind);
 		break;
-	case 2:		// InfoDisk
+	case 2:		/* InfoDisk */
 		errcode = infoDisk(devnm, &blksz, &nblks);
 		if (errcode >= E_OK) {
 			DSP_S(devnm);
@@ -1015,9 +1015,9 @@ LOCAL	void	cmdDisk(W kind)
 			       S," Total blocks: ", D,nblks, CH,'\n');
 		}
 		break;
-	case 3:		// BootDisk
+	case 3:		/* BootDisk */
 		errcode = bootDisk(( devnm[0] == '\0' )? NULL: devnm);
-		if (errcode >= E_OK) errcode = CMD_FINISH;	// Fin
+		if (errcode >= E_OK) errcode = CMD_FINISH;	/* Fin */
 		break;
 	}
 }
@@ -1030,14 +1030,14 @@ LOCAL	void	cmdExit(void)
 {
 	W	par;
 
-        // extract parameters
+        /* extract parameters */
 	if (token <= tDLM) par = 0;
 	else if (getNumber(0, &par)) return;
 
 	DSP_S((par < 0) ? "** System Reset\n" : "** System Power Off\n");
 	waitMsec(100);	/* give extra time for draining the remaining output */
 
-	sysExit(par);		// system reset or power off (never returnes)
+	sysExit(par);		/* system reset or power off (never returnes) */
 }
 /*
         forcible kill process command processing
@@ -1062,7 +1062,7 @@ LOCAL	void	cmdWrom(void)
 	UW	addr, data;
 	W	nsec;
 
-        // extract parameters
+        /* extract parameters */
 	if (getNumber(0, &addr)) return;
 	if (isnotDLM() || getNumber(0, &data)) return;
 	if (isnotDLM() || getNumber(0, &nsec)) return;
@@ -1082,7 +1082,7 @@ LOCAL	void	cmdFlashLoad(void)
 	proto = P_TEXT | P_SFORM;
 	mode = 0;
 
-        // extract attributes
+        /* extract attributes */
 	if (token > tEOC) {
 		if (token != tSYM) er_return(E_PAR);
 		for (i = 0; i < L_SYMBOL; i++) {
@@ -1097,7 +1097,7 @@ LOCAL	void	cmdFlashLoad(void)
 		if (isnotEOC()) return;
 	}
 
-        // execute loading
+        /* execute loading */
 	setupFlashLoad(0, addr);
 	i = addr[1] - addr[0] + 1;
 	if (mode) {
@@ -1111,7 +1111,7 @@ LOCAL	void	cmdFlashLoad(void)
 	errcode = doLoading(proto, 0, addr);
 	if (errcode < 0) return;
 
-        // FLASH ROM write
+        /* FLASH ROM write */
 	setupFlashLoad(-1, addr);
 	DSP_F5(S,"Writing Flash ROM at ", 08X,addr[0],
 	       S," [", D,addr[2], S," blks] ... wait\n");
@@ -1121,11 +1121,11 @@ LOCAL	void	cmdFlashLoad(void)
         command table
 */
 typedef	struct {
-	UB		fnm[12];	// full command name
-	UB		snm[4];		// abbreviated command name
-	FP		func;		// processing function
-	W		para;		// parameter information and other
-	const HELP	*help;		// help message
+	UB		fnm[12];	/* full command name */
+	UB		snm[4];		/* abbreviated command name */
+	FP		func;		/* processing function */
+	W		para;		/* parameter information and other */
+	const HELP	*help;		/* help message */
 } CMDTAB;
 
 #define	IGN_TRACE	0x1000
@@ -1218,7 +1218,7 @@ EXPORT	void	procCommand(UB *cmd, W fin)
 {
 	W	i, par;
 
-        // initialize command input
+        /* initialize command input */
 	if (cmd) {
 		strcpy(lptr = lineBuf, cmd);
 		token = tEOC;
@@ -1227,29 +1227,29 @@ EXPORT	void	procCommand(UB *cmd, W fin)
 		fin = 0;
 	}
 
-        // set DA address to PC
+        /* set DA address to PC */
 	daAddr = getCurPC();
 
 	for (;;) {
-                // skip the remainder of the previous command
+                /* skip the remainder of the previous command */
 		while (token > tEOC) getToken(0);
 
-                // input a command line
+                /* input a command line */
 		if (token == tEOL) {
-			if (fin) break;		// end
+			if (fin) break;		/* end */
 			if (getLine(PROMPT) <= 0) continue;
 		}
 
-                // skip comment
+                /* skip comment */
 		skipSpace();
 		if (*lptr == '*') {
 			getToken(0);
 			continue;
 		}
-                // extract command
-		if (getToken(0) <= tEOC) continue;	// skip empty line
+                /* extract command */
+		if (getToken(0) <= tEOC) continue;	/* skip empty line */
 
-                // searching command
+                /* searching command */
 		errcode = errinfo = 0;
 		if ((i = searchCommand()) < 0) {
 			errcode = E_CMD;
@@ -1257,18 +1257,18 @@ EXPORT	void	procCommand(UB *cmd, W fin)
 			if (checkAbort()) continue;
 			par = cmdTab[i].para;
 
-                        // if there is an initial command, the execution command is ignored
+                        /* if there is an initial command, the execution command is ignored */
 			if (fin < 0 && (par & IGN_TRACE)) continue;
 
-                        // read-ahead of parameters
+                        /* read-ahead of parameters */
 			getToken(0);
 
-                        // command execution
+                        /* command execution */
 			(*(cmdTab[i].func))(par & 0xff);
 		}
-		if (errcode == CMD_FINISH) break;	// finish
+		if (errcode == CMD_FINISH) break;	/* finish */
 
-                // display error
+                /* display error */
 		if (errcode < 0) dspError();
 	}
 }

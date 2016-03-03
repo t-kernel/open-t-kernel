@@ -21,7 +21,7 @@
 #include "../cmdsvc.h"
 #include <sys/sysinfo.h>
 
-// SW breakpoint code (BKPT instruction)
+/* SW breakpoint code (BKPT instruction) */
 #define	BREAK_ARM	0xE1200070
 #define	BREAK_THUMB	0xBE000000
 
@@ -29,74 +29,74 @@
 	breakpoint data
 */
 typedef struct {
-	UW	addr;			// break address
-	UW	code;			// saved data
-	UW	atr;			// break attribute
-	H	sz;			//code size (2 or 4)
-	UB	cmd[L_BPCMD];		// executed command
+	UW	addr;			/* break address */
+	UW	code;			/* saved data */
+	UW	atr;			/* break attribute */
+	H	sz;			/* code size (2 or 4) */
+	UB	cmd[L_BPCMD];		/* executed command */
 } BRKPT;
 
-#define	MAX_SBP		(8)		// maximum number of SW breakpoint
+#define	MAX_SBP		(8)		/* maximum number of SW breakpoint */
 #define	MAX_IBP		(0)
 #define	MAX_OBP		(0)
 #define	MAX_BRKPT	(MAX_SBP + MAX_IBP + MAX_OBP)
 
-LOCAL	BRKPT	brkPt[MAX_BRKPT + 1];	// breakpoint data
-					// the last is temorary break
+LOCAL	BRKPT	brkPt[MAX_BRKPT + 1];	/* breakpoint data */
+					/* the last is temorary break */
 
 /*
         step point data
         * used for trace and temporary step processing
 */
 typedef struct {
-	UW	addr;			//step address
-	UW	code;			// step save data
-	UW	pc;			// address of replaced instruction
-	UW	inst;			// replaced instruction
-	UW	regval;			// replaced register value
-	H	reg;			// replaced register number
-	H	sz;			// code size ( 2 / 4)
+	UW	addr;			/* step address */
+	UW	code;			/* step save data */
+	UW	pc;			/* address of replaced instruction */
+	UW	inst;			/* replaced instruction */
+	UW	regval;			/* replaced register value */
+	H	reg;			/* replaced register number */
+	H	sz;			/* code size ( 2 / 4) */
 } STEPPT;
 
-LOCAL	STEPPT	stepPt;			// step point data
+LOCAL	STEPPT	stepPt;			/* step point data */
 
 /*
         break attribute
 */
-#define	BA_S		0x1000		//software break
-#define	BA_I		0x2000		// instruction break
-#define	BA_O		0x4000		//operand break
-#define	BA_SET		0x8000		//software break released flag
-#define	BA_PRE		0x0100		// break before execution
-#define	BA_R		0x0200		// break on read
-#define	BA_W		0x0400		// break on write
-#define	BA_RW		0x0600		// break on read/write
-#define	BA_TMP		0x0800		// temporary break
+#define	BA_S		0x1000		/* software break */
+#define	BA_I		0x2000		/* instruction break */
+#define	BA_O		0x4000		/* operand break */
+#define	BA_SET		0x8000		/* software break released flag */
+#define	BA_PRE		0x0100		/* break before execution */
+#define	BA_R		0x0200		/* break on read */
+#define	BA_W		0x0400		/* break on write */
+#define	BA_RW		0x0600		/* break on read/write */
+#define	BA_TMP		0x0800		/* temporary break */
 
 #define	MAX_BPATR	1
 
 LOCAL	const struct {
-	UB	name[4];		// attribute name
-	UW	atr;			// attribute code
+	UB	name[4];		/* attribute name */
+	UW	atr;			/* attribute code */
 } brkAtr[MAX_BPATR] = {
-	{"S   ", 0x00000000 | BA_S | BA_PRE},		// software break
+	{"S   ", 0x00000000 | BA_S | BA_PRE},		/* software break */
 };
 
 /*
         trace data
 */
-LOCAL	W	traceMode;		// trace mode
-LOCAL	W	traceStep;		// number of trace steps
-LOCAL	W	stepFlg;		// temporary step execution flag
+LOCAL	W	traceMode;		/* trace mode */
+LOCAL	W	traceStep;		/* number of trace steps */
+LOCAL	W	stepFlg;		/* temporary step execution flag */
 LOCAL	union {
 		UB	b[8];
-		UW	w[2];		// to align on word boundary
-	} sbpCode;			// SW break instructions (two)
+		UW	w[2];		/* to align on word boundary */
+	} sbpCode;			/* SW break instructions (two) */
 
 /*
         CP14 register manipulation
 */
-// no debug comprocessor
+/* no debug comprocessor */
 LOCAL	void	setDSCR(UW val) {return;}
 LOCAL	UW	getDSCR(void) {return 0;}
 LOCAL	UW	getWFAR(void) {return 0;}
@@ -122,8 +122,8 @@ LOCAL	UW	EnableCP14(void)
 	UW	dscr;
 
 	dscr = getDSCR();
-	dscr |=  0x00008000;	// monitor debug mode on
-	dscr &= ~0x00004000;	// hold debug mode off
+	dscr |=  0x00008000;	/* monitor debug mode on */
+	dscr &= ~0x00004000;	/* hold debug mode off */
 	setDSCR(dscr);
 
         /* return the success/failure of setting */
@@ -181,25 +181,25 @@ EXPORT	ER	setBreak(UW addr, W atr, UB *cmd, W cmdlen)
 	UW	code;
 	BRKPT	*bp, *p;
 
-	if (atr == 0) atr = BA_S | BA_PRE;	// default attribute
+	if (atr == 0) atr = BA_S | BA_PRE;	/* default attribute */
 
-        // unaligned address (non-W alignment) is regarded as Thumb instruction
+        /* unaligned address (non-W alignment) is regarded as Thumb instruction */
 	sz = (addr & 0x03) ? 2 : 4;
 	addr &= ~(sz - 1);
 
-	if (atr & BA_TMP) {	// temporary break is used at fixed location
+	if (atr & BA_TMP) {	/* temporary break is used at fixed location */
 		bp = &brkPt[MAX_BRKPT];
 	} else {
-                // find an empty slot in the table
+                /* find an empty slot in the table */
 		ibcnt = obcnt = sbcnt = 0;
 		for (bp = NULL, p = brkPt; p < &brkPt[MAX_BRKPT]; p++) {
-			if (p->addr == 0) {if (bp == NULL) bp = p;} // empty
-			else if (p->addr == addr) bp = p;	    // update
-			else if (p->atr & BA_O) obcnt++;	    // WP
-			else if (p->atr & BA_I) ibcnt++;	    // HW BP
-			else sbcnt++;				    // SW BP
+			if (p->addr == 0) {if (bp == NULL) bp = p;} /* empty */
+			else if (p->addr == addr) bp = p;	    /* update */
+			else if (p->atr & BA_O) obcnt++;	    /* WP */
+			else if (p->atr & BA_I) ibcnt++;	    /* HW BP */
+			else sbcnt++;				    /* SW BP */
 		}
-                // check for the maximum value
+                /* check for the maximum value */
 		if (atr & BA_O) {
 			if (obcnt >= MAX_OBP) return E_HBPOVR;
 		} else if (atr & BA_I) {
@@ -210,10 +210,10 @@ EXPORT	ER	setBreak(UW addr, W atr, UB *cmd, W cmdlen)
 	}
 
 	if (atr & BA_S) {
-                // validate PC
-		// if (invalidPC(addr)) return E_BPBAD;
+                /* validate PC */
+		/* if (invalidPC(addr)) return E_BPBAD; */
 
-                //check for read and and write access rights
+                /*check for read and and write access rights */
 		if (readMem(addr, &code, sz, 2) != sz) return E_BPBAD;
 		if (writeMem(addr, &sbpCode.b[sz], sz, 2) != sz) return E_BPROM;
 		writeMem(addr, &code, sz, 2);
@@ -221,7 +221,7 @@ EXPORT	ER	setBreak(UW addr, W atr, UB *cmd, W cmdlen)
 		code = 0;
 	}
 
-        //set breakpoint
+        /*set breakpoint */
 	bp->addr = addr;
 	bp->atr = atr | BA_SET;
 	bp->sz = sz;
@@ -237,7 +237,7 @@ EXPORT	ER	clearBreak(UW addr)
 {
 	BRKPT	*p;
 
-	if (addr == 0) {	// clear all breakpoints
+	if (addr == 0) {	/* clear all breakpoints */
 		memset(&brkPt[0], 0, sizeof(brkPt));
 		return E_OK;
 	}
@@ -258,7 +258,7 @@ EXPORT	void	dspBreak(void)
 
 	for (p = brkPt; p < &brkPt[MAX_BRKPT]; p++) {
 		if (p->addr == 0) continue;
-                // THUMB(sz == 2) is displayed using odd address
+                /* THUMB(sz == 2) is displayed using odd address */
 		DSP_F3(08X,(p->addr + ((p->sz & 2) >> 1)), CH,' ',
 		       S,strBreakAtr(p->atr));
 		if (p->cmd[0] != '\0') {
@@ -272,16 +272,16 @@ EXPORT	void	dspBreak(void)
 */
 EXPORT	void	initBreak(void)
 {
-        // clear all breakpoints
+        /* clear all breakpoints */
 	memset(&brkPt[0], 0, sizeof(brkPt));
 
-        // clear all step points
+        /* clear all step points */
 	memset(&stepPt, 0, sizeof(stepPt));
 
-        // initialize others,
+        /* initialize others, */
 	traceMode = traceStep = stepFlg = 0;
 
-        // SW break instruction (undefined instruction)
+        /* SW break instruction (undefined instruction) */
 	sbpCode.w[0] = BREAK_THUMB;
 	sbpCode.w[1] = BREAK_ARM;
 }
@@ -294,25 +294,25 @@ EXPORT	W	resetBreak(UW vec)
 	UW	code, pc;
 	BRKPT	*p;
 
-	pc = getCurPCX();	// break address has been adjusted
+	pc = getCurPCX();	/* break address has been adjusted */
 	bpflg = 0;
 
         /* release if monitor debug mode is used */
 	if (CheckCP14()) {
-                // release hardware breakpoint
+                /* release hardware breakpoint */
 		for (i = 0; i < MAX_IBP; i++) {
 			setBCR(i, getBCR(i) & ~1);
 		}
 
-                // release watchpoint
+                /* release watchpoint */
 		for (i = 0; i < MAX_OBP; i++) {
 			setWCR(i, getWCR(i) & ~1);
 		}
 
-                // monitor debug mode is set to off later
+                /* monitor debug mode is set to off later */
 	}
 
-        // release steppoints
+        /* release steppoints */
 	if (stepPt.addr != 0) {
 		n = stepPt.sz;
 		readMem(stepPt.addr, &code, n, 2);
@@ -320,21 +320,21 @@ EXPORT	W	resetBreak(UW vec)
 			if (pc == stepPt.addr) bpflg = 0x100;
 			writeMem(stepPt.addr, &stepPt.code, n, 2);
 			if (stepPt.pc > 0) {
-                                // restore the changed instruction (ARM instruction only)
+                                /* restore the changed instruction (ARM instruction only) */
 				writeMem(stepPt.pc, &stepPt.inst, 4, 2);
-                                // restore the changed register
+                                /* restore the changed register */
 				pc = getRegister(stepPt.reg);
 				setRegister(stepPt.reg, stepPt.regval);
 			}
-                        // set the NEXT real PC
+                        /* set the NEXT real PC */
 			if (bpflg != 0) setCurPCX(pc);
 		}
 	}
 
-        // in the case of trace/step execution, SW breakpoints have been released
+        /* in the case of trace/step execution, SW breakpoints have been released */
 	if (! (traceMode || stepFlg)) {
 
-                // temporaly release SW/HW breakpoints (including the temporary breakpoints)
+                /* temporaly release SW/HW breakpoints (including the temporary breakpoints) */
 		for (p = brkPt; p <= &brkPt[MAX_BRKPT]; p++) {
 			if (p->addr == 0) continue;
 
@@ -354,13 +354,13 @@ EXPORT	W	resetBreak(UW vec)
 				} else {
 					p->atr &= ~BA_SET;
 				}
-                                // clear temporary breakpoint
+                                /* clear temporary breakpoint */
 				if (p->atr & BA_TMP)
 					memset(p, 0, sizeof(BRKPT));
 			}
 		}
 	}
-	return bpflg;	// is PC breakpoint?
+	return bpflg;	/* is PC breakpoint? */
 }
 /*
         setting step
@@ -370,23 +370,23 @@ LOCAL	void	setStep(UW pc, W mode)
 	W	n;
 	UW	cpsr, inst;
 
-	// ARM or THUMB
+	/* ARM or THUMB */
 	cpsr = getCurCPSR();
 
-        // decode instruction and obtain the next branch target
+        /* decode instruction and obtain the next branch target */
 	n = getStepAddr(pc, cpsr, (mode == 2) ? 1 : 0, &stepPt.addr, &inst);
 
-	if (n >= 0x10) {	// instruction modification
-                // modify instruction (ARM instruction only)
+	if (n >= 0x10) {	/* instruction modification */
+                /* modify instruction (ARM instruction only) */
 		readMem(stepPt.pc = pc, &stepPt.inst, 4, 2);
 		writeMem(pc, &inst, 4, 2);
-                // restore the changed register
+                /* restore the changed register */
 		stepPt.reg = (n >> 4) & 0x0F;
 		stepPt.regval = getRegister(stepPt.reg);
-                // Set PC witht the content of the replace register
+                /* Set PC witht the content of the replace register */
 		setRegister(stepPt.reg, pc + ((cpsr & PSR_T) ? 4 : 8));
 	}
-        //set break command
+        /*set break command */
 	stepPt.sz = (n &= 0x0F);
 	readMem(stepPt.addr, &stepPt.code, n, 2);
 	writeMem(stepPt.addr, &sbpCode.b[n], n, 2);
@@ -402,21 +402,21 @@ EXPORT	void	setupBreak(void)
 
 	pc = getCurPCX();
 
-        // clear steppoint
+        /* clear steppoint */
 	memset(&stepPt, 0, sizeof(stepPt));
 
-	if (traceMode) {	// trace is executed
+	if (traceMode) {	/* trace is executed */
 
-		setStep(pc, traceMode);		// set up step
+		setStep(pc, traceMode);		/* set up step */
 
-	} else {		// normal execution
+	} else {		/* normal execution */
 
-                // if an unexecuted break matches the PC value
-                // temporarily set up step execution, and execute one instruction only
+                /* if an unexecuted break matches the PC value */
+                /* temporarily set up step execution, and execute one instruction only */
 		if (stepFlg == 0) {
 			for (p = brkPt; p <= &brkPt[MAX_BRKPT]; p++) {
 				if (p->addr == pc && (p->atr & BA_PRE)) {
-					setStep(pc, 0);	// set up temporary step execution
+					setStep(pc, 0);	/* set up temporary step execution */
 					stepFlg = 1;
 					return;
 				}
@@ -425,13 +425,13 @@ EXPORT	void	setupBreak(void)
 
 		ibcnt = obcnt = 0;
 
-                //set breakpoint
-                // - unless we turn on monitor debug mode, WCR/WVR/BCR/BVR
-                //   cannot be accessed
-                // - depending on hardware, monitor debug mode cannot be
-                //  set to on
-                // So try setting monitor debug mode on, and only if it is successful,
-                //  we try to set  WCR/WVR/BCR/BVR
+                /*set breakpoint */
+                /* - unless we turn on monitor debug mode, WCR/WVR/BCR/BVR */
+                /*   cannot be accessed */
+                /* - depending on hardware, monitor debug mode cannot be */
+                /*  set to on */
+                /* So try setting monitor debug mode on, and only if it is successful, */
+                /*  we try to set  WCR/WVR/BCR/BVR */
 		for (p = brkPt; p <= &brkPt[MAX_BRKPT]; p++) {
 			if (p->addr == 0) continue;
 
@@ -440,7 +440,7 @@ EXPORT	void	setupBreak(void)
 				wcr = getWCR(obcnt);
 				wcr &= ~0x001FC1FF;
 				wcr |= ((p->atr & (BA_RW)) >> 9)  << 3;
-				switch (p->atr >> 24) {		// LE only
+				switch (p->atr >> 24) {		/* LE only */
 				case 2: wcr |= 0x060 << (p->addr & 2); break;
 				case 4: wcr |= 0x1e0; break;
 				default: /* do nothing */ break;
@@ -452,7 +452,7 @@ EXPORT	void	setupBreak(void)
 				if (!EnableCP14()) continue;
 				bcr = getBCR(ibcnt);
 				bcr &= ~0x007FC1E7;
-				bcr |= (p->addr & 2) ? 0x180 : 0x060;	// LE
+				bcr |= (p->addr & 2) ? 0x180 : 0x060;	/* LE */
 				setBVR(ibcnt, p->addr & ~3);
 				setBCR(ibcnt, bcr | 7);
 				ibcnt++;
@@ -462,11 +462,11 @@ EXPORT	void	setupBreak(void)
 			}
 		}
 
-                // if hardware breakpoint is not used at all
-                // monitor debug mode is turned off
+                /* if hardware breakpoint is not used at all */
+                /* monitor debug mode is turned off */
 		if (ibcnt == 0 && obcnt == 0) DisableCP14();
 	}
-	stepFlg = 0;		// clear temporary step execution flag
+	stepFlg = 0;		/* clear temporary step execution flag */
 }
 /*
         stop tracing
@@ -482,17 +482,17 @@ EXPORT	ER	goTrace(W trace, UW pc, UW par)
 {
 	W	er;
 
-        // set trace mode
-	if ((traceMode = trace) == 0) {		// normal execution
-                // set temporary breakpoint
+        /* set trace mode */
+	if ((traceMode = trace) == 0) {		/* normal execution */
+                /* set temporary breakpoint */
 		if (par != 0) {
 			er = setBreak(par, BA_S | BA_PRE | BA_TMP, NULL, 0);
 			if (er < E_OK) return er;
 		}
-	} else {		// trace execution
+	} else {		/* trace execution */
 		traceStep = par;
 	}
-	setCurPC(pc);		// set execution start address
+	setCurPC(pc);		/* set execution start address */
 	return E_OK;
 }
 /*
@@ -508,24 +508,24 @@ EXPORT	W	procBreak(W bpflg, UB **cmd)
 
 	bp = NULL;
 
-	if (traceMode) {	// trace execution
-                //PC holds the next PC value (by resetBreak())
+	if (traceMode) {	/* trace execution */
+                /*PC holds the next PC value (by resetBreak()) */
 		pc = getCurPC();
 
-                // disassembly display (next instruction)
+                /* disassembly display (next instruction) */
 		disAssemble(&pc, &npc, wrkBuf);
 		DSP_F4(08X,pc, S,": ", S,wrkBuf, CH,'\n');
 
-		if (-- traceStep > 0) return 0;		// continue
-		stopTrace();	// stop tracing
+		if (-- traceStep > 0) return 0;		/* continue */
+		stopTrace();	/* stop tracing */
 
-	} else {		// breakpoint
-                // During temporary step execution, then do nothing and continue
+	} else {		/* breakpoint */
+                /* During temporary step execution, then do nothing and continue */
 		if (stepFlg) return 0;
 
-		pc = getCurPCX();	// break address has been adjusted
+		pc = getCurPCX();	/* break address has been adjusted */
 
-                // this is not a breakpoint set by b command
+                /* this is not a breakpoint set by b command */
 		if ((bpflg & 0xF0) == 0) {
 			DSP_F3(S,"Unknown break at H'", 08X,pc, CH,'\n');
 			*cmd = NULL;
@@ -543,8 +543,8 @@ EXPORT	W	procBreak(W bpflg, UB **cmd)
 		}
 
 		if ((bp->atr & BA_O) && CheckCP14()) {
-                        // the address of instruction that generated operand break
-                        // is fetched from WFAR
+                        /* the address of instruction that generated operand break */
+                        /* is fetched from WFAR */
 			wfar = getWFAR();
 			wfar -= (getCurCPSR() & PSR_T) ? 4 : 8;
 			DSP_F4(S,"Break (", S,mes, S,") at ", 08X,wfar);
@@ -554,7 +554,7 @@ EXPORT	W	procBreak(W bpflg, UB **cmd)
 		}
 	}
 
-        // restore stopped instruction
+        /* restore stopped instruction */
 	*cmd = (bp && bp->cmd[0] != 0) ? bp->cmd : NULL;
-	return 1;	// wait for command
+	return 1;	/* wait for command */
 }

@@ -48,7 +48,7 @@ LOCAL	const UW	SPIMode[SPIMAX] = {0x2700, 0x0700, 0x2700};
 #define	SPn_CONTROL2(n)		(SPIBase[n] + 0x0034)
 #define	SPn_TIECS(n)		(SPIBase[n] + 0x0038)
 
-#define	TIMEOUT			10	// msec
+#define	TIMEOUT			10	/* msec */
 
 /* interrupt handler */
 LOCAL	void	spi_inthdr(INTVEC vec)
@@ -76,17 +76,17 @@ LOCAL	ER	wait_int(void)
 LOCAL	void	spi_init(W ch)
 {
 	out_w(SPn_MODE(ch), SPIMode[ch]);
-	out_w(SPn_TIECS(ch), 0x000f);		// CS: control by SPn_POL
+	out_w(SPn_TIECS(ch), 0x000f);		/* CS: control by SPn_POL */
 	out_w(SPn_POL(ch), SPIPol[ch]);
-	out_w(SPn_ENCLR(ch), ~0);		// interrupt disable
+	out_w(SPn_ENCLR(ch), ~0);		/* interrupt disable */
 
-	out_w(SPn_CONTROL(ch), 0x0100);		// starting reset
+	out_w(SPn_CONTROL(ch), 0x0100);		/* starting reset */
 	WaitUsec(10);
-	out_w(SPn_CONTROL(ch), 0x0000);		// releasing reset
+	out_w(SPn_CONTROL(ch), 0x0000);		/* releasing reset */
 	out_w(SPn_CONTROL2(ch), 0x0000);
 
 	out_w(SPn_FFCLR(ch), ~0);
-	out_w(SPn_ENSET(ch), 0x0004);		// interrupt enable
+	out_w(SPn_ENSET(ch), 0x0004);		/* interrupt enable */
 
 	return;
 }

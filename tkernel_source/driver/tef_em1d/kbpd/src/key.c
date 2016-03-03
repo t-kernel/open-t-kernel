@@ -57,7 +57,7 @@ LOCAL void makeShiftKeyEvent( InnerEvent *evt, InnEvtType type,
 	}
 }
 
-#if 0	// unused function
+#if 0	/* unused function */
 /*
  * generate shift key error event
  */

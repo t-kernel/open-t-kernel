@@ -52,98 +52,98 @@ EXPORT	UW	regStack[39 + 10 + 2];
 
 #define	L_REGNM		8
 typedef	struct {
-	UB	name[L_REGNM];		// register name
-	UW	id;			// register ID
+	UB	name[L_REGNM];		/* register name */
+	UW	id;			/* register ID */
 } REGTAB;
 
-#define	R_GEN		0x001000	// general register
-#define	R_CTL		0x002000	// control register
-#define	R_GRP		0x010000	// register group
+#define	R_GEN		0x001000	/* general register */
+#define	R_CTL		0x002000	/* control register */
+#define	R_GRP		0x010000	/* register group */
 
-#define	R_LF		0x080000	// forced linefeed
-#define	R_GAP		0x040000	// empty line
+#define	R_LF		0x080000	/* forced linefeed */
+#define	R_GAP		0x040000	/* empty line */
 
-#define	R_ONLY		0x100		// disable setup
-#define	SPEC(n)		(0x200 | (n))	// special
+#define	R_ONLY		0x100		/* disable setup */
+#define	SPEC(n)		(0x200 | (n))	/* special */
 
-#define	ixCPSR		10		// CPSR index
-#define	ixPC		11		// PC index
+#define	ixCPSR		10		/* CPSR index */
+#define	ixPC		11		/* PC index */
 
 #define	ixUSR		12
-#define	ixFIQ		(19 + 1)	// FIQ: SPSR,R8-R14
-#define	ixIRQ		(27 - 4)	// IRQ: SPSR,R13,R14
-#define	ixABT		(30 - 4)	// ABT: SPSR,R13,R14
-#define	ixUND		(33 - 4)	// UND: SPSR,R13,R14
-#define	ixSVC		(36 - 4)	// SVC: SPSR,R13,R14
-#define	ixSP_SVC	(ixSVC + 5)	// SVC SP index
+#define	ixFIQ		(19 + 1)	/* FIQ: SPSR,R8-R14 */
+#define	ixIRQ		(27 - 4)	/* IRQ: SPSR,R13,R14 */
+#define	ixABT		(30 - 4)	/* ABT: SPSR,R13,R14 */
+#define	ixUND		(33 - 4)	/* UND: SPSR,R13,R14 */
+#define	ixSVC		(36 - 4)	/* SVC: SPSR,R13,R14 */
+#define	ixSP_SVC	(ixSVC + 5)	/* SVC SP index */
 
-#define	ixCP15		39		// CP15 index
+#define	ixCP15		39		/* CP15 index */
 #define	ixCP15R1	(ixCP15 + 0)
 
 #define	N_ACTREGS	(16 + 7 + 7 + 8 + 7 + 10)
 #define	N_REGS		(N_ACTREGS + 3)
 
 LOCAL	const	REGTAB	regTab[N_REGS] = {
-	{"R0      ",	R_GEN + 0x00			},	// 0
-	{"R1      ",	R_GEN + 0x01			},	// 1
-	{"R2      ",	R_GEN + 0x02			},	// 2
-	{"R3      ",	R_GEN + 0x03 + R_LF		},	// 3
-	{"R4      ",	R_GEN + 0x04			},	// 4
-	{"R5      ",	R_GEN + 0x05			},	// 5
-	{"R6      ",	R_GEN + 0x06			},	// 6
-	{"R7      ",	R_GEN + 0x07 + R_LF		},	// 7
-	{"R8      ",	R_GEN + SPEC(0x00)		},	// 8
-	{"R9      ",	R_GEN + SPEC(0x01)		},	// 9
-	{"R10/SL  ",	R_GEN + SPEC(0x02)		},	// 10
-	{"R11/FP  ",	R_GEN + SPEC(0x03) + R_LF	},	// 11
-	{"R12/IP  ",	R_GEN + SPEC(0x04)		},	// 12
-	{"R13/SP  ",	R_GEN + SPEC(0x05)		},	// 13
-	{"R14/LR  ",	R_GEN + SPEC(0x06)		},	// 14
-	{"R15/PC  ",	R_GEN + ixPC + R_LF		},	// 15
+	{"R0      ",	R_GEN + 0x00			},	/* 0 */
+	{"R1      ",	R_GEN + 0x01			},	/* 1 */
+	{"R2      ",	R_GEN + 0x02			},	/* 2 */
+	{"R3      ",	R_GEN + 0x03 + R_LF		},	/* 3 */
+	{"R4      ",	R_GEN + 0x04			},	/* 4 */
+	{"R5      ",	R_GEN + 0x05			},	/* 5 */
+	{"R6      ",	R_GEN + 0x06			},	/* 6 */
+	{"R7      ",	R_GEN + 0x07 + R_LF		},	/* 7 */
+	{"R8      ",	R_GEN + SPEC(0x00)		},	/* 8 */
+	{"R9      ",	R_GEN + SPEC(0x01)		},	/* 9 */
+	{"R10/SL  ",	R_GEN + SPEC(0x02)		},	/* 10 */
+	{"R11/FP  ",	R_GEN + SPEC(0x03) + R_LF	},	/* 11 */
+	{"R12/IP  ",	R_GEN + SPEC(0x04)		},	/* 12 */
+	{"R13/SP  ",	R_GEN + SPEC(0x05)		},	/* 13 */
+	{"R14/LR  ",	R_GEN + SPEC(0x06)		},	/* 14 */
+	{"R15/PC  ",	R_GEN + ixPC + R_LF		},	/* 15 */
 
-	{"R8_USR  ",	R_GEN + ixUSR + 0 + R_GAP	},	// 16
-	{"R9_USR  ",	R_GEN + ixUSR + 1		},	// 17
-	{"R10_USR ",	R_GEN + ixUSR + 2		},	// 18
-	{"R11_USR ",	R_GEN + ixUSR + 3 + R_LF	},	// 19
-	{"R12_USR ",	R_GEN + ixUSR + 4		},	// 20
-	{"R13_USR ",	R_GEN + ixUSR + 5		},	// 21
-	{"R14_USR ",	R_GEN + ixUSR + 6 + R_LF	},	// 22
+	{"R8_USR  ",	R_GEN + ixUSR + 0 + R_GAP	},	/* 16 */
+	{"R9_USR  ",	R_GEN + ixUSR + 1		},	/* 17 */
+	{"R10_USR ",	R_GEN + ixUSR + 2		},	/* 18 */
+	{"R11_USR ",	R_GEN + ixUSR + 3 + R_LF	},	/* 19 */
+	{"R12_USR ",	R_GEN + ixUSR + 4		},	/* 20 */
+	{"R13_USR ",	R_GEN + ixUSR + 5		},	/* 21 */
+	{"R14_USR ",	R_GEN + ixUSR + 6 + R_LF	},	/* 22 */
 
-	{"R8_FIQ  ",	R_GEN + ixFIQ + 0		},	// 23
-	{"R9_FIQ  ",	R_GEN + ixFIQ + 1		},	// 24
-	{"R10_FIQ ",	R_GEN + ixFIQ + 2		},	// 25
-	{"R11_FIQ ",	R_GEN + ixFIQ + 3 + R_LF	},	// 26
-	{"R12_FIQ ",	R_GEN + ixFIQ + 4		},	// 27
-	{"R13_FIQ ",	R_GEN + ixFIQ + 5		},	// 28
-	{"R14_FIQ ",	R_GEN + ixFIQ + 6 + R_LF	},	// 29
+	{"R8_FIQ  ",	R_GEN + ixFIQ + 0		},	/* 23 */
+	{"R9_FIQ  ",	R_GEN + ixFIQ + 1		},	/* 24 */
+	{"R10_FIQ ",	R_GEN + ixFIQ + 2		},	/* 25 */
+	{"R11_FIQ ",	R_GEN + ixFIQ + 3 + R_LF	},	/* 26 */
+	{"R12_FIQ ",	R_GEN + ixFIQ + 4		},	/* 27 */
+	{"R13_FIQ ",	R_GEN + ixFIQ + 5		},	/* 28 */
+	{"R14_FIQ ",	R_GEN + ixFIQ + 6 + R_LF	},	/* 29 */
 
-	{"R13_IRQ ",	R_GEN + ixIRQ + 5		},	// 30
-	{"R14_IRQ ",	R_GEN + ixIRQ + 6		},	// 31
-	{"R13_SVC ",	R_GEN + ixSVC + 5		},	// 32
-	{"R14_SVC ",	R_GEN + ixSVC + 6 + R_LF	},	// 33
-	{"R13_ABT ",	R_GEN + ixABT + 5		},	// 34
-	{"R14_ABT ",	R_GEN + ixABT + 6		},	// 35
-	{"R13_UND ",	R_GEN + ixUND + 5		},	// 36
-	{"R14_UND ",	R_GEN + ixUND + 6 + R_LF	},	// 37
+	{"R13_IRQ ",	R_GEN + ixIRQ + 5		},	/* 30 */
+	{"R14_IRQ ",	R_GEN + ixIRQ + 6		},	/* 31 */
+	{"R13_SVC ",	R_GEN + ixSVC + 5		},	/* 32 */
+	{"R14_SVC ",	R_GEN + ixSVC + 6 + R_LF	},	/* 33 */
+	{"R13_ABT ",	R_GEN + ixABT + 5		},	/* 34 */
+	{"R14_ABT ",	R_GEN + ixABT + 6		},	/* 35 */
+	{"R13_UND ",	R_GEN + ixUND + 5		},	/* 36 */
+	{"R14_UND ",	R_GEN + ixUND + 6 + R_LF	},	/* 37 */
 
-	{"CPSR    ",	R_CTL + ixCPSR + R_GAP		},	// 38
-	{"SPSR    ",	R_CTL + SPEC(0x08)		},	// 39
-	{"SPSR_FIQ",	R_CTL + ixFIQ - 1		},	// 40
-	{"SPSR_IRQ",	R_CTL + ixIRQ + 4 + R_LF	},	// 41
-	{"SPSR_SVC",	R_CTL + ixSVC + 4		},	// 42
-	{"SPSR_ABT",	R_CTL + ixABT + 4		},	// 43
-	{"SPSR_UND",	R_CTL + ixUND + 4 + R_LF	},	// 44
+	{"CPSR    ",	R_CTL + ixCPSR + R_GAP		},	/* 38 */
+	{"SPSR    ",	R_CTL + SPEC(0x08)		},	/* 39 */
+	{"SPSR_FIQ",	R_CTL + ixFIQ - 1		},	/* 40 */
+	{"SPSR_IRQ",	R_CTL + ixIRQ + 4 + R_LF	},	/* 41 */
+	{"SPSR_SVC",	R_CTL + ixSVC + 4		},	/* 42 */
+	{"SPSR_ABT",	R_CTL + ixABT + 4		},	/* 43 */
+	{"SPSR_UND",	R_CTL + ixUND + 4 + R_LF	},	/* 44 */
 
-	{"SCTLR   ",	R_CTL + SPEC(0x0F) +  0 + R_GAP	},	// 45
-	{"TTBR0   ",	R_CTL + ixCP15 +  1 + R_ONLY	},	// 46
-	{"TTBR1   ",	R_CTL + ixCP15 +  2 + R_ONLY	},	// 47
-	{"TTBCR   ",	R_CTL + ixCP15 +  3 + R_ONLY + R_LF},	// 48
-	{"DACR    ",	R_CTL + ixCP15 +  4		},	// 49
-	{"DFSR    ",	R_CTL + ixCP15 +  5		},	// 50
-	{"IFSR    ",	R_CTL + ixCP15 +  6		},	// 51
-	{"DFAR    ",	R_CTL + ixCP15 +  7 + R_LF	},	// 52
-	{"IFAR    ",	R_CTL + ixCP15 +  8		},	// 53
-	{"CTXIDR  ",	R_CTL + ixCP15 +  9 + R_LF	},	// 54
+	{"SCTLR   ",	R_CTL + SPEC(0x0F) +  0 + R_GAP	},	/* 45 */
+	{"TTBR0   ",	R_CTL + ixCP15 +  1 + R_ONLY	},	/* 46 */
+	{"TTBR1   ",	R_CTL + ixCP15 +  2 + R_ONLY	},	/* 47 */
+	{"TTBCR   ",	R_CTL + ixCP15 +  3 + R_ONLY + R_LF},	/* 48 */
+	{"DACR    ",	R_CTL + ixCP15 +  4		},	/* 49 */
+	{"DFSR    ",	R_CTL + ixCP15 +  5		},	/* 50 */
+	{"IFSR    ",	R_CTL + ixCP15 +  6		},	/* 51 */
+	{"DFAR    ",	R_CTL + ixCP15 +  7 + R_LF	},	/* 52 */
+	{"IFAR    ",	R_CTL + ixCP15 +  8		},	/* 53 */
+	{"CTXIDR  ",	R_CTL + ixCP15 +  9 + R_LF	},	/* 54 */
 
 	{"G       ",	R_GRP|R_GEN			},
 	{"C       ",	R_GRP|R_CTL			},
@@ -162,15 +162,15 @@ EXPORT	W	searchRegister(UB *name, W grp)
 
 	for (p = (REGTAB*)regTab, i = 0; i < N_REGS; p++, i++) {
 		for (n = 0; n < L_REGNM; n++) if (p->name[n] == '/') break;
-		if (n == L_REGNM) {	// no separator '/' -> a single register name
+		if (n == L_REGNM) {	/* no separator '/' -> a single register name */
 			if (memcmp(name, p->name, L_REGNM)) continue;
-		} else {		// has alias
-                        // check the name(s) after the separator
+		} else {		/* has alias */
+                        /* check the name(s) after the separator */
 			memset(bf, ' ', sizeof(bf));
 			memcpy(bf, p->name + (n + 1), L_REGNM - (n + 1));
 			a = memcmp(name, bf, L_REGNM - n);
 
-                        // check the name before the separator
+                        /* check the name before the separator */
 			memset(bf, ' ', sizeof(bf));
 			memcpy(bf, p->name, n);
 			if (a && memcmp(name, bf, n + 1)) continue;
@@ -185,7 +185,7 @@ EXPORT	W	searchRegister(UB *name, W grp)
 */
 LOCAL	W	ixCpuMode(void)
 {
-        // obtain mode
+        /* obtain mode */
 	switch(regStack[ixCPSR] & PSR_M(31)) {
 	case PSR_USR:
 	case PSR_SYS:	return ixUSR;
@@ -206,31 +206,31 @@ EXPORT	UW	getRegister(W regno)
 
 	i = regTab[regno].id & (R_GRP | 0x3ff);
 
-        // normal register
+        /* normal register */
 	if (i < SPEC(0)) return regStack[i & 0xff];
 
-        // obtain mode
+        /* obtain mode */
 	ix = ixCpuMode();
 
-        // special register
+        /* special register */
 	switch(i) {
-	case SPEC(0x00):	// R8
-	case SPEC(0x01):	// R9
-	case SPEC(0x02):	// R10
-	case SPEC(0x03):	// R11
-	case SPEC(0x04):	// R12
+	case SPEC(0x00):	/* R8 */
+	case SPEC(0x01):	/* R9 */
+	case SPEC(0x02):	/* R10 */
+	case SPEC(0x03):	/* R11 */
+	case SPEC(0x04):	/* R12 */
 		if (ix != ixFIQ) ix = ixUSR;
-	case SPEC(0x05):	// R13
-	case SPEC(0x06):	// R14
+	case SPEC(0x05):	/* R13 */
+	case SPEC(0x06):	/* R14 */
 		return regStack[ix + i - SPEC(0)];
-	case SPEC(0x08):	// SPSR
-		if (ix == ixUSR) return 0;	// undefined
+	case SPEC(0x08):	/* SPSR */
+		if (ix == ixUSR) return 0;	/* undefined */
 		if (ix == ixFIQ) ix -= 5;
 		return regStack[ix + 4];
-	case SPEC(0x0F):	// CP15 R1
+	case SPEC(0x0F):	/* CP15 R1 */
 		return regStack[ixCP15R1];
 	}
-        // retur 0 on error
+        /* retur 0 on error */
 	return 0;
 }
 /*
@@ -241,34 +241,34 @@ EXPORT	ER	setRegister(W regno, UW val)
 	W	i, ix;
 
 	i = regTab[regno].id & (R_GRP | 0x3ff);
-	if (i & R_ONLY) return E_RONLY;		// cannot be set
+	if (i & R_ONLY) return E_RONLY;		/* cannot be set */
 
-	if (i < SPEC(0)) {	// normal register
+	if (i < SPEC(0)) {	/* normal register */
 		regStack[i & 0xff] = val;
 		return 0;
 	}
 
-        // obtain mode
+        /* obtain mode */
 	ix = ixCpuMode();
 
-        // special register
+        /* special register */
 	switch(i) {
-	case SPEC(0x00):	// R8
-	case SPEC(0x01):	// R9
-	case SPEC(0x02):	// R10
-	case SPEC(0x03):	// R11
-	case SPEC(0x04):	// R12
+	case SPEC(0x00):	/* R8 */
+	case SPEC(0x01):	/* R9 */
+	case SPEC(0x02):	/* R10 */
+	case SPEC(0x03):	/* R11 */
+	case SPEC(0x04):	/* R12 */
 		if (ix != ixFIQ) ix = ixUSR;
-	case SPEC(0x05):	// R13
-	case SPEC(0x06):	// R14
+	case SPEC(0x05):	/* R13 */
+	case SPEC(0x06):	/* R14 */
 		regStack[ix + i - SPEC(0x00)] = val;
 		break;
-	case SPEC(0x08):	// SPSR
-		if (ix == ixUSR) break;	// undefined
+	case SPEC(0x08):	/* SPSR */
+		if (ix == ixUSR) break;	/* undefined */
 		if (ix == ixFIQ) ix -= 5;
 		regStack[ix + 4] = val;
 		break;
-	case SPEC(0x0F):	// CP15 R1
+	case SPEC(0x0F):	/* CP15 R1 */
 		regStack[ixCP15R1] &= MASK_CACHEMMU;
 		regStack[ixCP15R1] |= val & VALID_CACHEMMU;
 		break;
@@ -320,7 +320,7 @@ EXPORT	UW	getCurSPSR(void)
 */
 EXPORT	UW	getCurPC(void)
 {
-        // set LSB = 1 for Thumb mode.
+        /* set LSB = 1 for Thumb mode. */
 	return regStack[ixPC] | ((regStack[ixCPSR] & PSR_T) ? 1 : 0);
 }
 EXPORT	UW	getCurPCX(void)
@@ -348,7 +348,7 @@ EXPORT	UW	getCP15(W reg, W opcd)
 EXPORT	void	setCurPC(UW val)
 {
 	if (regStack[ixPC] != val) {
-                // Thumb Bit is changed according to the LSB value of PC.
+                /* Thumb Bit is changed according to the LSB value of PC. */
 		if (val & 0x3)	regStack[ixCPSR] |= PSR_T;
 		else		regStack[ixCPSR] &= ~PSR_T;
 		regStack[ixPC] = val & ~0x1;
@@ -356,7 +356,7 @@ EXPORT	void	setCurPC(UW val)
 }
 EXPORT	void	setCurPCX(UW val)
 {
-        // Thumb Bit is not changed.
+        /* Thumb Bit is not changed. */
 	regStack[ixPC] = val & ~0x1;
 }
 /*
@@ -367,15 +367,15 @@ EXPORT	void	setUpBoot( void *start, BootInfo *bootinfo )
 	bootFlag = 1; /* suppress the setting register R0 upon exit of the monitor */
 
 	regStack[ixCPSR]   = PSR_I | PSR_F | PSR_SVC;
-	regStack[0]        = (UW)bootinfo;		// R0 boot parameter
-	regStack[ixPC]     = (UW)start;			// PC start address
-	regStack[ixSP_SVC] = (UW)&__stack_bottom;	// SP monitor stack
+	regStack[0]        = (UW)bootinfo;		/* R0 boot parameter */
+	regStack[ixPC]     = (UW)start;			/* PC start address */
+	regStack[ixSP_SVC] = (UW)&__stack_bottom;	/* SP monitor stack */
 
-        // MMU enabled, Cache / Write Buffer not enabled
+        /* MMU enabled, Cache / Write Buffer not enabled */
 	regStack[ixCP15R1] &= MASK_CACHEMMU;
 	regStack[ixCP15R1] |= ENB_MMUONLY;
 
-        // system initialization processing
+        /* system initialization processing */
 	resetSystem(1);
 }
 /*
@@ -383,7 +383,7 @@ EXPORT	void	setUpBoot( void *start, BootInfo *bootinfo )
 */
 EXPORT	W	isKillValid(void)
 {
-        // Has TRAP for KILL been define?
+        /* Has TRAP for KILL been define? */
 	if ( SCArea->intvec[SWI_KILLPROC] == NULL ) return -1;
 	return 0;
 }
@@ -394,7 +394,7 @@ EXPORT	W	isKillValid(void)
 */
 EXPORT	W	isTKDSValid(void)
 {
-        // Has TRAP for T-Kernel/DS been defined?
+        /* Has TRAP for T-Kernel/DS been defined? */
 	if ( SCArea->intvec[SWI_DEBUG] == NULL ) return -1;
 	return 0;
 }

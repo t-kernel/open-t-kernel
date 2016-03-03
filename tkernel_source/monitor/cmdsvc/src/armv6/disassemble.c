@@ -43,13 +43,13 @@ EXPORT	ER	disAssemble(UW *saddr, UW *naddr, UB *str)
 	W	len;
 	UW	inst, addr;
 
-	len = (*saddr & 0x1) ? 2 : 4;		// Thumb or Arm instruction
-	addr = (*saddr &= ~(len - 1));		// address adjustment
+	len = (*saddr & 0x1) ? 2 : 4;		/* Thumb or Arm instruction */
+	addr = (*saddr &= ~(len - 1));		/* address adjustment */
 
-        // extract op code
+        /* extract op code */
 	if (readMem(addr, &inst, len, 2) != len) return E_MACV;
 
-        // binary dump
+        /* binary dump */
 	if (len == 4) {
 		str = make_hex(str, inst >> 24);
 		str = make_hex(str, inst >> 16);

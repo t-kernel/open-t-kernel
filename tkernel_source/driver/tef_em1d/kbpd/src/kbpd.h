@@ -417,4 +417,4 @@ IMPORT void kpFinishStateMachine( void );
 IMPORT void kpReleaseKey( KeyState *ks );
 IMPORT BOOL kpExecStateMachine( InnerEvent *evt, ReceiveData *msg );
 IMPORT ER kpKeyAndButtonForceUp( void );
-#endif	//IMPORT_DEFINE
+#endif	/*IMPORT_DEFINE */

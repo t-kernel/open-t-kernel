@@ -53,7 +53,7 @@ typedef	enum {
 	DN_SCRXSPEC0	= -500,		/* DEV_SPEC	(R) */
 } ScrDataNo;
 
-// we use the range from -755 to - 500
+/* we use the range from -755 to - 500 */
 #define	DN_SCRXSPEC(n)	(DN_SCRXSPEC0 - ((n) & 0xff))
 
 /*

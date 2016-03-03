@@ -21,21 +21,21 @@
 #include "flash.h"
 
 #ifndef	SECSZ
-#define	SECSZ		0x20000			// sector size 128kB x 1
+#define	SECSZ		0x20000			/* sector size 128kB x 1 */
 #endif
 
 #ifndef	BSECSZ
-#define	BSECSZ		0x02000			// boot sector size 8KB x 1
+#define	BSECSZ		0x02000			/* boot sector size 8KB x 1 */
 #endif
 
-#define	SECMSK		(SECSZ - 1)		// sector mask
+#define	SECMSK		(SECSZ - 1)		/* sector mask */
 
-#define	MAX_RETRY	(3)			// maximum number of retries
-#define	WAIT_CNT	0x10000000		// wait count (enough time)
+#define	MAX_RETRY	(3)			/* maximum number of retries */
+#define	WAIT_CNT	0x10000000		/* wait count (enough time) */
 
-#define	WBSZ		(16)			// write buffer size (H unit)
+#define	WBSZ		(16)			/* write buffer size (H unit) */
 
-EXPORT	const UW	FROM_SECSZ = SECSZ;	// sector size
+EXPORT	const UW	FROM_SECSZ = SECSZ;	/* sector size */
 
 /*
  * check Flash ROM
@@ -48,8 +48,8 @@ LOCAL	const JEDEC_SPEC	*checkFlashROM(_UH *rom)
 
         /* read Signature */
 	rom[0] = 0x0090;
-	man = rom[0] & 0x00ff;	// ignore upper 8 bits
-	dev = rom[1] & 0x00ff;	// ignore upper 8 bits
+	man = rom[0] & 0x00ff;	/* ignore upper 8 bits */
+	dev = rom[1] & 0x00ff;	/* ignore upper 8 bits */
 
         /* obtain Flash ROM specification */
 	for (i = 0; i < N_JedecSpec; ++i) {
@@ -59,7 +59,7 @@ LOCAL	const JEDEC_SPEC	*checkFlashROM(_UH *rom)
 		return spec;
 	}
 
-	return NULL;	// unsupported target
+	return NULL;	/* unsupported target */
 }
 
 /*
@@ -109,12 +109,12 @@ LOCAL	ER	writesec(_UH *rom, UH *data, const JEDEC_SPEC *spec)
                 /* wait for completion of erasure */
 		for (i = WAIT_CNT; --i >= 0 && ((d = *rp) & 0x0080) == 0; );
 		if (i < 0 || (d & 0x003A) != 0) {
-			*rp = 0x0050;		// clear error
+			*rp = 0x0050;		/* clear error */
 			return E_IO;
 		}
 	}
 
-	if (data == NULL) return E_OK;	// erase only
+	if (data == NULL) return E_OK;	/* erase only */
 
         /* write (using a buffer) */
 	rp = rom;
@@ -123,7 +123,7 @@ LOCAL	ER	writesec(_UH *rom, UH *data, const JEDEC_SPEC *spec)
 		xp = rp;
 		for (i = WAIT_CNT; --i >= 0; ) {
 			*rp = 0x00E8;
-			if (*xp & 0x0080) break;	// XSR check
+			if (*xp & 0x0080) break;	/* XSR check */
 		}
 		if (i < 0) goto abort;
 
@@ -132,10 +132,10 @@ LOCAL	ER	writesec(_UH *rom, UH *data, const JEDEC_SPEC *spec)
 		*xp = 0x00D0;
 
                 /* wait for completion of write */
-		// *xp = 0x0070;
+		/* *xp = 0x0070; */
 		for (i = WAIT_CNT; --i >= 0 && ((d = *xp) & 0x0080) == 0; );
 		if (i < 0 || (d & 0x001A) != 0) {
-			*xp = 0x0050;	// clear error
+			*xp = 0x0050;	/* clear error */
 			goto abort;
 		}
 	}
@@ -193,7 +193,7 @@ EXPORT	ER	flashwr(UW addr, void *data, W nsec, BOOL reset)
 		data = (B *)data + SECSZ;
 	}
 
-	if (reset) flashwr_reset();	// do not return
+	if (reset) flashwr_reset();	/* do not return */
 
 	return E_OK;
 }

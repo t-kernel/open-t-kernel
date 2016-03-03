@@ -38,7 +38,7 @@
 #define	RETRY		4
 
 /* SPI channel used by RTC */
-#define	SPICH_RTC	2	// SP0:CS2
+#define	SPICH_RTC	2	/* SP0:CS2 */
 
 /* binary <-> BCD conversion */
 #define	BCDtoBIN(v)	(((v) >> 4) * 10 + ((v) & 0xF))
@@ -104,7 +104,7 @@ EXPORT	ER	cdSetDateTime(void *date_tim)
 	rtcWrite(rxSEC, dt.d_sec);
 	rtcWrite(rxMIN, dt.d_min);
 	rtcWrite(rxHOUR,  dt.d_hour);
-	rtcWrite(rxWEEK, 0x01);		// we do not use day of the week
+	rtcWrite(rxWEEK, 0x01);		/* we do not use day of the week */
 	rtcWrite(rxDAY, dt.d_day);
 	rtcWrite(rxMONTH,  dt.d_month);
 	rtcWrite(rxYEAR, dt.d_year);
@@ -132,9 +132,9 @@ EXPORT	ER	cdGetDateTime(void *date_tim)
 		sec        = rtcRead(rxSEC);
 	} while (sec != dt.d_sec);	/* make sure data is read consistently in a whole second */
 
-	dt.d_wday = 0;	// not supported (0 - pretend it is sunday)
-	dt.d_days = 0;	// not used
-	dt.d_week = 0;	// not used
+	dt.d_wday = 0;	/* not supported (0 - pretend it is sunday) */
+	dt.d_days = 0;	/* not used */
+	dt.d_week = 0;	/* not used */
 
 	dt.d_year  = BCDtoBIN(dt.d_year) + 100;	/* 00-99 -> 2000-2099 */
 	dt.d_month = BCDtoBIN(dt.d_month);

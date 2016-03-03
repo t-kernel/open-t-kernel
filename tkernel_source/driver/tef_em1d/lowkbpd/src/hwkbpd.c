@@ -30,7 +30,7 @@ LOCAL	ID	FlgID;			/* flag for event notification */
 #define	TpFlg	(1 << 0)
 #define	SwFlg	(1 << 1)
 
-// ---------------------------------------------------------------------------
+/* --------------------------------------------------------------------------- */
 /* tablet parameter (coordinate normalizaton parameter, etc.) */
 typedef	struct {
 	W	x_bias;
@@ -242,21 +242,21 @@ LOCAL	void	tp_task(void)
 	W	i;
 	UINT	flg;
 	LOCAL	const UB	tpsetup[] = {
-		 10, 0xff,	// IRQ_MASK_A (mask all)
-		 11, 0xbf,	// IRQ_MASK_B M_PEN_DOWN
-		 12, 0xff,	// IRQ_MASK_C (mask all)
-		 13, 0xff,	// IRQ_MASK_D (mask all)
-		  5, 0xff,	// EVENT_A (clear all)
-		  6, 0xff,	// EVENT_B (clear all)
-		  7, 0xff,	// EVENT_C (clear all)
-		  8, 0xff,	// EVENT_D (clear all)
-		 22, 0x09,	// GPIO3:TSIYN,  GPIO2:GPI,Active low
-		 23, 0x00,	// GPIO5:TSIXN,  GPIO4:TSIYP
-		 24, 0x00,	// GPIO7:TSIREF, GPIO6:TSIXP
-		105, 0xc3,	// TSI_CONT_A 4slot, PEN_DET_EN, AUTO_TSI_EN
-		106, 0x80,	// TSI_CONT_B X+/X-,Y+/Y-,Y+/X-
-		 82, 0x40,	// 1ms interval
-		  0, 0x00,	// (terminate)
+		 10, 0xff,	/* IRQ_MASK_A (mask all) */
+		 11, 0xbf,	/* IRQ_MASK_B M_PEN_DOWN */
+		 12, 0xff,	/* IRQ_MASK_C (mask all) */
+		 13, 0xff,	/* IRQ_MASK_D (mask all) */
+		  5, 0xff,	/* EVENT_A (clear all) */
+		  6, 0xff,	/* EVENT_B (clear all) */
+		  7, 0xff,	/* EVENT_C (clear all) */
+		  8, 0xff,	/* EVENT_D (clear all) */
+		 22, 0x09,	/* GPIO3:TSIYN,  GPIO2:GPI,Active low */
+		 23, 0x00,	/* GPIO5:TSIXN,  GPIO4:TSIYP */
+		 24, 0x00,	/* GPIO7:TSIREF, GPIO6:TSIXP */
+		105, 0xc3,	/* TSI_CONT_A 4slot, PEN_DET_EN, AUTO_TSI_EN */
+		106, 0x80,	/* TSI_CONT_B X+/X-,Y+/Y-,Y+/X- */
+		 82, 0x40,	/* 1ms interval */
+		  0, 0x00,	/* (terminate) */
 	};
 
         /* DA9052 TSI initialization */
@@ -272,7 +272,7 @@ LOCAL	void	tp_task(void)
                 /* wait for TP interrupt */
 		tk_wai_flg(FlgID, TpFlg, TWF_ANDW | TWF_BITCLR, &flg, TMO_FEVR);
 
-                // interrupt is prohibited inside the TP intterupt handler
+                /* interrupt is prohibited inside the TP intterupt handler */
 
                 /* polling is done while pen touch state */
 		while (1) {
@@ -374,7 +374,7 @@ fin0:
 	return er;
 }
 
-// ---------------------------------------------------------------------------
+/* --------------------------------------------------------------------------- */
 LOCAL	UB	PrevSwMsg = 0;		/* area to store previous SW message */
 LOCAL	UB	PrevSwSts = 0;		/* area to store previous SW readout */
 LOCAL	FastLock	HwLock_sw;	/* for exclusive access control purposes */
@@ -461,8 +461,8 @@ LOCAL	void	swscan(void)
 	sw = in_w(GIO_I(GIO_L));
 
         /* mask and shift unnecessary bits */
-	sw &= 0x000000d0;	// P7,P6,P4
-	sw >>= 4;		// bit0: P4
+	sw &= 0x000000d0;	/* P7,P6,P4 */
+	sw >>= 4;		/* bit0: P4 */
 
         /* if the state is different from the previously read state, send a message */
 	if (sw != PrevSwSts) {
@@ -558,7 +558,7 @@ fin0:
 	return er;
 }
 
-// ---------------------------------------------------------------------------
+/* --------------------------------------------------------------------------- */
 /* process received data */
 EXPORT	void	hwProc(InMsg *msg)
 {

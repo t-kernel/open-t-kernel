@@ -66,9 +66,9 @@
 
 /* definition of LCD panel (including controller-dependent part) */
 typedef	struct {
-	W	paneltype;	// panel type (if negative, this applies to all the panels)
-	UW	pll2ctrl0;	// to configure PLL2 clock frequency
-	UW	divlcdlclk;	// LCD_LCLK division
+	W	paneltype;	/* panel type (if negative, this applies to all the panels) */
+	UW	pll2ctrl0;	/* to configure PLL2 clock frequency */
+	UW	divlcdlclk;	/* LCD_LCLK division */
 
 	UH	hde;
 	UH	hrs;
@@ -83,14 +83,14 @@ typedef	struct {
 } LCDdefs;
 
 
-#define	SUPPORT_MODEMAP	00020000000	// supported mode map
+#define	SUPPORT_MODEMAP	00020000000	/* supported mode map */
 #define	DEFAULT_REQMODE	DMeWVGAx16
 
 /* LCD parameter */
 LOCAL	const LCDdefs	LCDparm[] = {
 	{
-		// 800x480@@60Hz, 31.5kHz hsync (pixclk=33.3MHz)
-		-1, 0x61, 0x51,		// 401.408MHz / 12
+		/* 800x480@@60Hz, 31.5kHz hsync (pixclk=33.3MHz) */
+		-1, 0x61, 0x51,		/* 401.408MHz / 12 */
 		800,  840,  968, 1056,   480,  491,  493,  525,  -1, -1
 	},
 };
@@ -117,29 +117,29 @@ LOCAL	W	WriteDA9052(W reg, W dat)
 LOCAL	void	LCDpower(BOOL power)
 {
 	LOCAL	const UB	on_cmd[] = {
-		54, 0x5a,	// VLDO5: 2.5V/enable	*max 3.3V*
-		70, 0x27,	// BOOST(2MHz, LED1/2 enable, controller enable)
-		71, 0x4f,	// LED_CONT(LED1/2 current sink/ramp enable)
-		73, 0xe1,	// LED1_CONF(12034microA)
-		74, 0xe1,	// LED2_CONF(12034microA)	
-		76, 0xbf,	// LED1_CONT(PWM/100%)
-		77, 0xbf,	// LED2_CONT(PWM/100%)
-		 0, 0x00,	// (terminate)
+		54, 0x5a,	/* VLDO5: 2.5V/enable	*max 3.3V* */
+		70, 0x27,	/* BOOST(2MHz, LED1/2 enable, controller enable) */
+		71, 0x4f,	/* LED_CONT(LED1/2 current sink/ramp enable) */
+		73, 0xe1,	/* LED1_CONF(12034microA) */
+		74, 0xe1,	/* LED2_CONF(12034microA)	 */
+		76, 0xbf,	/* LED1_CONT(PWM/100%) */
+		77, 0xbf,	/* LED2_CONT(PWM/100%) */
+		 0, 0x00,	/* (terminate) */
 	};
 	LOCAL	const UB	off_cmd[] = {
-		77, 0x00,	// LED2_CONT(default, off)
-		76, 0x00,	// LED1_CONT(default, off)
-		74, 0x00,	// LED2_CONF(default, 50microA)
-		73, 0x00,	// LED1_CONF(default, 50microA)
-		71, 0x40,	// LED_CONT(default)
-		70, 0x20,	// BOOST(default)
-		54, 0x1a,	// VLDO5: 2.5V/disable
-		 0, 0x00,	// (terminate)
+		77, 0x00,	/* LED2_CONT(default, off) */
+		76, 0x00,	/* LED1_CONT(default, off) */
+		74, 0x00,	/* LED2_CONF(default, 50microA) */
+		73, 0x00,	/* LED1_CONF(default, 50microA) */
+		71, 0x40,	/* LED_CONT(default) */
+		70, 0x20,	/* BOOST(default) */
+		54, 0x1a,	/* VLDO5: 2.5V/disable */
+		 0, 0x00,	/* (terminate) */
 	};
 	const UB	*cmd;
 
 	if (!power) {
-		*GIO_OH(GIO_HH) = 0x00040000;	// DISP='0'
+		*GIO_OH(GIO_HH) = 0x00040000;	/* DISP='0' */
 		tk_dly_tsk(10);
 	}
 
@@ -151,7 +151,7 @@ LOCAL	void	LCDpower(BOOL power)
 	tk_dly_tsk(10);
 
 	if (power) {
-		*GIO_OH(GIO_HH) = 0x00040004;	// DISP='1'
+		*GIO_OH(GIO_HH) = 0x00040004;	/* DISP='1' */
 		tk_dly_tsk(10);
 	}
 
@@ -234,14 +234,14 @@ LOCAL	void	em1_setmode(W flg)
 	pll_setup(lcd->pll2ctrl0, lcd->divlcdlclk);
 
         /* set up parameters */
-	*BUSSEL = 1;		// MEMC-LCDC mode
+	*BUSSEL = 1;		/* MEMC-LCDC mode */
 	*QOS = 0;
 	*CONTROL= ((lcd->hsync < 0) ? 4 : 0) |
 		((lcd->vsync < 0) ? 2 : 0);
-	*BACKCOLOR = 0;		// background is black (#000000)
+	*BACKCOLOR = 0;		/* background is black (#000000) */
 	*AREAADR = (UW)Vinf.framebuf_addr;
 	*HOFFSET = Vinf.framebuf_rowb;
-	*IFORMAT = 1;		// RGB565
+	*IFORMAT = 1;		/* RGB565 */
 	*HAREA = lcd->hde;
 	*HEDGE1 = lcd->hrs - lcd->hde;
 	*HEDGE2 = lcd->hre - lcd->hde;
@@ -250,7 +250,7 @@ LOCAL	void	em1_setmode(W flg)
 	*VEDGE1 = lcd->vrs - lcd->vde;
 	*VEDGE2 = lcd->vre - lcd->vde;
 	*VTOTAL = lcd->vtot;
-	*INTENCLR = ~0;		// all interrupts are disabled
+	*INTENCLR = ~0;		/* all interrupts are disabled */
 
         /* clear VRAM content */
 	if (flg) MEMSET(Vinf.f_addr, 0, Vinf.framebuf_total);

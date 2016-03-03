@@ -64,14 +64,14 @@ IMPORT	W	N_NoMemSeg;
 /* initialize SPI for PMIC communication */
 LOCAL	void	pmicInit(void)
 {
-	out_w(SPn_MODE(SP0), 0x2700);		// 8bit, CS0, Master, CPU mode
-	out_w(SPn_TIECS(SP0), 0x000f);		// CS0: follow the specification by SPn_POL
+	out_w(SPn_MODE(SP0), 0x2700);		/* 8bit, CS0, Master, CPU mode */
+	out_w(SPn_TIECS(SP0), 0x000f);		/* CS0: follow the specification by SPn_POL */
 	out_w(SPn_POL(SP0), SPIPol);
-	out_w(SPn_ENCLR(SP0), ~0);		// interrupt disable
+	out_w(SPn_ENCLR(SP0), ~0);		/* interrupt disable */
 
-	out_w(SPn_CONTROL(SP0), 0x0100);	// start reset
+	out_w(SPn_CONTROL(SP0), 0x0100);	/* start reset */
 	waitUsec(10);
-	out_w(SPn_CONTROL(SP0), 0x0000);	// release reset
+	out_w(SPn_CONTROL(SP0), 0x0000);	/* release reset */
 	out_w(SPn_CONTROL2(SP0), 0x0000);
 
 	return;
@@ -106,19 +106,19 @@ EXPORT	W	pmicRead(W reg)
 {
 	W	dat;
 
-	pmicCSassert(TRUE);			// CS assert
+	pmicCSassert(TRUE);			/* CS assert */
 
-	out_w(SPn_FFCLR(SP0), ~0);		// status flag is cleared
-	out_w(SPn_TX_DATA(SP0), (reg << 1) | 1);        // send register number
-	out_w(SPn_CONTROL(SP0), 0x0009);	// send start
+	out_w(SPn_FFCLR(SP0), ~0);		/* status flag is cleared */
+	out_w(SPn_TX_DATA(SP0), (reg << 1) | 1);        /* send register number */
+	out_w(SPn_CONTROL(SP0), 0x0009);	/* send start */
 	pmicWait();
 
-	out_w(SPn_FFCLR(SP0), ~0);		// status flag is cleared
-	out_w(SPn_CONTROL(SP0), 0x0005);	// start receive
+	out_w(SPn_FFCLR(SP0), ~0);		/* status flag is cleared */
+	out_w(SPn_CONTROL(SP0), 0x0005);	/* start receive */
 	pmicWait();
-	dat = in_w(SPn_RX_DATA(SP0));		// data received
+	dat = in_w(SPn_RX_DATA(SP0));		/* data received */
 
-	pmicCSassert(FALSE);			// CS de-assert
+	pmicCSassert(FALSE);			/* CS de-assert */
 
 	return dat;
 }
@@ -126,19 +126,19 @@ EXPORT	W	pmicRead(W reg)
 /* write PMIC register */
 EXPORT	void	pmicWrite(W reg, W dat)
 {
-	pmicCSassert(TRUE);			// CS assert
+	pmicCSassert(TRUE);			/* CS assert */
 
-	out_w(SPn_FFCLR(SP0), ~0);		// status flag is cleared
-	out_w(SPn_TX_DATA(SP0), reg << 1);	// send register number
-	out_w(SPn_CONTROL(SP0), 0x0009);	// send start
+	out_w(SPn_FFCLR(SP0), ~0);		/* status flag is cleared */
+	out_w(SPn_TX_DATA(SP0), reg << 1);	/* send register number */
+	out_w(SPn_CONTROL(SP0), 0x0009);	/* send start */
 	pmicWait();
 
-	out_w(SPn_FFCLR(SP0), ~0);		// status flag is cleared
-	out_w(SPn_TX_DATA(SP0), dat);		// send data
-	out_w(SPn_CONTROL(SP0), 0x0009);	// send start
+	out_w(SPn_FFCLR(SP0), ~0);		/* status flag is cleared */
+	out_w(SPn_TX_DATA(SP0), dat);		/* send data */
+	out_w(SPn_CONTROL(SP0), 0x0009);	/* send start */
 	pmicWait();
 
-	pmicCSassert(FALSE);			// CS de-assert
+	pmicCSassert(FALSE);			/* CS de-assert */
 
 	return;
 }
@@ -157,30 +157,30 @@ EXPORT	void	resetSystem(W boot)
 	DisCacheMMU();
 
         /* set up interrupt controller */
-	out_w(IT0_IDS0, ~0);		// CPU: all interrupts disabled
+	out_w(IT0_IDS0, ~0);		/* CPU: all interrupts disabled */
 	out_w(IT0_IDS1, ~0);
 	out_w(IT0_IDS2, ~0);
 	out_w(IT0_IIR, ~0);
 	out_w(IT3_IPI0_CLR, 0x0000003f);
-	out_w(IT3_IDS0, ~0);		// DSP: all interrupts disabled
+	out_w(IT3_IDS0, ~0);		/* DSP: all interrupts disabled */
 	out_w(IT3_IDS1, ~0);
 	out_w(IT3_IDS2, ~0);
 	out_w(IT3_IIR, ~0);
 	out_w(IT0_IPI3_CLR, 0x0000003f);
-	out_w(IT0_FID, 0x00000001);	// CPU: FIQ disabled
-	out_w(GIO_IIA(GIO_L), 0);	// GPIO: interrupt disabled
+	out_w(IT0_FID, 0x00000001);	/* CPU: FIQ disabled */
+	out_w(GIO_IIA(GIO_L), 0);	/* GPIO: interrupt disabled */
 	out_w(GIO_IIA(GIO_H), 0);
 	out_w(GIO_IIA(GIO_HH), 0);
 	out_w(GIO_IIA(GIO_HHH), 0);
-	out_w(GIO_GSW(GIO_L), 0);	// GPIO: FIQ interrupt disabled
+	out_w(GIO_GSW(GIO_L), 0);	/* GPIO: FIQ interrupt disabled */
 	out_w(GIO_GSW(GIO_H), 0);
 	out_w(GIO_GSW(GIO_HH), 0);
 	out_w(GIO_GSW(GIO_HHH), 0);
-	out_w(IT0_LIIR, 0x0000000f);	// internal interrupt disabled
-	out_w(IT_PINV_CLR0, ~0);	// inhibit interrupt polarity inversion
+	out_w(IT0_LIIR, 0x0000000f);	/* internal interrupt disabled */
+	out_w(IT_PINV_CLR0, ~0);	/* inhibit interrupt polarity inversion */
 	out_w(IT_PINV_CLR1, ~0);
 	out_w(IT_PINV_CLR2, ~0);
-	out_w(IT0_IEN0, 0x0c000000);	// CPU: GPIO interrupt enabled
+	out_w(IT0_IEN0, 0x0c000000);	/* CPU: GPIO interrupt enabled */
 	out_w(IT0_IEN1, 0x003c0000);
 	out_w(IT0_IEN2, 0x00018000);
 
@@ -209,11 +209,11 @@ EXPORT	void	resetSystem(W boot)
 	SCInfo.ramend = (void*)va;
 
         /* set up EIT vectors */
-        // we do not need _defaultHdr absolutely, but just in case set it up
-	SCArea->intvec[EIT_DEFAULT]	= _defaultHdr;	// default handler
-	SCArea->intvec[EIT_UNDEF]	= _defaultHdr;	// undefined instruction
-	SCArea->intvec[SWI_MONITOR]	= _defaultHdr;	// SWI - monitor SVC
-	SCArea->intvec[EIT_IRQ(26)]	= _gio6Hdr;	// GPIO branch
+        /* we do not need _defaultHdr absolutely, but just in case set it up */
+	SCArea->intvec[EIT_DEFAULT]	= _defaultHdr;	/* default handler */
+	SCArea->intvec[EIT_UNDEF]	= _defaultHdr;	/* undefined instruction */
+	SCArea->intvec[SWI_MONITOR]	= _defaultHdr;	/* SWI - monitor SVC */
+	SCArea->intvec[EIT_IRQ(26)]	= _gio6Hdr;	/* GPIO branch */
 	SCArea->intvec[EIT_IRQ(27)]	= _gio7Hdr;
 	SCArea->intvec[EIT_IRQ(50)]	= _gio0Hdr;
 	SCArea->intvec[EIT_IRQ(51)]	= _gio1Hdr;
@@ -221,7 +221,7 @@ EXPORT	void	resetSystem(W boot)
 	SCArea->intvec[EIT_IRQ(53)]	= _gio3Hdr;
 	SCArea->intvec[EIT_IRQ(79)]	= _gio4Hdr;
 	SCArea->intvec[EIT_IRQ(80)]	= _gio5Hdr;
-	SCArea->intvec[EIT_GPIO(8)]	= _defaultHdr;	// abort switch
+	SCArea->intvec[EIT_GPIO(8)]	= _defaultHdr;	/* abort switch */
 
         /* set up initial page table */
 	for (i = 0; i < N_MemSeg; ++i) {
@@ -253,8 +253,8 @@ EXPORT	void	resetSystem(W boot)
 	}
 
 	DSB();
-	Asm("mcr p15, 0, %0, cr8, c7, 0":: "r"(0));	// I/D TLB invalidate
-	Asm("mcr p15, 0, %0, cr7, c5, 6":: "r"(0));	// invalidate BTC
+	Asm("mcr p15, 0, %0, cr8, c7, 0":: "r"(0));	/* I/D TLB invalidate */
+	Asm("mcr p15, 0, %0, cr7, c5, 6":: "r"(0));	/* invalidate BTC */
 	DSB();
 	ISB();
 
@@ -275,22 +275,22 @@ EXPORT	void	sysExit(W reset)
 {
 	DisCacheMMU();
 
-        // after this point, delay such as waitUsec() spends more time than the number indicates //
+        /* after this point, delay such as waitUsec() spends more time than the number indicates // */
 
 	/* LED off */
 	cpuLED(0x00);
 
         /* all interrupts disabled */
-	out_w(IT0_IDS0, ~0);		// CPU: all interrupts disabled
+	out_w(IT0_IDS0, ~0);		/* CPU: all interrupts disabled */
 	out_w(IT0_IDS1, ~0);
 	out_w(IT0_IDS2, ~0);
 	out_w(IT3_IPI0_CLR, 0x0000003f);
-	out_w(IT3_IDS0, ~0);		// DSP: all interrupts disabled
+	out_w(IT3_IDS0, ~0);		/* DSP: all interrupts disabled */
 	out_w(IT3_IDS1, ~0);
 	out_w(IT3_IDS2, ~0);
 	out_w(IT0_IPI3_CLR, 0x0000003f);
-	out_w(IT0_FID, 0x00000001);	// FIQ disabled
-	out_w(IT0_LIIR, 0x0000000f);	// internal interrupt disabled
+	out_w(IT0_FID, 0x00000001);	/* FIQ disabled */
+	out_w(IT0_LIIR, 0x0000000f);	/* internal interrupt disabled */
 
         /* power on controller initialization */
 	pmicInit();
