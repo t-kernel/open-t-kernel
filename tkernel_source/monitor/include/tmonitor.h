@@ -28,7 +28,7 @@
 
 /* CPU-dependent definitions */
 #if CPU_ARM
-#  include "arm/cpudepend.h"
+#  include <mach/cpudepend.h>
 #endif
 
 /*

@@ -23,7 +23,7 @@
  */
 
 #include "sysdepend.h"
-#include <arm/em1d512.h>
+#include <mach/em1d512.h>
 
 EXPORT	UW	DipSw;		/* DipSw status */
 

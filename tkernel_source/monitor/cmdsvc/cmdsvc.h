@@ -23,7 +23,7 @@
 #include <tm/tmonitor.h>
 
 #if CPU_ARMv6
-#  include "armv6/cpudep.h"
+#  include <asm/cpudep.h>
 #endif
 
 /* ======================================================================== */

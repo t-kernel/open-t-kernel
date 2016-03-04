@@ -22,7 +22,7 @@
 
 #include <machine.h>
 #include <tk/sysdef.h>
-#include <arm/em1d512.h>
+#include <mach/em1d512.h>
 #include <sys/sysinfo.h>
 
 #include "setup_em1d512.h"

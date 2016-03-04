@@ -34,7 +34,7 @@ typedef struct {
 
 /* ----------------------------------------------------------------------- */
 #elif _TEF_EM1D_
-#  include <arm/em1d512.h>
+#  include <mach/em1d512.h>
    LOCAL const DEFSIO	DefSIO[3] = {
 			{ UARTnBase(UART0) },
 			{ UARTnBase(UART1) },

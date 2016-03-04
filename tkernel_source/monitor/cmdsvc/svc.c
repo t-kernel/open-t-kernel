@@ -105,8 +105,6 @@ EXPORT W procSVC( W fno, W p1, W p2, W p3, W p4 )
 	W	er = E_OK;
 	W	n;
 
-	ret = svcmap[fno](fno, p1, p2, p3, p4);
-
 	switch ( fno ) {
 	  case TM_MONITOR:	/* void tm_monitor( void ) */
 		procCommand(NULL, 0);

@@ -19,7 +19,7 @@
  */
 
 #include "sysdepend.h"
-#include <arm/em1d512.h>
+#include <mach/em1d512.h>
 
 LOCAL	UW	delay64us;		 /* wait for 64 microsec */
 

@@ -22,7 +22,7 @@
 
 #include <machine.h>
 #include <sys/sysinfo.h>
-#include "cpudep.h"
+#include <asm/cpudep.h>
 
 /*
  * Monitor entry (registered as default handler)

@@ -22,7 +22,7 @@
  */
 
 #include "sysdepend.h"
-#include <arm/em1d512.h>
+#include <mach/em1d512.h>
 
 /* used device driver */
 IMPORT	ER	initSIO_ns16550(SIOCB *, const CFGSIO *, W speed);
