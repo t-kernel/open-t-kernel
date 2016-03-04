@@ -76,7 +76,7 @@ LOCAL	UB	*lptr;			/* line pointer */
 #define	tERNUM		0x101		/* error: illegal numeric form */
 
 /* character classficiation */
-#define	isSpace(c)		((c) && (c) <= ' ')
+#define	isSpace(c)	isspace(c)	((c) && (c) <= ' ')
 #define	isNum(c)		((c) >= '0' && (c) <= '9')
 #define	isAlpha(c)		( ((c) >= 'A' && (c) <= 'Z') ||\
 					((c) >= 'a' && (c) <= 'z') )
@@ -1125,7 +1125,7 @@ typedef	struct {
 	UB		snm[4];		/* abbreviated command name */
 	FP		func;		/* processing function */
 	W		para;		/* parameter information and other */
-	const HELP	*help;		/* help message */
+	HELP		*help;		/* help message */
 } CMDTAB;
 
 #define	IGN_TRACE	0x1000

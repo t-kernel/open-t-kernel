@@ -50,6 +50,8 @@ IMPORT BOOL pciSVC( W fno, W p1, W p2, W p3, W *er )		WEAK;
 IMPORT BOOL usbSVC( W fno, W p1, W p2, W p3, W *er )		WEAK;
 IMPORT BOOL sysExtSVC( W fno, W p1, W p2, W p3, W *er )		WEAK;
 
+char version[]="ot-kernel";
+
 /*
  * calling submodule extended SVC function
  */
@@ -102,6 +104,8 @@ EXPORT W procSVC( W fno, W p1, W p2, W p3, W p4 )
 {
 	W	er = E_OK;
 	W	n;
+
+	ret = svcmap[fno](fno, p1, p2, p3, p4);
 
 	switch ( fno ) {
 	  case TM_MONITOR:	/* void tm_monitor( void ) */
