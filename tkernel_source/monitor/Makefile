@@ -9,7 +9,8 @@ INCLUDE = \
 	-Ihwdepend/arm/include \
 	-Iinclude \
 	-Ihwdepend/arm/mach-em1d \
-	-I../include
+	-I../include \
+	-Icmdsvc
 
 CFLAGS := -O2 -mcpu=arm1176jzf-s -msoft-float -mfpu=vfp -mthumb-interwork -mstructure-size-boundary=8 -ffreestanding -Wno-pointer-sign -D_TEF_EM1D_
 
@@ -26,4 +27,3 @@ tmonitor: $(OBJ)
 	arm-none-eabi-objcopy -O binary $@ tm.bin
 clean:
 	rm -f $(OBJ) tmonitor tm.S tm.bin
-	cp cmdsvc/cmdsvc.h cmdsvc.h
