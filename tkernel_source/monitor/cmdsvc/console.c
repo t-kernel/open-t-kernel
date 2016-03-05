@@ -18,7 +18,7 @@
  *       console I/O
  */
 
-#include "cmdsvc.h"
+#include <cmdsvc.h>
 
 /* control characters */
 #define	BS	('H'-'@')

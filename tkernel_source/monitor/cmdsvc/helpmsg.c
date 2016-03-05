@@ -18,7 +18,7 @@
  *       command help message
  */
 
-#include "cmdsvc.h"
+#include <cmdsvc.h>
 #include "help.h"
 
 /*

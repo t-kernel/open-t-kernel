@@ -18,7 +18,7 @@
  *       boot processing
  */
 
-#include "cmdsvc.h"
+#include <cmdsvc.h>
 
 /*
  * boot information

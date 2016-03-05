@@ -17,7 +17,7 @@
  *
  */
 
-#include "../cmdsvc.h"
+#include <cmdsvc.h>
 #include <sys/rominfo.h>
 
 /*

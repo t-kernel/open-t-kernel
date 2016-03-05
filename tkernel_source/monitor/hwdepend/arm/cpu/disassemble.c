@@ -19,7 +19,7 @@
  *       disassember
  */
 
-#include "../cmdsvc.h"
+#include <cmdsvc.h>
 
 LOCAL	UB	*make_hex(UB *str, UB byte)
 {

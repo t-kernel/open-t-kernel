@@ -19,7 +19,7 @@
  *       Register-related operations (after ARMV6)
  */
 
-#include "../cmdsvc.h"
+#include <cmdsvc.h>
 #include <sys/sysinfo.h>
 
 EXPORT	UW	regStack[39 + 10 + 2];

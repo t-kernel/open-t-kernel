@@ -18,7 +18,7 @@
  *       Check address
  */
 
-#include "../cmdsvc.h"
+#include <cmdsvc.h>
 
 LOCAL	UW	validLA;		/* valid logical start address */
 LOCAL	UW	validSz;		/* valid logical address size */

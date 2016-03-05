@@ -18,7 +18,7 @@
  *       load processing
  */
 
-#include "cmdsvc.h"
+#include <cmdsvc.h>
 
 LOCAL	UW	s_addr;			/* start address */
 LOCAL	UW	e_addr;			/* end address + 1 */

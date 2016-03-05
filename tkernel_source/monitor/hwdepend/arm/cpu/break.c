@@ -18,7 +18,7 @@
  *     break/trace processing (after ARMv6)
  */
 
-#include "../cmdsvc.h"
+#include <cmdsvc.h>
 #include <sys/sysinfo.h>
 
 /* SW breakpoint code (BKPT instruction) */

@@ -19,7 +19,7 @@
  *       calculate step address
  */
 
-#include "../cmdsvc.h"
+#include <cmdsvc.h>
 
 #define	aINSTSZ		4		/* ARM instruction size */
 #define	tINSTSZ		2		/* THUMB instruction size */

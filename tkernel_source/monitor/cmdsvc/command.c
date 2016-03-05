@@ -19,7 +19,7 @@
  *       command processing
  */
 
-#include "cmdsvc.h"
+#include <cmdsvc.h>
 #include "help.h"
 #include <tk/dbgspt.h>
 

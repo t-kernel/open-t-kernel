@@ -18,7 +18,7 @@
  *       memory & I/O access processing
  */
 
-#include "cmdsvc.h"
+#include <cmdsvc.h>
 
 /* multi-type memory pointer */
 typedef union {

@@ -18,7 +18,7 @@
  *       Entry to monitor
  */
 
-#include "../cmdsvc.h"
+#include <cmdsvc.h>
 #include <sys/sysinfo.h>
 
 EXPORT W	bootFlag;	/* boot flag */

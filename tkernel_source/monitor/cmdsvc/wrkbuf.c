@@ -22,6 +22,6 @@
  *
  */
 
-#include "cmdsvc.h"
+#include <cmdsvc.h>
 
 EXPORT	UB	wrkBuf[WRKBUF_SZ];
