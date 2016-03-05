@@ -25,7 +25,7 @@
 #include <mach/em1d512.h>
 
 /* used device driver */
-IMPORT	ER	initSIO_ns16550(SIOCB *, const CFGSIO *, W speed);
+IMPORT	ER	initSIO_acd2(SIOCB *, const CFGSIO *, W speed);
 IMPORT	ER	initMemDisk(DISKCB *, const CFGDISK *);
 
 /* memory region definition */
@@ -66,7 +66,7 @@ EXPORT	W	N_NoMemSeg = sizeof(NoMemSeg) / sizeof(MEMSEG);
  *       list in the order of port number
  */
 EXPORT	const	CFGSIO	ConfigSIO[] = {
-	{initSIO_ns16550, 0},
+	{initSIO_acd2, 0},
 };
 
 EXPORT	const W	N_ConfigSIO = sizeof(ConfigSIO) / sizeof(CFGSIO);
