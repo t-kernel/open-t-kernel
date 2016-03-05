@@ -26,3 +26,4 @@ tmonitor: $(OBJ)
 	arm-none-eabi-objcopy -O binary $@ tm.bin
 clean:
 	rm -f $(OBJ) tmonitor tm.S tm.bin
+	cp cmdsvc/cmdsvc.h cmdsvc.h
