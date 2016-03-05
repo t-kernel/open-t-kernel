@@ -1,3 +1,4 @@
+MACH := mach-acd2
 include Makefile.src
 include Makefile.obj
 
@@ -5,10 +6,10 @@ CC := arm-none-eabi-gcc
 LDS := "hwdepend/arm/lib/monitor.ld"
 
 INCLUDE = \
-	-Ihwdepend/arm/mach-em1d/include \
+	-Ihwdepend/arm/$(MACH)/include \
 	-Ihwdepend/arm/include \
 	-Iinclude \
-	-Ihwdepend/arm/mach-em1d \
+	-Ihwdepend/arm/$(MACH) \
 	-I../include \
 	-Icmdsvc
 

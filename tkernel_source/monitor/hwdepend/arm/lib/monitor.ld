@@ -30,7 +30,7 @@ ENTRY(_start)
 
 SECTIONS {
 	__loadaddr = .;
-	_start     = .;
+
 	.eitbra _start : AT(__loadaddr) {
 		__eitbra_start = .;
 		*(EITBRA)

@@ -16,6 +16,9 @@
  *	eitentry.S
  *
  *       EM1D512 (ARM1176JZF-S) exception branch handling
+ *
+ *	eitent-start.S
+ *	Startup Code (reset vector)
  */
 
 #define	_in_asm_source_
@@ -39,13 +42,13 @@
 	.global  _start
 _start:
 	b	startup_entry		// 00 : reset
-	b	undef_entry		// 04 : undefined instruction exception
-	b	svc_entry		// 08 : supervisor call (SVC)
+	b	undef_entry		// 04 : undefined instruction
+	b	svc_entry		// 08 : software interrupt
 	b	iabort_entry		// 0C : prefetch abort
 	b	dabort_entry		// 10 : data abort
-	nop				// 14 : (reserved)
-	b	irq_entry		// 18 : interrupt
-fiq_entry:				// 1C : fast interrupt
+	nop				// 14 : reserved
+	b	irq_entry		// 18 : IRQ
+fiq_entry:				// 1C : FIQ
 /*
  * fast interrupt
  *       calls the handler defined at FIQ interrupt vector unconditionally.
@@ -105,6 +108,7 @@ irq_entry:
 	bxne	lr
 	b	default_entry
 
+#ifdef CONFIG_MACH_EM1D
 /*
  * GPIO interrupt
  *      Interrupt obtained by means of input port interrupt maskable status register (GIO_MST)
@@ -122,7 +126,7 @@ irq_entry:
  *		+---------------+
  *      registers upon handler invocation
  *       ip = vector table address
- *       lr = indeterminate
+ *       lr = indeterminate (return address?)
  */
  .macro gio_e reg, vec
 	ldr	lr, =base(\reg)
@@ -182,6 +186,7 @@ Csym(_gio7Hdr):	gio_o	GIO_MST(GIO_HHH), EITVEC(EIT_GPIO(127))
 	cmp	lr, #0
 	bxne	lr
 	b	default_entry
+#endif
 
 /*
  * undefined instruction
