@@ -2,7 +2,9 @@ MACH := mach-acd2
 include Makefile.src
 include Makefile.obj
 
-CC := arm-none-eabi-gcc
+CROSS_COMPILE ?= arm-none-eabi-
+
+CC := $(CROSS_COMPILE)gcc
 LDS := "hwdepend/arm/lib/monitor.ld"
 
 INCLUDE = \
@@ -23,8 +25,8 @@ CFLAGS := -O2 -mcpu=cortex-r4 -msoft-float -mfpu=vfp -mthumb-interwork -mstructu
 	$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
 
 tmonitor: $(OBJ)
-	arm-none-eabi-gcc $^ -o $@ $(INCLUDE) -T$(LDS) -lgcc -nostdlib -static 
-	arm-none-eabi-objdump -DS $@ >tm.S
-	arm-none-eabi-objcopy -O binary $@ tm.bin
+	$(CROSS_COMPILE)gcc $^ -o $@ $(INCLUDE) -T$(LDS) -lgcc -nostdlib -static 
+	$(CROSS_COMPILE)objdump -DS $@ >tm.S
+	$(CROSS_COMPILE)objcopy -O binary $@ tm.bin
 clean:
 	rm -f $(OBJ) tmonitor tm.S tm.bin
