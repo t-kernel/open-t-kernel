@@ -19,17 +19,24 @@ CFLAGS := -O2 -mcpu=cortex-a8 -msoft-float -mfpu=vfp -mthumb-interwork -mstructu
 
 
 %.o: %.S
-	$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
+	@echo	"     AS\t"	$@
+	@$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
 
 %.o: %.c
-	$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
+	@echo	"     CC\t"	$@
+	@$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
 
 tmonitor: $(OBJ)
-	$(CROSS_COMPILE)gcc $^ -o $@ $(INCLUDE) -T$(LDS) -lgcc -nostdlib -static 
-	$(CROSS_COMPILE)objdump -DS $@ >tm.S
-	$(CROSS_COMPILE)objcopy -O binary $@ tm.bin
+	@$(CROSS_COMPILE)gcc $^ -o $@ $(INCLUDE) -T$(LDS) -lgcc -nostdlib -static 
+	@echo	"     LD\t"	$@
+	@$(CROSS_COMPILE)objdump -DS $@ >tm.S
+	@echo	"    DIS\t"	tm.S
+	@$(CROSS_COMPILE)objcopy -O binary $@ tm.bin
+	@echo	"OBJDUMP\t"	tm.bin
 clean:
-	rm -f $(OBJ) tmonitor tm.S tm.bin
+	@rm -f $(OBJ) tmonitor tm.S tm.bin
+	@echo	"  CLEAN"
 
 prepare:
-	sed 's/^SRC/OBJ/g' Makefile.src | sed 's/[cS]$$/o/g' >Makefile.obj
+	@sed 's/^SRC/OBJ/g' Makefile.src | sed 's/[cS]$$/o/g' >Makefile.obj
+	@echo	"   GEN\tMakefile"
