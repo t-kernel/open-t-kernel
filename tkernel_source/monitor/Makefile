@@ -30,3 +30,6 @@ tmonitor: $(OBJ)
 	$(CROSS_COMPILE)objcopy -O binary $@ tm.bin
 clean:
 	rm -f $(OBJ) tmonitor tm.S tm.bin
+
+prepare:
+	sed 's/^SRC/OBJ/g' Makefile.src | sed 's/[cS]$$/o/g' >Makefile.obj
