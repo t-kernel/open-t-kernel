@@ -15,7 +15,7 @@ INCLUDE = \
 	-I../include \
 	-Icmdsvc
 
-CFLAGS := -O2 -mcpu=cortex-r4 -msoft-float -mfpu=vfp -mthumb-interwork -mstructure-size-boundary=8 -ffreestanding -Wno-pointer-sign -D_TEF_EM1D_
+CFLAGS := -O2 -mcpu=cortex-a8 -msoft-float -mfpu=vfp -mthumb-interwork -mstructure-size-boundary=8 -ffreestanding -Wno-pointer-sign -D_TEF_EM1D_
 
 
 %.o: %.S
