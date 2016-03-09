@@ -1,4 +1,6 @@
 MACH := mach-acd2
+MACH := mach-em1d
+MACH := mach-asm9
 include Makefile.src
 include Makefile.obj
 
@@ -33,6 +35,7 @@ tmonitor: $(OBJ)
 	@echo	"    DIS\t"	tm.S
 	@$(CROSS_COMPILE)objcopy -O binary $@ tm.bin
 	@echo	"OBJDUMP\t"	tm.bin
+	@$(CROSS_COMPILE)nm $@ >tm.map
 clean:
 	@rm -f $(OBJ) tmonitor tm.S tm.bin
 	@echo	"  CLEAN"
