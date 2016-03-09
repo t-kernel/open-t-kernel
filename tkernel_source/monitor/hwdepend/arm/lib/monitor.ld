@@ -29,6 +29,10 @@ OUTPUT_ARCH(arm)
 ENTRY(_start)
 
 SECTIONS {
+
+	__stack_size = 0x100;
+	__heap_size  = 0x100;
+
 	__loadaddr = .;
 
 	.eitbra _start : AT(__loadaddr) {
@@ -116,9 +120,14 @@ SECTIONS {
 			. = ALIGN(0x10);
 		}
 	}
+	.heap ALIGN(0x10) (NOLOAD) : {
+		__heap_top    = .;
+		. = ALIGN(__heap_top + __heap_size, 4); 
+		__heap_bottom = .;
+	}
 	.stack ALIGN(0x10) (NOLOAD) : {
 		__stack_top    = .;
-		. = ALIGN(__stack_top + 0x1000, 4); 
+		. = ALIGN(__stack_top + __stack_size, 4); 
 		__stack_bottom = .;
 	}
 }
