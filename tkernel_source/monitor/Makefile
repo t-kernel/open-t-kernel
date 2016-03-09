@@ -1,13 +1,20 @@
 MACH := mach-em1d
 MACH := mach-asm9
 MACH := mach-acd2
+
+MACH := mach-asm9
+
 include Makefile.src
 -include Makefile.obj
 
 CROSS_COMPILE ?= arm-none-eabi-
 
 CC := $(CROSS_COMPILE)gcc
+ifeq ($(MACH),mach-em1d)
+LDS := "hwdepend/arm/lib/monitor.lnk"
+else
 LDS := "hwdepend/arm/lib/monitor.ld"
+endif
 
 INCLUDE = \
 	-Ihwdepend/arm/$(MACH)/include \
@@ -17,8 +24,25 @@ INCLUDE = \
 	-I../include \
 	-Icmdsvc
 
-CFLAGS := -O2 -mcpu=cortex-a8 -msoft-float -mfpu=vfp -mthumb-interwork -mstructure-size-boundary=8 -ffreestanding -Wno-pointer-sign -D_TEF_EM1D_
+CFLAGS := -O2 -msoft-float -mfpu=vfp -mthumb-interwork -mstructure-size-boundary=8 -ffreestanding -Wno-pointer-sign -D_TEF_EM1D_
 
+ifeq ($(MACH),mach-em1d)
+CFLAGS += -mcpu=arm1176jzf-s
+CFLAGS += -D__TRON_ARCH_ARM=6
+CFLAGS += -DCONFIG_MACH_EM1D
+endif
+
+ifeq ($(MACH),mach-acd2)
+CFLAGS += -mcpu=cortex-r4
+CFLAGS += -D__TRON_ARCH_ARM=7
+CFLAGS += -DCONFIG_MACH_ACD2
+endif
+
+ifeq ($(MACH),mach-asm9) 
+CFLAGS += -mcpu=arm926ej-s
+CFLAGS += -D__TRON_ARCH_ARM=5
+CFLAGS += -DCONFIG_MACH_ASM9
+endif
 
 %.o: %.S
 	@echo	"     AS\t"	$@

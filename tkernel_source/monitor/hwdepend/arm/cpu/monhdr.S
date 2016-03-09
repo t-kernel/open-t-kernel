@@ -76,7 +76,9 @@ Csym(_defaultHdr):
 	mov	r7, lr			// regStack -> r7
 
         // save the status on entry (cpsr, ip)
+#if __TRON_ARCH_ARM__ > 6
 	cpsid	aif			// disable FIQ and IRQ
+#endif
 	stmia	r7!, {r1, ip}		// Entry cspr & ip saved
 
         // restore ip, lr, spsr from the values inside stack and return
@@ -91,23 +93,33 @@ Csym(_defaultHdr):
 	stmia	r7, {r8-r12,sp,lr}^	// usr: r8 .. r12,sp,lr
 	add	r7, r7, #(4*7)
 
+#if __TRON_ARCH_ARM__ > 6
 	cps	#PSR_FIQ
+#endif
 	mrs	r3, spsr
 	stmia	r7!, {r3, r8-r12,sp,lr}	// fiq: spsr, r8 .. r12,sp,lr
 
+#if __TRON_ARCH_ARM__ > 6
 	cps	#PSR_IRQ
+#endif
 	mrs	r3, spsr
 	stmia	r7!, {r3, sp, lr}	// irq: spsr, sp, lr
 
+#if __TRON_ARCH_ARM__ > 6
 	cps	#PSR_ABT
+#endif
 	mrs	r3, spsr
 	stmia	r7!, {r3, sp, lr}	// abt: spsr, sp, lr
 
+#if __TRON_ARCH_ARM__ > 6
 	cps	#PSR_UND
+#endif
 	mrs	r3, spsr
 	stmia	r7!, {r3, sp, lr}	// und: spsr, sp, lr
 
+#if __TRON_ARCH_ARM__ > 6
 	cps	#PSR_SVC
+#endif
 	mrs	r3, spsr
 	stmia	r7!, {r3, sp, lr}	// svc: spsr, sp, lr
 
@@ -159,19 +171,27 @@ Csym(_defaultHdr):
 	msr	spsr_fsxc, r3
 	mov	r1, lr			// r1: lr_svc (used for forcible terminal of processes)
 
+#if __TRON_ARCH_ARM__ > 6
 	cps	#PSR_UND
+#endif
 	ldmdb	r7!, {r3, sp, lr}	// und: spsr, sp, lr
 	msr	spsr_fsxc, r3
 
+#if __TRON_ARCH_ARM__ > 6
 	cps	#PSR_ABT
+#endif
 	ldmdb	r7!, {r3, sp, lr}	// abt: spsr, sp, lr
 	msr	spsr_fsxc, r3
 
+#if __TRON_ARCH_ARM__ > 6
 	cps	#PSR_IRQ
+#endif
 	ldmdb	r7!, {r3, sp, lr}	// irq: spsr, sp, lr
 	msr	spsr_fsxc, r3
 
+#if __TRON_ARCH_ARM__ > 6
 	cps	#PSR_FIQ
+#endif
 	ldmdb	r7!, {r3, r8-r12,sp,lr}	// fiq: spsr, r8 .. r12,sp,lr
 	msr	spsr_fsxc, r3
 
@@ -206,7 +226,9 @@ Csym(_defaultHdr):
 	ldmdb	r7, {r0-r7}		// r0 .. r7
 
         // return from monitor
+#if __TRON_ARCH_ARM__ > 6
 	rfefd	sp!
+#endif
 
 /* ------------------------------------------------------------------------ */
 
