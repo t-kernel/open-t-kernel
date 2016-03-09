@@ -45,6 +45,8 @@ EXPORT void procReset( void )
 	W	i;
 	W	speed;
 
+	return;
+
 	DispProgress(0x01);
 
         /* system basic set up */

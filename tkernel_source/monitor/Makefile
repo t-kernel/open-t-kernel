@@ -1,8 +1,8 @@
-MACH := mach-acd2
 MACH := mach-em1d
 MACH := mach-asm9
+MACH := mach-acd2
 include Makefile.src
-include Makefile.obj
+-include Makefile.obj
 
 CROSS_COMPILE ?= arm-none-eabi-
 

@@ -32,6 +32,9 @@
 #include <mach/em1d512.h>  
 #include <setup_em1d512.h>
 
+#define Mode_IRQ              0x12
+#define Mode_SVC              0x13
+#define GLOBAL_VARIABLE_AREA  0xFF000
 
 /*----------------------------------------------------------------------
         T-Monitor boot processing
@@ -40,6 +43,7 @@
 	.globl	startup_entry
 startup_entry:
 @ ARM lowlevel initial
+#if 0
 // SVC mode, FIQ/IRQ interrupt disabled
 	mov	r0, #(PSR_SVC | PSR_I | PSR_F)
 	msr	cpsr_fsxc, r0
@@ -56,12 +60,13 @@ startup_entry:
 	ldr	r1, =0x30800000
 	orr	r0, r0, r1
 	mcr	p15, 0, r0, cr1, cr0, 0
-
+#endif
 @ Machine/Board initial
 // Setup clock divider
 	bl	startup_entry_lowlevel
 
 @ ARM initial cp15 and enable mmu.
+#if 0
 // initialization of CP15
 	ldr	r0, =0x00000004
 	mcr	p15, 0, r0, cr2, cr0, 2		// TTBCR
@@ -87,6 +92,7 @@ startup_entry:
 	orr	r0, r0, #0x00000001
 	mcr	p15, 0, r0, cr1, cr0, 0
 	isb
+#endif
 
 // perform reset processing
 @ no return jump
@@ -103,11 +109,22 @@ startup_entry:
 	.globl	reset_entry
 	.type	reset_entry, %function
 reset_entry:
+@===================================================================
+@ Setup stacks (IRQ and SVC)
+@===================================================================
+    msr     CPSR_c, #Mode_IRQ
+    ldr     SP, =__stack_bottom
+
+    ldr     r1, =__stack_bottom
+    sub     r0, r1, #0x800
+
+    msr     CPSR_c, #Mode_SVC
+    mov     SP, r0
 
 // SVC mode, FIQ/IRQ interrupt disabled
 
 // Switch to T-Monitor stack
-	ldr	sp, =__stack_bottom
+//	ldr	sp, =__stack_bottom
 
 // not in effect: cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
@@ -124,7 +141,7 @@ reset_entry:
 
 // reset processing
 	bl	procReset
-
+#if 0
 // clear registers & initialize stack pointer
 	ldr	r7, =__stack_top	// since it is 0-cleared, why not use it.
 
@@ -168,7 +185,7 @@ reset_entry:
 	msr	cpsr_fsxc, r0
 
 	ldmia	r7, {r0-r7}		// r0-r7
-
+#endif
 // enter monitor by means of SVC #0 instruction (SVC mode)
   resetLoop:
 	svc	#0
