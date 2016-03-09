@@ -9,7 +9,10 @@ include Makefile.src
 
 CROSS_COMPILE ?= arm-none-eabi-
 
-CC := $(CROSS_COMPILE)gcc
+GNUCC := $(CROSS_COMPILE)gcc
+ARMCC := armcc
+CC := $(GNUCC)
+
 ifeq ($(MACH),mach-em1d)
 LDS := "hwdepend/arm/lib/monitor.lnk"
 else
@@ -60,6 +63,7 @@ tmonitor: $(OBJ)
 	@$(CROSS_COMPILE)objcopy -O binary $@ tm.bin
 	@echo	"OBJDUMP\t"	tm.bin
 	@$(CROSS_COMPILE)nm $@ >tm.map
+	@echo "SYSMAP\t"	tm.map
 clean:
 	@rm -f $(OBJ) tmonitor tm.S tm.bin
 	@echo	"  CLEAN"
