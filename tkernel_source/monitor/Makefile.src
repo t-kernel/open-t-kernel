@@ -1,3 +1,19 @@
+
+ifeq ($(MACH),mach-m150)
+SRC := hwdepend/mips/mach-m150/system.c
+SRC := hwdepend/mips/mach-m150/boot/eitent.S
+SRC := hwdepend/mips/mach-m150/sio.c
+SRC := hwdepend/mips/mach-m150/lib/monitor.lnk
+SRC := hwdepend/mips/mach-m150/m150_serial.c
+SRC := hwdepend/mips/mach-m150/command.c
+SRC := hwdepend/mips/mach-m150/console.c
+SRC := hwdepend/mips/mach-m150/mach/include/device.h
+SRC := hwdepend/mips/mach-m150/tmonitor.h
+SRC := hwdepend/mips/mach-m150/string.c
+SRC := hwdepend/mips/mach-m150/startup.c
+SRC := hwdepend/mips/mach-m150/svc.c
+SRC := hwdepend/mips/mach-m150/printf.c
+else
 SRC := hwdepend/arm/$(MACH)/startup.c
 SRC += hwdepend/arm/$(MACH)/hwinfo.c
 SRC += driver/sio/sio.c
@@ -55,3 +71,4 @@ SRC += driver/flash/cfi_16x1.c
 SRC += driver/flash/cfi.c
 SRC += driver/memdisk/memdsk.c
 SRC += tmmain/version.c
+endif

@@ -1,8 +1,11 @@
-MACH := mach-em1d
-MACH := mach-asm9
-MACH := mach-acd2
 
-MACH := mach-asm9
+ARCH := arm
+
+# MACH := mach-em1d
+# MACH := mach-asm9
+# MACH := mach-acd2
+
+MACH ?= mach-em1d
 
 include Makefile.src
 -include Makefile.obj
@@ -28,6 +31,8 @@ INCLUDE = \
 	-Icmdsvc
 
 CFLAGS := -O2 -msoft-float -mfpu=vfp -mthumb-interwork -mstructure-size-boundary=8 -ffreestanding -Wno-pointer-sign -D_TEF_EM1D_
+
+-include hwdepend/$(ARCH)/Makefile
 
 ifeq ($(MACH),mach-em1d)
 CFLAGS += -mcpu=arm1176jzf-s
@@ -63,7 +68,7 @@ tmonitor: $(OBJ)
 	@$(CROSS_COMPILE)objcopy -O binary $@ tm.bin
 	@echo	"OBJDUMP\t"	tm.bin
 	@$(CROSS_COMPILE)nm $@ >tm.map
-	@echo "SYSMAP\t"	tm.map
+	@echo   " SYSMAP\t"	tm.map
 clean:
 	@rm -f $(OBJ) tmonitor tm.S tm.bin
 	@echo	"  CLEAN"

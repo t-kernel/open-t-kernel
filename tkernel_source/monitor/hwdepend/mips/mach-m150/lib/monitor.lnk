@@ -1,0 +1,103 @@
+/*
+ *----------------------------------------------------------------------
+ *    T-Kernel 2.0 Software Package
+ *
+ *    Copyright 2011 by Ken Sakamura.
+ *    This software is distributed under the latest version of T-License 2.x.
+ *----------------------------------------------------------------------
+ *
+ *    Released by T-Engine Forum(http://www.t-engine.org/) at 2011/05/17.
+ *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
+ *
+ *    Modified for APP-M150(MIPS32) at 2015/10/19.
+ *
+ *----------------------------------------------------------------------
+ */
+
+/*
+ *	monitor.lnk (APP-M150)
+ *
+ *       link specification for monitor
+ */
+
+OUTPUT_ARCH(mips)
+ENTRY(_start)
+
+SECTIONS
+{
+	.eitent 0x80000000 : {
+		_eitent_start = .;
+		*(.eitent)
+		. = ALIGN(0x10);
+	}
+	__text_org = .;
+	.text __text_org : {
+		_ftext = .;
+		KEEP (*(.init))
+		*(.text)
+		*(.text.*)
+		*(.stub)
+		*(.gnu.warning)
+		*(.gnu.linkonce.t.*)
+		*(.mips16.fn.*)
+		*(.mips16.call.*)
+		KEEP (*(.fini))
+		PROVIDE (__etext = .);
+		PROVIDE (_etext = .);
+		PROVIDE (etext = .);
+		*(.rodata)
+		*(.rodata.*)
+		*(.gnu.linkonce.r.*)
+		*(.rodata1)
+		. = ALIGN(0x10);
+	} =0
+	__data_org = . ;
+	.data __data_org : {
+		__data_start = .;
+		_fdata = .;
+		*(.reginfo)
+		*(.data)
+		*(.data.*)
+		*(.gnu.linkonce.d.*)
+		SORT(CONSTRUCTORS)
+		*(.data1)
+		KEEP (*(.eh_frame))
+		*(.gcc_except_table)
+		KEEP (*crtbegin.o(.ctors))
+		KEEP (*(EXCLUDE_FILE (*crtend.o ) .ctors))
+		KEEP (*(SORT(.ctors.*)))
+		KEEP (*(.ctors))
+		KEEP (*crtbegin.o(.dtors))
+		KEEP (*(EXCLUDE_FILE (*crtend.o ) .dtors))
+		KEEP (*(SORT(.dtors.*)))
+		KEEP (*(.dtors))
+		*(.got.plt)
+		*(.got)
+		*(.sdata)
+		*(.sdata.*)
+		*(.gnu.linkonce.s.*)
+		*(.lit8)
+		*(.lit4)
+		. = ALIGN(0x10);
+		_edata = .;
+		PROVIDE (edata = .);
+	}
+	.bss : {
+		__bss_start = .;
+		PROVIDE (__sbss_start = .);
+		PROVIDE (___sbss_start = .);
+		*(.sbss)
+		*(.sbss.*)
+		*(.gnu.linkonce.sb.*)
+		*(.scommon)
+		PROVIDE (__sbss_end = .);
+		PROVIDE (___sbss_end = .);
+		*(.bss)
+		*(.bss.*)
+		*(.gnu.linkonce.b.*)
+		*(COMMON)
+		. = ALIGN(0x10);
+		_end = .;
+		PROVIDE (end = .);
+	}
+}
