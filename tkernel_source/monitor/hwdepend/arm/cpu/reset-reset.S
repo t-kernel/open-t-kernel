@@ -105,33 +105,14 @@ startup_entry:
 reset_entry:
 
 // SVC mode, FIQ/IRQ interrupt disabled
-	mov	r0, #(PSR_SVC | PSR_I | PSR_F)
-	msr	cpsr_fsxc, r0
 
 // Switch to T-Monitor stack
 	ldr	sp, =__stack_bottom
 
 // not in effect: cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
-	dsb
-	mrc	p15, 0, r0, cr1, cr0, 0
-	ldr	r1, =~0x01003f84
-	and	r0, r0, r1
-	ldr	r1, =0x30800000
-	orr	r0, r0, r1
-	mcr	p15, 0, r0, cr1, cr0, 0
-
-	isb
-	mcr	p15, 0, r0, cr8, cr7, 0		// I/D TLB invalidate
-	dsb
-	bl	Csym(FlushCache)		// Clean/invalidate I/D cache
 
 // Turn on VFP
-	mrc	p15, 0, r0, cr1, cr0, 2
-	orr	r0, r0, #0x00f00000	// VFP(CP11,CP10) enable
-	bic	r0, r0, #0xc0000000	// Should be Zero
-	mcr	p15, 0, r0, cr1, cr0, 2
-	isb			// Flush Prefetch buffer
 
 @Setup C environment
 	bl	reset_entry_setupc
