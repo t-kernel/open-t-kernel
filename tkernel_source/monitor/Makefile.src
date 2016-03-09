@@ -1,6 +1,6 @@
 SRC := hwdepend/arm/$(MACH)/startup.c
 SRC += hwdepend/arm/$(MACH)/hwinfo.c
-SRC += hwdepend/arm/$(MACH)/sio.c
+SRC += driver/sio/sio.c
 SRC += hwdepend/arm/$(MACH)/diskio.c
 SRC += hwdepend/arm/$(MACH)/eitproc.c
 SRC += hwdepend/arm/$(MACH)/cpuctrl.c
