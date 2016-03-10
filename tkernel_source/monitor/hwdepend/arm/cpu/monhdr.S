@@ -278,6 +278,8 @@ Csym(_defaultHdr):
         // return from monitor
 #if __TRON_ARCH_ARM__ >= 6
 	rfefd	sp!
+#else
+	pop	{pc}
 #endif
 
 /* ------------------------------------------------------------------------ */

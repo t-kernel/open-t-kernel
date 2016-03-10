@@ -32,41 +32,44 @@
 #include <mach/em1d512.h>  
 #include <setup_em1d512.h>
 
-#define Mode_IRQ              0x12
-#define Mode_SVC              0x13
-#define GLOBAL_VARIABLE_AREA  0xFF000
 
 /*----------------------------------------------------------------------
         T-Monitor boot processing
 ----------------------------------------------------------------------*/
 	.section .startup
 	.globl	startup_entry
+	.type	startup_entry, %function
 startup_entry:
 @ ARM lowlevel initial
-#if 0
 // SVC mode, FIQ/IRQ interrupt disabled
 	mov	r0, #(PSR_SVC | PSR_I | PSR_F)
 	msr	cpsr_fsxc, r0
 
 // use On-Chip SRAM as stack area
+#if CONFIG_MACH_EM1D
+	ldr	sp, =0xa0020000
+#else
 	ldr	sp, =0
+#endif
 
 // not in effect: MMU, cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
+#if __TRON_ARCH_ARM__ >= 6
 	dsb
+#else
+	mcr	p15, 0, r0, cr7, c10, 4
+#endif
 	mrc	p15, 0, r0, cr1, cr0, 0
 	ldr	r1, =~0x01003f85
 	and	r0, r0, r1
 	ldr	r1, =0x30800000
 	orr	r0, r0, r1
 	mcr	p15, 0, r0, cr1, cr0, 0
-#endif
 @ Machine/Board initial
 // Setup clock divider
 	bl	startup_entry_lowlevel
 
 @ ARM initial cp15 and enable mmu.
-#if 0
 // initialization of CP15
 	ldr	r0, =0x00000004
 	mcr	p15, 0, r0, cr2, cr0, 2		// TTBCR
@@ -83,19 +86,32 @@ startup_entry:
 	mcr	p15, 0, r0, cr3, cr0, 0		// Domain access
 
 // MMU enable
+#if __TRON_ARCH_ARM__ >= 6
 	dsb
+#else
+	mcr	p15, 0, r0, cr7, c10, 4
+#endif
 	mcr	p15, 0, r0, cr8, cr7, 0		// I/D TLB invalidate
 	mcr	p15, 0, r0, cr7, cr5, 6		// invalidate BTC
+#if __TRON_ARCH_ARM__ >= 6
 	dsb
 	isb
+#else
+	mcr	p15, 0, r0, cr7, c10, 4
+	mcr	p15, 0, r0, cr7, c5, 4
+#endif
+
 	mrc	p15, 0, r0, cr1, cr0, 0
 	orr	r0, r0, #0x00000001
 	mcr	p15, 0, r0, cr1, cr0, 0
+#if __TRON_ARCH_ARM__ >= 6
 	isb
-#endif
+#else
+	mcr	p15, 0, r0, cr7, c5, 4
 
+#endif
 // perform reset processing
-@ no return jump
+@ no return jump?
 	ldr	pc, =reset_entry
 @ End of startup_entry
 	.pool
@@ -109,39 +125,61 @@ startup_entry:
 	.globl	reset_entry
 	.type	reset_entry, %function
 reset_entry:
-@===================================================================
-@ Setup stacks (IRQ and SVC)
-@===================================================================
-    msr     CPSR_c, #Mode_IRQ
-    ldr     SP, =__stack_bottom
-
-    ldr     r1, =__stack_bottom
-    sub     r0, r1, #0x800
-
-    msr     CPSR_c, #Mode_SVC
-    mov     SP, r0
 
 // SVC mode, FIQ/IRQ interrupt disabled
+	mov	r0, #(PSR_SVC | PSR_I | PSR_F)
+	msr	cpsr_fsxc, r0
 
 // Switch to T-Monitor stack
 //	ldr	sp, =__stack_bottom
 
 // not in effect: cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
+#if	__TRON_ARCH_ARM__ >= 6
+	dsb
+#else
+	mcr	p15, 0, r0, cr7, c10, 4
+#endif
+	mrc	p15, 0, r0, cr1, cr0, 0
+	ldr	r1, =~0x01003f84
+	and	r0, r0, r1
+	ldr	r1, =0x30800000
+	orr	r0, r0, r1
+	mcr	p15, 0, r0, cr1, cr0, 0
 
+#if	__TRON_ARCH_ARM__ >= 6
+	isb
+#else
+	mcr	p15, 0, r0, cr7, c5, 4
+#endif
+	mcr	p15, 0, r0, cr8, cr7, 0		// I/D TLB invalidate
+#if	__TRON_ARCH_ARM__ >= 6
+	dsb
+#else
+	mcr	p15, 0, r0, cr7, c10, 4
+#endif
+	bl	Csym(FlushCache)		// Clean/invalidate I/D cache
 // Turn on VFP
+	mrc	p15, 0, r0, cr1, cr0, 2
+	orr	r0, r0, #0x00f00000	// VFP(CP11,CP10) enable
+	bic	r0, r0, #0xc0000000	// Should be Zero
+	mcr	p15, 0, r0, cr1, cr0, 2
+#if	__TRON_ARCH_ARM__ >= 6
+	isb				// Flush Prefetch buffer
+#else
+	mcr	p15, 0, r0, cr7, c5, 4
+#endif
 
-@Setup C environment
-	bl	reset_entry_setupc
 // initialize data area
-// copy in unit of 16 bytes 
+
 // clear bss and stack area
 // clear in units of 16 bytes
+	bl	reset_entry_setupc
 @ End of setup C
 
 // reset processing
 	bl	procReset
-#if 0
+
 // clear registers & initialize stack pointer
 	ldr	r7, =__stack_top	// since it is 0-cleared, why not use it.
 
@@ -170,7 +208,7 @@ reset_entry:
 	ldr	sp, =__stack_top + 48	// und: sp, lr, spsr
 	mov	lr, #0
 	msr	spsr_fsxc, lr
-	@@@@@@@@
+
         // clear VFP
 	mov	r0, #0x40000000		// EX=0,EN=1,SBZ/other flags = 0
 	fmxr	fpexc, r0
@@ -185,7 +223,7 @@ reset_entry:
 	msr	cpsr_fsxc, r0
 
 	ldmia	r7, {r0-r7}		// r0-r7
-#endif
+
 // enter monitor by means of SVC #0 instruction (SVC mode)
   resetLoop:
 	svc	#0
