@@ -78,6 +78,11 @@ Csym(_defaultHdr):
         // save the status on entry (cpsr, ip)
 #if __TRON_ARCH_ARM__ > 6
 	cpsid	aif			// disable FIQ and IRQ
+#else
+	mrs	r0, spsr
+	bic	r0, #0x80	@ irq
+	bic	r0, #0x40	@ fiq
+	msr	spsr, r0
 #endif
 	stmia	r7!, {r1, ip}		// Entry cspr & ip saved
 
@@ -95,30 +100,55 @@ Csym(_defaultHdr):
 
 #if __TRON_ARCH_ARM__ >= 6
 	cps	#PSR_FIQ
+#else
+	mrs     r3,cpsr
+	bic     r3,r3,#0x1f
+ 	orr     r3,r3,#0x11
+ 	msr     cpsr,r3
 #endif
 	mrs	r3, spsr
 	stmia	r7!, {r3, r8-r12,sp,lr}	// fiq: spsr, r8 .. r12,sp,lr
 
 #if __TRON_ARCH_ARM__ >= 6
 	cps	#PSR_IRQ
+#else
+	mrs     r3,cpsr
+	bic     r3,r3,#0x1f
+ 	orr     r3,r3,#0x12
+ 	msr     cpsr,r3
 #endif
 	mrs	r3, spsr
 	stmia	r7!, {r3, sp, lr}	// irq: spsr, sp, lr
 
 #if __TRON_ARCH_ARM__ >= 6
 	cps	#PSR_ABT
+#else
+	mrs     r3,cpsr
+	bic     r3,r3,#0x1f
+ 	orr     r3,r3,#0x17
+ 	msr     cpsr,r3
 #endif
 	mrs	r3, spsr
 	stmia	r7!, {r3, sp, lr}	// abt: spsr, sp, lr
 
 #if __TRON_ARCH_ARM__ >= 6
 	cps	#PSR_UND
+#else
+	mrs     r3,cpsr
+	bic     r3,r3,#0x1f
+ 	orr     r3,r3,#0x1B
+ 	msr     cpsr,r3
 #endif
 	mrs	r3, spsr
 	stmia	r7!, {r3, sp, lr}	// und: spsr, sp, lr
 
 #if __TRON_ARCH_ARM__ >= 6
 	cps	#PSR_SVC
+#else
+	mrs     r3,cpsr
+	bic     r3,r3,#0x1f
+ 	orr     r3,r3,#0x13
+ 	msr     cpsr,r0
 #endif
 	mrs	r3, spsr
 	stmia	r7!, {r3, sp, lr}	// svc: spsr, sp, lr
@@ -173,24 +203,44 @@ Csym(_defaultHdr):
 
 #if __TRON_ARCH_ARM__ >= 6
 	cps	#PSR_UND
+#else
+	mrs     r3,cpsr
+	bic     r3,r3,#0x1f
+ 	orr     r3,r3,#0x1B
+ 	msr     cpsr,r3
 #endif
 	ldmdb	r7!, {r3, sp, lr}	// und: spsr, sp, lr
 	msr	spsr_fsxc, r3
 
 #if __TRON_ARCH_ARM__ >= 6
 	cps	#PSR_ABT
+#else
+	mrs     r3,cpsr
+	bic     r3,r3,#0x1f
+ 	orr     r3,r3,#0x17
+ 	msr     cpsr,r3
 #endif
 	ldmdb	r7!, {r3, sp, lr}	// abt: spsr, sp, lr
 	msr	spsr_fsxc, r3
 
 #if __TRON_ARCH_ARM__ >= 6
 	cps	#PSR_IRQ
+#else
+	mrs     r3,cpsr
+	bic     r3,r3,#0x1f
+ 	orr     r3,r3,#0x12
+ 	msr     cpsr,r3
 #endif
 	ldmdb	r7!, {r3, sp, lr}	// irq: spsr, sp, lr
 	msr	spsr_fsxc, r3
 
 #if __TRON_ARCH_ARM__ >= 6
 	cps	#PSR_FIQ
+#else
+	mrs     r3,cpsr
+	bic     r3,r3,#0x1f
+ 	orr     r3,r3,#0x11
+ 	msr     cpsr,r3
 #endif
 	ldmdb	r7!, {r3, r8-r12,sp,lr}	// fiq: spsr, r8 .. r12,sp,lr
 	msr	spsr_fsxc, r3

@@ -5,7 +5,7 @@ ARCH := arm
 # MACH := mach-asm9
 # MACH := mach-acd2
 
-MACH ?= mach-em1d
+MACH ?= mach-asm9
 
 include Makefile.src
 -include Makefile.obj
@@ -34,6 +34,12 @@ CFLAGS := -O2 -msoft-float -mfpu=vfp -mthumb-interwork -mstructure-size-boundary
 
 -include hwdepend/$(ARCH)/Makefile
 
+ifeq ($(ARCH),arm)
+CFLAGS += -D__ARM__
+endif
+ifeq ($(ARCH),mips)
+CFLAGS += -D__MIPS__
+endif
 ifeq ($(MACH),mach-em1d)
 CFLAGS += -mcpu=arm1176jzf-s
 CFLAGS += -D__TRON_ARCH_ARM=6

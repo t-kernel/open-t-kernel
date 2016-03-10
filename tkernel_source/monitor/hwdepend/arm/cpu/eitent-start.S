@@ -25,7 +25,9 @@
 
 #include <machine.h>
 #include <tk/sysdef.h>
+@#ifdef CONFIG_MACH_EM1D
 #include <mach/em1d512.h>
+@#endif
 #include <sys/sysinfo.h>
 
 #define	base(n)		( (n) & 0xfffff000 )
@@ -81,10 +83,12 @@ irq_entry:
 	sub	lr, lr, #4		// return address adjustment
 #if __TRON_ARCH_ARM__ >= 6
 	srsdb	sp!, #PSR_IRQ		// save registers
-#else
-
-#endif
 	stmfd	sp!, {r3, ip}
+#else
+	push	{r3, ip, lr}
+	mrs	r3, spsr
+	push	{r3}
+#endif
 
 	ldr	lr, =base(AINTBase)
 	ldr	ip, =EITVEC(EIT_IRQ(95))
@@ -130,7 +134,7 @@ irq_entry:
  *		+---------------+
  *      registers upon handler invocation
  *       ip = vector table address
- *       lr = indeterminate (return address?)
+ *       lr = indeterminate
  */
  .macro gio_e reg, vec
 	ldr	lr, =base(\reg)
@@ -206,12 +210,12 @@ Csym(_gio7Hdr):	gio_o	GIO_MST(GIO_HHH), EITVEC(EIT_GPIO(127))
 undef_entry:
 #if __TRON_ARCH_ARM__ >= 6
 	srsdb	sp!, #PSR_UND		// save registers
-#else
-
-#endif
-
 	stmfd	sp!, {ip}
-
+#else
+	push	{ip, lr}
+	mrs	ip, spsr
+	push	{ip}
+#endif
 	ldr	ip, =base(EITVEC(EIT_UNDEF))
 	ldr	lr, [ip, #offs(EITVEC(EIT_UNDEF))]!
 	cmp	lr, #0
@@ -234,14 +238,14 @@ undef_entry:
 svc_entry:
 #if __TRON_ARCH_ARM__ >= 6
 	srsdb	sp!, #PSR_SVC		// save registers
-
-#else
-
-#endif
 	stmfd	sp!, {ip}
-
-
+	
 	mrs	ip, spsr
+#else
+	push	{ip}
+	mrs	ip,spsr
+	push	{ip}
+#endif
 	tst	ip, #PSR_T
 	ldrneh	ip, [lr, #-2]		// Thumb instruction
 	ldreq	ip, [lr, #-4]		// ARM instruction
@@ -273,10 +277,12 @@ iabort_entry:
 	sub	lr, lr, #4		// return address adjustment
 #if __TRON_ARCH_ARM__ >= 6
 	srsdb	sp!, #PSR_ABT		// save registers
-#else
-
-#endif
 	stmfd	sp!, {ip}
+#else
+	push	{ip}
+	mrs	ip, spsr
+	push	{ip}
+#endif
 
 	mrc	p15, 0, ip, c5, c0, 1	// IFSR
 	tst	ip, #0x400		// FS[4]
@@ -306,11 +312,13 @@ iabort_entry:
 dabort_entry:
 	sub	lr, lr, #8		// return address adjustment
 #if __TRON_ARCH_ARM__ >= 6
-	srsdb	sp!, #PSR_DAB		// save registers
-#else
-
-#endif
+	srsdb	sp!, #PSR_ABT		// save registers
 	stmfd	sp!, {ip}
+#else
+	push	{ip}
+	mrs	ip, spsr
+	push	{ip}
+#endif
 
 	mrc	p15, 0, ip, c5, c0, 0	// DFSR
 	tst	ip, #0x400		// FS[4]
@@ -335,5 +343,6 @@ default_entry:
 	ldr	lr, =base(EITVEC(EIT_DEFAULT))
 	ldr	lr, [lr, #offs(EITVEC(EIT_DEFAULT))]
 	bx	lr
-
+#ifdef CONFIG_MACH_ASM9
+#endif
 	.pool
