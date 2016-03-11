@@ -50,13 +50,13 @@ startup_entry:
 	orr	r0, #0xd3
 	msr	cpsr, r0
 #endif
-bl startup_entry_lowlevel @@@@@@@@@@@
+
 // use On-Chip SRAM as stack area
 #if CONFIG_MACH_EM1D
 	ldr	sp, =0xa0020000
 #endif
 #if CONFIG_MACH_ASM9
-	ldr	sp, =0x40002000
+	ldr	sp, =0x40002000		@ shall we do it some where else?
 	sub	sp, #0x10
 #endif
 
@@ -73,10 +73,10 @@ bl startup_entry_lowlevel @@@@@@@@@@@
 	orr	r0, r0, r1
 	mcr	p15, 0, r0, cr1, cr0, 0
 #else
+	mov	r0, #0
 1:	mrc	p15, 0, r0, c7, c10, 3	@ flush D cache before disabling it
 	bne	1b
 
-	mov	r0, #0
 	mcr	p15, 0, r0, c8, c7, 0	@ invalidate TLB
 	mcr	p15, 0, r0, c7, c5, 0	@ invalidate I cache
 
