@@ -29,9 +29,8 @@
 #include <tk/sysdef.h>
 #include <sys/sysinfo.h>
 
-#include <mach/em1d512.h>  
+#include <mach/em1d512.h>
 #include <setup_em1d512.h>
-
 
 /*----------------------------------------------------------------------
         T-Monitor boot processing
@@ -42,29 +41,52 @@
 startup_entry:
 @ ARM lowlevel initial
 // SVC mode, FIQ/IRQ interrupt disabled
+#if __TRON_ARM_ARCH__ >= 6
 	mov	r0, #(PSR_SVC | PSR_I | PSR_F)
 	msr	cpsr_fsxc, r0
-
+#else
+	mrs	r0, cpsr
+	bic	r0, #0x1f
+	orr	r0, #0xd3
+	msr	cpsr, r0
+#endif
+bl startup_entry_lowlevel @@@@@@@@@@@
 // use On-Chip SRAM as stack area
 #if CONFIG_MACH_EM1D
 	ldr	sp, =0xa0020000
-#else
-	ldr	sp, =0
+#endif
+#if CONFIG_MACH_ASM9
+	ldr	sp, =0x40002000
+	sub	sp, #0x10
 #endif
 
 // not in effect: MMU, cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
+
 #if __TRON_ARM_ARCH__ >= 6
 	dsb
-#else
 	mcr	p15, 0, r0, cr7, c10, 4
-#endif
 	mrc	p15, 0, r0, cr1, cr0, 0
 	ldr	r1, =~0x01003f85
 	and	r0, r0, r1
 	ldr	r1, =0x30800000
 	orr	r0, r0, r1
 	mcr	p15, 0, r0, cr1, cr0, 0
+#else
+1:	mrc	p15, 0, r0, c7, c10, 3	@ flush D cache before disabling it
+	bne	1b
+
+	mov	r0, #0
+	mcr	p15, 0, r0, c8, c7, 0	@ invalidate TLB
+	mcr	p15, 0, r0, c7, c5, 0	@ invalidate I cache
+
+	mrc     p15, 0, r0, c1, c0, 0
+	bic     r0, r0, #0x00000300
+	bic     r0, r0, #0x00000087
+	bic     r0, r0, #0x00002000	@ disable high vector
+	orr     r0, r0, #0x00000002
+	mcr     p15, 0, r0, c1, c0, 0
+#endif
 @ Machine/Board initial
 // Setup clock divider
 	bl	startup_entry_lowlevel
@@ -127,37 +149,53 @@ startup_entry:
 reset_entry:
 
 // SVC mode, FIQ/IRQ interrupt disabled
+#if __TRON_ARM_ARCH__ >= 6
 	mov	r0, #(PSR_SVC | PSR_I | PSR_F)
 	msr	cpsr_fsxc, r0
+#else
+	mrs	r0, cpsr
+	bic	r0, #0x1f
+	orr	r0, #0xd3
+	msr	cpsr, r0
+#endif
 
 // Switch to T-Monitor stack
 //	ldr	sp, =__stack_bottom
 
 // not in effect: cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
-#if	__TRON_ARM_ARCH__ >= 6
+
+
+#if __TRON_ARM_ARCH__ >= 6
 	dsb
-#else
-	mcr	p15, 0, r0, cr7, c10, 4
-#endif
 	mrc	p15, 0, r0, cr1, cr0, 0
 	ldr	r1, =~0x01003f84
 	and	r0, r0, r1
 	ldr	r1, =0x30800000
 	orr	r0, r0, r1
-	mcr	p15, 0, r0, cr1, cr0, 0
-
-#if	__TRON_ARM_ARCH__ >= 6
+	mcr	p15, 0, r0, cr1, cr0, 0	
 	isb
-#else
-	mcr	p15, 0, r0, cr7, c5, 4
-#endif
 	mcr	p15, 0, r0, cr8, cr7, 0		// I/D TLB invalidate
-#if	__TRON_ARM_ARCH__ >= 6
 	dsb
 #else
+1:	mrc	p15, 0, r0, c7, c10, 3	@ flush D cache before disabling it
+	bne	1b
+
+	mov	r0, #0
+	mcr	p15, 0, r0, c8, c7, 0	@ invalidate TLB
+	mcr	p15, 0, r0, c7, c5, 0	@ invalidate I cache
+
+	mrc     p15, 0, r0, c1, c0, 0
+	bic     r0, r0, #0x00000300
+	bic     r0, r0, #0x00000087
+	bic     r0, r0, #0x00002000	@ disable high vector
+	orr     r0, r0, #0x00000002
+	mcr     p15, 0, r0, c1, c0, 0
+
+	mcr	p15, 0, r0, cr7, c5, 4
 	mcr	p15, 0, r0, cr7, c10, 4
 #endif
+
 	bl	Csym(FlushCache)		// Clean/invalidate I/D cache
 // Turn on VFP
 	mrc	p15, 0, r0, cr1, cr0, 2
@@ -170,8 +208,8 @@ reset_entry:
 	mcr	p15, 0, r0, cr7, c5, 4
 #endif
 
+@ go setup C
 // initialize data area
-
 // clear bss and stack area
 // clear in units of 16 bytes
 	bl	reset_entry_setupc
