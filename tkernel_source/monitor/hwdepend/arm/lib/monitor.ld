@@ -20,7 +20,7 @@
 
 MEMORY
 {
-	RAM0 (rxw) : ORIGIN = 0x00000000, LENGTH = 0x00080000
+	RAM0 (rxw) : ORIGIN = 0x00000000, LENGTH = 0x02000000
 	ROM0 (rx)  : ORIGIN = 0x80000000, LENGTH = 0x00080000
 }
 
@@ -30,8 +30,8 @@ ENTRY(_start)
 
 SECTIONS {
 
-	__stack_size = 0x100;
-	__heap_size  = 0x100;
+	__stack_size = 0x100000;
+	__heap_size  = 0x100000;
 
 	EITBRA_START = 0x20000000;
 
@@ -39,7 +39,7 @@ SECTIONS {
 
 	__loadaddr = .;
 
-	.eitbra : AT(__loadaddr) {
+	.eitbra EITBRA_START : AT(__loadaddr) {
 		__eitbra_start = .;
 		*(EITBRA)
 		. = ALIGN(0x10);
