@@ -54,7 +54,7 @@ startup_entry:
 
 // not in effect: MMU, cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
-#if __TRON_ARCH_ARM__ >= 6
+#if __TRON_ARM_ARCH__ >= 6
 	dsb
 #else
 	mcr	p15, 0, r0, cr7, c10, 4
@@ -86,14 +86,14 @@ startup_entry:
 	mcr	p15, 0, r0, cr3, cr0, 0		// Domain access
 
 // MMU enable
-#if __TRON_ARCH_ARM__ >= 6
+#if __TRON_ARM_ARCH__ >= 6
 	dsb
 #else
 	mcr	p15, 0, r0, cr7, c10, 4
 #endif
 	mcr	p15, 0, r0, cr8, cr7, 0		// I/D TLB invalidate
 	mcr	p15, 0, r0, cr7, cr5, 6		// invalidate BTC
-#if __TRON_ARCH_ARM__ >= 6
+#if __TRON_ARM_ARCH__ >= 6
 	dsb
 	isb
 #else
@@ -104,7 +104,7 @@ startup_entry:
 	mrc	p15, 0, r0, cr1, cr0, 0
 	orr	r0, r0, #0x00000001
 	mcr	p15, 0, r0, cr1, cr0, 0
-#if __TRON_ARCH_ARM__ >= 6
+#if __TRON_ARM_ARCH__ >= 6
 	isb
 #else
 	mcr	p15, 0, r0, cr7, c5, 4
@@ -135,7 +135,7 @@ reset_entry:
 
 // not in effect: cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
-#if	__TRON_ARCH_ARM__ >= 6
+#if	__TRON_ARM_ARCH__ >= 6
 	dsb
 #else
 	mcr	p15, 0, r0, cr7, c10, 4
@@ -147,13 +147,13 @@ reset_entry:
 	orr	r0, r0, r1
 	mcr	p15, 0, r0, cr1, cr0, 0
 
-#if	__TRON_ARCH_ARM__ >= 6
+#if	__TRON_ARM_ARCH__ >= 6
 	isb
 #else
 	mcr	p15, 0, r0, cr7, c5, 4
 #endif
 	mcr	p15, 0, r0, cr8, cr7, 0		// I/D TLB invalidate
-#if	__TRON_ARCH_ARM__ >= 6
+#if	__TRON_ARM_ARCH__ >= 6
 	dsb
 #else
 	mcr	p15, 0, r0, cr7, c10, 4
@@ -164,7 +164,7 @@ reset_entry:
 	orr	r0, r0, #0x00f00000	// VFP(CP11,CP10) enable
 	bic	r0, r0, #0xc0000000	// Should be Zero
 	mcr	p15, 0, r0, cr1, cr0, 2
-#if	__TRON_ARCH_ARM__ >= 6
+#if	__TRON_ARM_ARCH__ >= 6
 	isb				// Flush Prefetch buffer
 #else
 	mcr	p15, 0, r0, cr7, c5, 4

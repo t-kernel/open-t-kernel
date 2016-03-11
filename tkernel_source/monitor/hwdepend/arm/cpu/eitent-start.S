@@ -81,7 +81,7 @@ fiq_entry:				// 1C : FIQ
  */
 irq_entry:
 	sub	lr, lr, #4		// return address adjustment
-#if __TRON_ARCH_ARM__ >= 6
+#if __TRON_ARM_ARCH__ >= 6
 	srsdb	sp!, #PSR_IRQ		// save registers
 	stmfd	sp!, {r3, ip}
 #else
@@ -208,7 +208,7 @@ Csym(_gio7Hdr):	gio_o	GIO_MST(GIO_HHH), EITVEC(EIT_GPIO(127))
  *       lr = indeterminate
  */
 undef_entry:
-#if __TRON_ARCH_ARM__ >= 6
+#if __TRON_ARM_ARCH__ >= 6
 	srsdb	sp!, #PSR_UND		// save registers
 	stmfd	sp!, {ip}
 #else
@@ -236,7 +236,7 @@ undef_entry:
  *       lr = indeterminate
  */
 svc_entry:
-#if __TRON_ARCH_ARM__ >= 6
+#if __TRON_ARM_ARCH__ >= 6
 	srsdb	sp!, #PSR_SVC		// save registers
 	stmfd	sp!, {ip}
 	
@@ -275,7 +275,7 @@ svc_entry:
  */
 iabort_entry:
 	sub	lr, lr, #4		// return address adjustment
-#if __TRON_ARCH_ARM__ >= 6
+#if __TRON_ARM_ARCH__ >= 6
 	srsdb	sp!, #PSR_ABT		// save registers
 	stmfd	sp!, {ip}
 #else
@@ -311,7 +311,7 @@ iabort_entry:
  */
 dabort_entry:
 	sub	lr, lr, #8		// return address adjustment
-#if __TRON_ARCH_ARM__ >= 6
+#if __TRON_ARM_ARCH__ >= 6
 	srsdb	sp!, #PSR_ABT		// save registers
 	stmfd	sp!, {ip}
 #else
