@@ -18,7 +18,7 @@
  *       EM1-D512: initial setting after a reset.
  *
  *	reset-lowlevel.S
- *	Board initial, should place to arch/arm/mach-acd2/.
+ *	Board initial, should place to arch/arm/mach-asm9/.
  */
 
 #define	_in_asm_source_
@@ -35,9 +35,11 @@
 ----------------------------------------------------------------------*/
 	.section .startup
 	.globl	startup_entry_lowlevel
+	.globl	serial_putchar
 startup_entry_lowlevel:
-@ Machine/Board initial
+	push	{r7, lr}
 
+@ Machine/Board initial
 	mov	r0, #1
 	ldr	r1, =0x80040000
 	str	r0, [r1, #0x500]
@@ -87,27 +89,16 @@ serial:
 	str	r0, [r1, #0x28]
 @ serial done
 
-1111:
-	mov	r0, #'A'
+	mov	r0, #'a'
 	bl	serial_putchar
-	mov	r0, #'S'
+	mov	r0, #'s'
 	bl	serial_putchar
-	mov	r0, #'M'
+	mov	r0, #'m'
 	bl	serial_putchar
 	mov	r0, #'9'
 	bl	serial_putchar
-	bl	serial_putchar
-	bl	serial_putchar
-	bl	serial_putchar
-	bl	serial_putchar
-	bl	serial_putchar
-	bl	serial_putchar
-	bl	serial_putchar
-	bl	serial_putchar
-	bl	serial_putchar
-	bl	serial_putchar
-	bl	serial_putchar
-	b	1111b
+	
+	ldr	r1, =0x80040000
 
 	mov	r0, #(1<<2)
 	str	r0, [r1,  #0x24]
@@ -119,7 +110,7 @@ serial:
 	str	r0, [r1,  #0x24]
 
 	ldr	r0, [r1, #0x238]
-	bic	r0, #0xFFFFFFFB
+	bic	r0, #0x00000004
 	str	r0, [r1, #0x238]
 
 	mov	r0, #2
@@ -129,7 +120,7 @@ serial:
 	mov	r0, #480
 	str	r0, [r1, #0x100]
 
-	ldr	r1, =0x00100000
+	ldr	r1, =0x00100000	@ wait syspll lock
 1:
 	sub	r1, #1
 	cmp	r1, #0
@@ -141,7 +132,7 @@ serial:
 	cmp	r0, #0
 	beq	1b
 2:
-	ldr	r1, =1000
+	ldr	r1, =2000	@ wait 100us or more
 1:	sub	r1, #1
 	cmp	r1, #0
 	bne	1b
@@ -157,7 +148,7 @@ serial:
 	mov	r0, #1
 	str	r0, [r1, #0x124]
 
-	mov	r0, #(1<<6)
+	mov	r0, #(1<<6)	@ enable emi clock
 	str	r0, [r1,  #0x24]
 
 #ifdef CONFIG_MACH_ASM9
@@ -165,9 +156,8 @@ serial:
 //SDRAM32M ASM9260T SIP
 @	outl((1 << 3) | (12 << 5) | (8 << 9) | (0 << 13),0x80700000 );
 @	  outl: 0x00001188 -> 0x80700000
-	ldr	r1, =0x80700000
-
 	ldr	r0, =0x00001188
+	ldr	r1, =0x80700000
 	str	r0, [r1]
 
 	ldr	r1, =0x80040000
@@ -183,14 +173,14 @@ serial:
 	ldr	r1, =0x80070000
 @	outl(0x20000000,0x80700014 + 4*2);
 	mov	r0, #0x20000000
-	str	r0, [r1, #0x2C]
+	str	r0, [r1, #0x1C]
 
 @	outl(0xc,0x80700054 + 4*2);
 	mov	r0, #0xC
 	str	r0, [r1, #0x5C]
 
 @	outl(0x024996d9,0x80700004);
-	ldr	r0, =0x024996D9
+	ldr	r1, =0x024996D9
 	str	r0, [r1, #4]
 
 @	outl((inl(0x80700004) & 0xFFFFFFFC) | (1 << 0),0x80700004);
@@ -225,7 +215,10 @@ serial:
 // creation of temporary page table
 // Mapping of FlashROM area (0x70000000 - 0x72000000 --> 0x00000000 -)
 @ End of Machine/Board initial
+
+	pop	{r7, lr}
 	bx	lr
+
 serial_putchar:
 1:	ldr	r7, =0x80010000
 	ldr	r7, [r7, #0x60]
