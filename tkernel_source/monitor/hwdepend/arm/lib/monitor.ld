@@ -33,9 +33,13 @@ SECTIONS {
 	__stack_size = 0x100;
 	__heap_size  = 0x100;
 
+	EITBRA_START = 0x20000000;
+
+	. = EITBRA_START;
+
 	__loadaddr = .;
 
-	.eitbra _start : AT(__loadaddr) {
+	.eitbra : AT(__loadaddr) {
 		__eitbra_start = .;
 		*(EITBRA)
 		. = ALIGN(0x10);
