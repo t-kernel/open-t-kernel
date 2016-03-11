@@ -37,12 +37,11 @@
 	.globl	startup_entry_lowlevel
 	.globl	serial_putchar
 startup_entry_lowlevel:
-	push	{r7, lr}
-
+	mov	r6, lr
 @ Machine/Board initial
 	mov	r0, #1
 	ldr	r1, =0x80040000
-	str	r0, [r1, #0x500]
+	str	r0, [r1, #0x500]	@ power control
 
 serial:
 @ set_pin_mux(3,0,2);		//UART4-TXD
@@ -120,7 +119,7 @@ serial:
 	mov	r0, #480
 	str	r0, [r1, #0x100]
 
-	ldr	r1, =0x00100000	@ wait syspll lock
+	ldr	r1, =0x00100000		@ wait syspll lock
 1:
 	sub	r1, #1
 	cmp	r1, #0
@@ -132,7 +131,7 @@ serial:
 	cmp	r0, #0
 	beq	1b
 2:
-	ldr	r1, =2000	@ wait 100us or more
+	ldr	r1, =2000		@ wait 100us or more
 1:	sub	r1, #1
 	cmp	r1, #0
 	bne	1b
@@ -190,7 +189,7 @@ serial:
 	str	r0, [r1, #4]
 
 @	outl(0x00542b4f,0x80700094);
-	ldr	r0, =0x00542b4f
+	ldr	r0, =0x00542b4F
 	str	r0, [r1, #0x94]
 
 @	outl(inl(0x8070000C) | (1 << 9) ,0x8070000C);
@@ -215,8 +214,7 @@ serial:
 // creation of temporary page table
 // Mapping of FlashROM area (0x70000000 - 0x72000000 --> 0x00000000 -)
 @ End of Machine/Board initial
-
-	pop	{r7, lr}
+	mov	lr, r6
 	bx	lr
 
 serial_putchar:

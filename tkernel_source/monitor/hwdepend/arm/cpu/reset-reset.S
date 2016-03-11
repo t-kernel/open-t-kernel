@@ -51,6 +51,21 @@ startup_entry:
 	msr	cpsr, r0
 #endif
 
+#if 1
+	mrc		p15, 0, r0, c1, c0, 0		@ 读cp15控制寄存器(cp15 r1)到r0
+	ldr		r3, =0xC0001080			@ 复位位:屏蔽Cache,小端,快总线模式
+	ldr		r4, =0xC0004000			@ 设置位:Round Robin替换
+	bic		r0, r0, r3
+	orr		r0, r0, r4
+	bic		r0, r0, #0x00002000		@ 矢量在0x0
+	mcr		p15, 0, r0, c1, c0, 0		@ 写入r0到cp15控制寄存器(cp15 r1)
+
+	bl	startup_entry_lowlevel
+	mov	r0, #'S'
+	bl	serial_putchar
+	b	.
+#endif
+
 // use On-Chip SRAM as stack area
 #if CONFIG_MACH_EM1D
 	ldr	sp, =0xa0020000
