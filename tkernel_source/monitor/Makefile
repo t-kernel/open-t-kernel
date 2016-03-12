@@ -5,7 +5,7 @@ ARCH := arm
 # MACH := mach-asm9
 # MACH := mach-acd2
 
-MACH ?= mach-asm9
+MACH := mach-sam9
 
 include Makefile.src
 -include Makefile.obj
@@ -58,6 +58,12 @@ CFLAGS += -D__TRON_ARCH_ARM=5
 CFLAGS += -DCONFIG_MACH_ASM9
 endif
 
+ifeq ($(MACH),mach-asm9) 
+CFLAGS += -mcpu=arm926ej-s
+CFLAGS += -D__TRON_ARCH_ARM=5
+CFLAGS += -DCONFIG_MACH_SAM9
+endif
+
 %.o: %.S
 	@echo	"     AS\t"	$@
 	@$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
@@ -73,6 +79,7 @@ tmonitor: $(OBJ)
 	@echo	"    DIS\t"	tm.S
 	@$(CROSS_COMPILE)objcopy -O binary $@ tm.bin
 	@echo	"OBJDUMP\t"	tm.bin
+	@cp tm.bin /var/lib/tftpboot/
 	@$(CROSS_COMPILE)nm $@ >tm.map
 	@echo   " SYSMAP\t"	tm.map
 clean:

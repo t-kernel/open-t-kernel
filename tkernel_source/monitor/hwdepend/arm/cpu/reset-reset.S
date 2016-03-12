@@ -51,7 +51,7 @@ startup_entry:
 	msr	cpsr, r0
 #endif
 
-#if 1
+#if CONFIG_MACH_ASM9
 	mrc		p15, 0, r0, c1, c0, 0		@ 读cp15控制寄存器(cp15 r1)到r0
 	ldr		r3, =0xC0001080			@ 复位位:屏蔽Cache,小端,快总线模式
 	ldr		r4, =0xC0004000			@ 设置位:Round Robin替换
@@ -73,6 +73,9 @@ startup_entry:
 #if CONFIG_MACH_ASM9
 	ldr	sp, =0x40002000		@ shall we do it some where else?
 	sub	sp, #0x10
+#endif
+#ifdef CONFIG_INIT_SP
+	ldr	sp, =CONFIG_INIT_SP
 #endif
 
 // not in effect: MMU, cache (D/I), program-flow prediction, High-Vector, VIC
@@ -106,21 +109,43 @@ startup_entry:
 // Setup clock divider
 	bl	startup_entry_lowlevel
 
+	mov	r0, #'s'
+	bl	serial_putchar
+	mov	r0, #'a'
+	bl	serial_putchar
+	mov	r0, #'m'
+	bl	serial_putchar
+	mov	r0, #'9'
+	bl	serial_putchar
+	mov	r0, #0x0D
+	bl	serial_putchar
+	mov	r0, #0x0A
+	bl	serial_putchar
+
+
 @ ARM initial cp15 and enable mmu.
+#ifdef CONFIG_MACH_EM1D
 // initialization of CP15
 	ldr	r0, =0x00000004
 	mcr	p15, 0, r0, cr2, cr0, 2		// TTBCR
 	ldr	r0, =(PAGETBL_BASE + 0x09)	// WB/WA, no-shared, cachable
 	mcr	p15, 0, r0, cr2, cr0, 1		// TTBR1
 	mcr	p15, 0, r0, cr2, cr0, 0		// TTBR0
+#if __TRON_ARM_ARCH__ >= 6
 	ldr	r0, =EITENT_BASE
 	mcr	p15, 0, r0, cr12, cr0, 0	// VBAR
+#else
+@	DDI0198E_arm926ejs_r0p5_trm.pdf
+@	2.3.12 Register c11 and c12
+@	Accessing, reading or writing, these registers causes Unpredicatable behavior.
+#endif 
 	ldr	r0, =0x000a8aa4
 	mcr	p15, 0, r0, cr10, cr2, 0 	// PRRR
 	ldr	r0, =0x44e048e0
 	mcr	p15, 0, r0, cr10, cr2, 1	// NMRR
 	ldr	r0, =0x55555555			// All client
 	mcr	p15, 0, r0, cr3, cr0, 0		// Domain access
+#endif
 
 // MMU enable
 #if __TRON_ARM_ARCH__ >= 6
@@ -147,6 +172,25 @@ startup_entry:
 	mcr	p15, 0, r0, cr7, c5, 4
 
 #endif
+#if CONFIG_MACH_SAM9
+	mov	r0, #'s'
+	bl	serial_putchar
+	mov	r0, #'a'
+	bl	serial_putchar
+	mov	r0, #'m'
+	bl	serial_putchar
+	mov	r0, #'9'
+	bl	serial_putchar
+	mov	r0, #0x0D
+	bl	serial_putchar
+	mov	r0, #0x0A
+	bl	serial_putchar
+#endif
+	mov	r0, #'9'
+	bl	serial_putchar
+
+	b	.
+
 // perform reset processing
 @ no return jump?
 	ldr	pc, =reset_entry
