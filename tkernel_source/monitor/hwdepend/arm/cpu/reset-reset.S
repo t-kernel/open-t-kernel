@@ -51,21 +51,6 @@ startup_entry:
 	msr	cpsr, r0
 #endif
 
-#if CONFIG_MACH_ASM9
-	mrc		p15, 0, r0, c1, c0, 0		@ 读cp15控制寄存器(cp15 r1)到r0
-	ldr		r3, =0xC0001080			@ 复位位:屏蔽Cache,小端,快总线模式
-	ldr		r4, =0xC0004000			@ 设置位:Round Robin替换
-	bic		r0, r0, r3
-	orr		r0, r0, r4
-	bic		r0, r0, #0x00002000		@ 矢量在0x0
-	mcr		p15, 0, r0, c1, c0, 0		@ 写入r0到cp15控制寄存器(cp15 r1)
-
-	bl	startup_entry_lowlevel
-	mov	r0, #'S'
-	bl	serial_putchar
-	b	.
-#endif
-
 // use On-Chip SRAM as stack area
 #if CONFIG_MACH_EM1D
 	ldr	sp, =0xa0020000
@@ -91,19 +76,24 @@ startup_entry:
 	orr	r0, r0, r1
 	mcr	p15, 0, r0, cr1, cr0, 0
 #else
-	mov	r0, #0
-1:	mrc	p15, 0, r0, c7, c10, 3	@ flush D cache before disabling it
-	bne	1b
+        mov     r0, #0
+flush_dcache:
+        mrc     p15, 0, r15, c7, c10, 3
+        bne     flush_dcache
 
-	mcr	p15, 0, r0, c8, c7, 0	@ invalidate TLB
-	mcr	p15, 0, r0, c7, c5, 0	@ invalidate I cache
+        mcr     p15, 0, r0, c8, c7, 0   /* invalidate TLB */
+        mcr     p15, 0, r0, c7, c5, 0   /* invalidate I Cache */
 
-	mrc     p15, 0, r0, c1, c0, 0
-	bic     r0, r0, #0x00000300
-	bic     r0, r0, #0x00000087
-	bic     r0, r0, #0x00002000	@ disable high vector
-	orr     r0, r0, #0x00000002
-	mcr     p15, 0, r0, c1, c0, 0
+        /*
+         * disable MMU and D cache
+         * enable I cache if CONFIG_SYS_ICACHE_OFF is not defined
+         */
+        mrc     p15, 0, r0, c1, c0, 0
+        bic     r0, r0, #0x00000300     /* clear bits 9:8 (---- --RS) */
+        bic     r0, r0, #0x00000087     /* clear bits 7, 2:0 (B--- -CAM) */
+        bic     r0, r0, #0x00002000     /* clear bit 13 (--V- ----) */
+        orr     r0, r0, #0x00000002     /* set bit 2 (A) Align */
+        mcr     p15, 0, r0, c1, c0, 0
 #endif
 @ Machine/Board initial
 // Setup clock divider
@@ -150,34 +140,25 @@ startup_entry:
 // MMU enable
 #if __TRON_ARM_ARCH__ >= 6
 	dsb
-#else
-	mcr	p15, 0, r0, cr7, c10, 4
-#endif
 	mcr	p15, 0, r0, cr8, cr7, 0		// I/D TLB invalidate
 	mcr	p15, 0, r0, cr7, cr5, 6		// invalidate BTC
-#if __TRON_ARM_ARCH__ >= 6
 	dsb
 	isb
-#else
-	mcr	p15, 0, r0, cr7, c10, 4
-	mcr	p15, 0, r0, cr7, c5, 4
-#endif
 
 	mrc	p15, 0, r0, cr1, cr0, 0
 	orr	r0, r0, #0x00000001
 	mcr	p15, 0, r0, cr1, cr0, 0
-#if __TRON_ARM_ARCH__ >= 6
 	isb
 #else
-	mcr	p15, 0, r0, cr7, c5, 4
-
+	mov	r0, #'2'
+	bl	serial_putchar
 #endif
 #if CONFIG_MACH_SAM9
-	mov	r0, #'s'
+	mov	r0, #'S'
 	bl	serial_putchar
-	mov	r0, #'a'
+	mov	r0, #'A'
 	bl	serial_putchar
-	mov	r0, #'m'
+	mov	r0, #'M'
 	bl	serial_putchar
 	mov	r0, #'9'
 	bl	serial_putchar
@@ -189,11 +170,10 @@ startup_entry:
 	mov	r0, #'9'
 	bl	serial_putchar
 
-	b	.
-
 // perform reset processing
 @ no return jump?
-	ldr	pc, =reset_entry
+@	ldr	pc, =reset_entry
+	b	reset_entry
 @ End of startup_entry
 	.pool
 
@@ -206,6 +186,7 @@ startup_entry:
 	.globl	reset_entry
 	.type	reset_entry, %function
 reset_entry:
+	mov	r0, #'R'; bl	serial_putchar
 
 // SVC mode, FIQ/IRQ interrupt disabled
 #if __TRON_ARM_ARCH__ >= 6
@@ -217,13 +198,15 @@ reset_entry:
 	orr	r0, #0xd3
 	msr	cpsr, r0
 #endif
+	mov	r0, #'2'; bl	serial_putchar
 
 // Switch to T-Monitor stack
-//	ldr	sp, =__stack_bottom
+	ldr	sp, =__stack_bottom
 
 // not in effect: cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
 
+	mov	r0, #'3'; bl	serial_putchar
 
 #if __TRON_ARM_ARCH__ >= 6
 	dsb
@@ -237,6 +220,7 @@ reset_entry:
 	mcr	p15, 0, r0, cr8, cr7, 0		// I/D TLB invalidate
 	dsb
 #else
+#if 0
 1:	mrc	p15, 0, r0, c7, c10, 3	@ flush D cache before disabling it
 	bne	1b
 
@@ -254,18 +238,20 @@ reset_entry:
 	mcr	p15, 0, r0, cr7, c5, 4
 	mcr	p15, 0, r0, cr7, c10, 4
 #endif
+#endif
+	mov	r0, #'4'; bl	serial_putchar
 
 	bl	Csym(FlushCache)		// Clean/invalidate I/D cache
+#if	__TRON_ARM_ARCH__ >= 6
 // Turn on VFP
 	mrc	p15, 0, r0, cr1, cr0, 2
 	orr	r0, r0, #0x00f00000	// VFP(CP11,CP10) enable
 	bic	r0, r0, #0xc0000000	// Should be Zero
 	mcr	p15, 0, r0, cr1, cr0, 2
-#if	__TRON_ARM_ARCH__ >= 6
 	isb				// Flush Prefetch buffer
 #else
-	mcr	p15, 0, r0, cr7, c5, 4
 #endif
+	mov	r0, #'5'; bl	serial_putchar
 
 @ go setup C
 // initialize data area
@@ -273,7 +259,7 @@ reset_entry:
 // clear in units of 16 bytes
 	bl	reset_entry_setupc
 @ End of setup C
-
+	mov	r0, #'p'; bl	serial_putchar
 // reset processing
 	bl	procReset
 
@@ -306,6 +292,9 @@ reset_entry:
 	mov	lr, #0
 	msr	spsr_fsxc, lr
 
+
+
+#if __TRON_ARM_ARCH__ >= 6
         // clear VFP
 	mov	r0, #0x40000000		// EX=0,EN=1,SBZ/other flags = 0
 	fmxr	fpexc, r0
@@ -314,6 +303,7 @@ reset_entry:
 	fmxr	fpscr, r1
 
 	fldmiad	r7, {d0-d15}		// zero clear
+#endif
 
         // return to SVC mode
 	mov	r0, #(PSR_SVC | PSR_I | PSR_F)
@@ -321,9 +311,17 @@ reset_entry:
 
 	ldmia	r7, {r0-r7}		// r0-r7
 
+	mov	r0, #'R'
+	bl	serial_putchar
+
+	ldr	r0, =rr
+	bl	putString
+
 // enter monitor by means of SVC #0 instruction (SVC mode)
   resetLoop:
 	svc	#0
 	b	resetLoop		// return will cause another reset
+rr:
+.asciz "reset-reset"
 
 	.pool

@@ -61,8 +61,7 @@ startup_entry_lowlevel:
 serial_putchar:
 1:	ldr	r7, =0xFFFFEE00			@ Wait for the transmitter to be ready
 	ldr	r7, [r7, #0x14] 
-	and	r7, #(1<<9)
-	cmp	r7, #0
+	tst	r7, #(1<<9)
 	beq	1b
 
 	ldr	r7, =0xFFFFEE00

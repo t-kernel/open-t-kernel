@@ -35,24 +35,29 @@ EXPORT ER initSIO( W port, W speed )
 {
 	const CFGSIO	*cp;
 	ER	err;
-
+serial_putchar('I');
 	if ( port >= N_ConfigSIO ) port = 0; /* invalid value is turned into a default value. */
 
 	memset(&SIO, 0, sizeof(SIO));
 	ConPort    = port;
 	ConPortBps = speed;
+	serial_putchar('n');
 
 	if ( port < 0 ) return E_OK; /* no console */
 
         /* initialize hardware */
 	cp = &ConfigSIO[port];
 	err = (*cp->initsio)(&SIO, cp, speed);
+	serial_putchar('i');
 	if ( err < E_OK ) goto err_ret;
+	serial_putchar('t');
 
 	return E_OK;
+	serial_putchar('S');
 
 err_ret:
         /* if there was an error, treat it as no console */
+	serial_putchar('I');
 	memset(&SIO, 0, sizeof(SIO));
 	ConPort = -1;
 	return err;
@@ -63,7 +68,7 @@ err_ret:
  */
 EXPORT void putSIO( UB c )
 {
-	if ( SIO.put != NULL ) (*SIO.put)(&SIO, c);
+	if ( SIO.put ) SIO.put(&SIO, c);
 }
 
 /*
@@ -76,5 +81,6 @@ EXPORT void putSIO( UB c )
  */
 EXPORT W getSIO( W tmo )
 {
-	return ( SIO.get != NULL )? (*SIO.get)(&SIO, tmo): -1;
+	if (SIO.get) return SIO.get (&SIO, tmo);
+	else return -1;
 }

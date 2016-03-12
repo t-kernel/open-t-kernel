@@ -64,6 +64,7 @@ IMPORT	W	N_NoMemSeg;
 /* initialize SPI for PMIC communication */
 LOCAL	void	pmicInit(void)
 {
+#if 0
 	out_w(SPn_MODE(SP0), 0x2700);		/* 8bit, CS0, Master, CPU mode */
 	out_w(SPn_TIECS(SP0), 0x000f);		/* CS0: follow the specification by SPn_POL */
 	out_w(SPn_POL(SP0), SPIPol);
@@ -73,6 +74,9 @@ LOCAL	void	pmicInit(void)
 	waitUsec(10);
 	out_w(SPn_CONTROL(SP0), 0x0000);	/* release reset */
 	out_w(SPn_CONTROL2(SP0), 0x0000);
+#else
+	putString("[driver]: pmicInit\n");
+#endif
 
 	return;
 }
@@ -80,6 +84,7 @@ LOCAL	void	pmicInit(void)
 /* wait for data of SPI for PMIC communication */
 LOCAL	void	pmicWait(void)
 {
+#if 0
 	W	i;
 
 	for (i = 1000000; i > 0; i--) {
@@ -87,6 +92,9 @@ LOCAL	void	pmicWait(void)
 		waitUsec(1);
 	}
 	if (!i) pmicInit();
+#else
+	putString("[driver]: pmicWait\n");
+#endif
 
 	return;
 }
@@ -94,9 +102,6 @@ LOCAL	void	pmicWait(void)
 /* contro CS line of SPI for PMIC communication */
 LOCAL	void	pmicCSassert(BOOL cs)
 {
-	waitNsec(200);
-	out_w(SPn_POL(SP0), SPIPol ^ (cs ? 0x0001 : 0x0000));
-	waitNsec(200);
 
 	return;
 }
@@ -108,15 +113,8 @@ EXPORT	W	pmicRead(W reg)
 
 	pmicCSassert(TRUE);			/* CS assert */
 
-	out_w(SPn_FFCLR(SP0), ~0);		/* status flag is cleared */
-	out_w(SPn_TX_DATA(SP0), (reg << 1) | 1);        /* send register number */
-	out_w(SPn_CONTROL(SP0), 0x0009);	/* send start */
 	pmicWait();
 
-	out_w(SPn_FFCLR(SP0), ~0);		/* status flag is cleared */
-	out_w(SPn_CONTROL(SP0), 0x0005);	/* start receive */
-	pmicWait();
-	dat = in_w(SPn_RX_DATA(SP0));		/* data received */
 
 	pmicCSassert(FALSE);			/* CS de-assert */
 
@@ -128,17 +126,12 @@ EXPORT	void	pmicWrite(W reg, W dat)
 {
 	pmicCSassert(TRUE);			/* CS assert */
 
-	out_w(SPn_FFCLR(SP0), ~0);		/* status flag is cleared */
-	out_w(SPn_TX_DATA(SP0), reg << 1);	/* send register number */
-	out_w(SPn_CONTROL(SP0), 0x0009);	/* send start */
 	pmicWait();
 
-	out_w(SPn_FFCLR(SP0), ~0);		/* status flag is cleared */
-	out_w(SPn_TX_DATA(SP0), dat);		/* send data */
-	out_w(SPn_CONTROL(SP0), 0x0009);	/* send start */
 	pmicWait();
 
 	pmicCSassert(FALSE);			/* CS de-assert */
+	putString("[driver]: pmicWrite\n");
 
 	return;
 }
@@ -157,32 +150,15 @@ EXPORT	void	resetSystem(W boot)
 	DisCacheMMU();
 
         /* set up interrupt controller */
-	out_w(IT0_IDS0, ~0);		/* CPU: all interrupts disabled */
-	out_w(IT0_IDS1, ~0);
-	out_w(IT0_IDS2, ~0);
-	out_w(IT0_IIR, ~0);
-	out_w(IT3_IPI0_CLR, 0x0000003f);
-	out_w(IT3_IDS0, ~0);		/* DSP: all interrupts disabled */
-	out_w(IT3_IDS1, ~0);
-	out_w(IT3_IDS2, ~0);
-	out_w(IT3_IIR, ~0);
-	out_w(IT0_IPI3_CLR, 0x0000003f);
-	out_w(IT0_FID, 0x00000001);	/* CPU: FIQ disabled */
-	out_w(GIO_IIA(GIO_L), 0);	/* GPIO: interrupt disabled */
-	out_w(GIO_IIA(GIO_H), 0);
-	out_w(GIO_IIA(GIO_HH), 0);
-	out_w(GIO_IIA(GIO_HHH), 0);
-	out_w(GIO_GSW(GIO_L), 0);	/* GPIO: FIQ interrupt disabled */
-	out_w(GIO_GSW(GIO_H), 0);
-	out_w(GIO_GSW(GIO_HH), 0);
-	out_w(GIO_GSW(GIO_HHH), 0);
-	out_w(IT0_LIIR, 0x0000000f);	/* internal interrupt disabled */
-	out_w(IT_PINV_CLR0, ~0);	/* inhibit interrupt polarity inversion */
-	out_w(IT_PINV_CLR1, ~0);
-	out_w(IT_PINV_CLR2, ~0);
-	out_w(IT0_IEN0, 0x0c000000);	/* CPU: GPIO interrupt enabled */
-	out_w(IT0_IEN1, 0x003c0000);
-	out_w(IT0_IEN2, 0x00018000);
+	/* CPU: all interrupts disabled */
+	/* DSP: all interrupts disabled */
+	/* CPU: FIQ disabled */
+
+	/* GPIO: interrupt disabled */
+	/* GPIO: FIQ interrupt disabled */
+	/* internal interrupt disabled */
+	/* inhibit interrupt polarity inversion */
+	/* CPU: GPIO interrupt enabled */
 
         /* power on controller initialization */
 	pmicInit();
@@ -253,8 +229,8 @@ EXPORT	void	resetSystem(W boot)
 	}
 
 	DSB();
-	Asm("mcr p15, 0, %0, cr8, c7, 0":: "r"(0));	/* I/D TLB invalidate */
-	Asm("mcr p15, 0, %0, cr7, c5, 6":: "r"(0));	/* invalidate BTC */
+	/* I/D TLB invalidate */
+	/* invalidate BTC */
 	DSB();
 	ISB();
 

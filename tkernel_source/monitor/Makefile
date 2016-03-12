@@ -56,12 +56,14 @@ ifeq ($(MACH),mach-asm9)
 CFLAGS += -mcpu=arm926ej-s
 CFLAGS += -D__TRON_ARCH_ARM=5
 CFLAGS += -DCONFIG_MACH_ASM9
+CFLAGS += -DCONFIG_INIT_SP=0x40002000
 endif
 
 ifeq ($(MACH),mach-asm9) 
 CFLAGS += -mcpu=arm926ej-s
 CFLAGS += -D__TRON_ARCH_ARM=5
 CFLAGS += -DCONFIG_MACH_SAM9
+CFLAGS += -DCONFIG_INIT_SP=0x00000000
 endif
 
 %.o: %.S

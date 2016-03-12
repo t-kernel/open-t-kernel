@@ -30,10 +30,10 @@ ENTRY(_start)
 
 SECTIONS {
 
-	__stack_size = 0x100000;
-	__heap_size  = 0x100000;
+	__stack_size = 0x10000;
+	__heap_size  = 0x10000;
 
-	EITBRA_START = 0x20000000;
+	EITBRA_START = 0x72200000;
 
 	. = EITBRA_START;
 

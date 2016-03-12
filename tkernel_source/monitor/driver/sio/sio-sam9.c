@@ -40,8 +40,21 @@ LOCAL const DEFSIO	DefSIO[] = {
 /*
  * serial port I/O
  */
-LOCAL void putSIO_sam9( SIOCB *scb, UB c )
+void putSIO_sam9( SIOCB *scb, UB c )
 {
+#define __in_w(addr) (*((volatile unsigned *)(addr)))
+#define __out_b(addr, c) (*(volatile unsigned char *)(addr)) = (c)
+
+#ifdef __GNUC__
+unsigned val;
+wait:
+	val = __in_w(0xFFFFEE00+0x14);
+	val &= (1<<9);
+	if(val == 0) goto wait;
+#else
+	while (__in_w(0xFFFFEE00+0x14) & (1<<9) == 0);
+#endif
+	__out_b(0xFFFFEE00+0x1C, c);
 	return;
 }
 
@@ -79,7 +92,9 @@ LOCAL W getSIO_sam9(SIOCB *scb, W tmo )
 EXPORT ER initSIO_sam9(SIOCB *scb, const CFGSIO *csio, W speed)
 {
 
+#if 0
 	if ( csio->info>1 ) return E_PAR;
+#endif
 
         /* select the target port */
 	scb->info = DefSIO[csio->info].iob;

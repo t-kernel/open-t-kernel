@@ -204,21 +204,6 @@ LOCAL	ER	send_stop(void)
 LOCAL	ER	send_data(UB data)
 {
 	ER	er;
-	UW	sts;
-
-        /* data transmission */
-	out_w(IIC_IIC(IIC2), data);
-	er = wait_int();
-	if (er < E_OK) goto fin0;
-
-        /* NAK check */
-	sts = in_w(IIC_IICSE(IIC2));
-	if (!(sts & IICSE_ACKD)) {
-		er = E_IO;
-		goto fin0;
-	}
-
-	er = E_OK;
 fin0:
 	return er;
 }
@@ -257,6 +242,8 @@ fin0:
 LOCAL	ER	iic_start(void)
 {
 	ER	er;
+#if 0
+
 
         /* initialization default */
 	out_w(IIC_IICC(IIC2), 0);			/* stop completely */
@@ -267,14 +254,18 @@ LOCAL	ER	iic_start(void)
 
         /* wait for bus to become available (since there is only one master, the bus is supposed to be unoccupied) */
 	er = wait_state(IIC_IICF(IIC2), IICF_IICBSY, 0);
-
+#endif
+	putString(__func__);putString("\n");
 	return er;
 }
 
 /* stop IIC send/receive */
 LOCAL	void	iic_finish(void)
 {
+#if 0
 	out_w(IIC_IICC(IIC2), 0);	/* stop completely */
+#endif
+		putString(__func__);putString("\n");
 	return;
 }
 
@@ -282,7 +273,7 @@ LOCAL	void	iic_finish(void)
 LOCAL	W	IICGPIORead(W addr)
 {
 	W	dat;
-
+#if 0
 	setup_int();
 
 	iic_start();
@@ -292,6 +283,8 @@ LOCAL	W	IICGPIORead(W addr)
 	iic_finish();
 
 	clear_int();
+#endif
+		putString(__func__);putString("\n");
 
 	return dat;
 }
@@ -375,18 +368,27 @@ EXPORT	void	resetStart(void)
 /* initialize hardware peripherals (executed only during reset) */
 EXPORT	void	initHardware(void)
 {
+	putString("initHardware");
+#if 0
         /* enable abort switch interrupt */
 	out_w(GIO_IDT1(GIO_L), 0x00000008);	/* asynchronous leading-edge high interrupt */
 	out_w(GIO_IIR(GIO_L), 0x00000100);
 	out_w(GIO_IIA(GIO_L), 0x00000100);
 	out_w(GIO_IEN(GIO_L), 0x00000100);
-
+#endif
 	return;
 }
 
 /* LED on/off */
 EXPORT	void	cpuLED(UW v)
 {
+	if(v == LED_POWERUP) {
+		putString("[info]: LED power up\n");
+	}
+	else if (v == LED_MEMCLR) {
+		putString("[info]: LED mem clear\n");
+	}
+#if 0
 	UB	m, d, r, c;
 
 	m = ~((v >> 16) | 0xf0);	/* mask (0:unmodified 1:modify) */
@@ -394,6 +396,7 @@ EXPORT	void	cpuLED(UW v)
 	r = IICGPIORead(0xb9);
 	c = (r ^ d) & m;		/* modify flag (0:unmodified 1:modify) */
 	IICGPIOWrite(0xb8, r ^ c);
+#endif
 }
 
 /*
@@ -409,7 +412,7 @@ EXPORT	W	procHwInt(UW vec)
 	if (vec != EIT_GPIO(8)) return 0;
 
         /* clear interrupt */
-	out_w(GIO_IIR(GIO_L), 0x00000100);
+	//out_w(GIO_IIR(GIO_L), 0x00000100);
 
 	DSP_S("Abort Switch (SW1) Pressed");
 	return 1;

@@ -38,6 +38,7 @@
 	.globl	Csym(FlushCache)
 	.type	Csym(FlushCache), %function
 Csym(FlushCache):
+	bx	lr
 	ldr	r2, =DCACHE_NWAY-1
   l_flush_dcache1:
 	ldr	r3, =DCACHE_NSEG-1
@@ -65,6 +66,7 @@ Csym(FlushCache):
 	.globl	Csym(setCacheMMU)
 	.type	Csym(setCacheMMU), %function
 Csym(setCacheMMU):
+	bx	lr
 	stmfd	sp!, {r4, lr}			// save registers
 	mov	r4, r0				// save argument
 

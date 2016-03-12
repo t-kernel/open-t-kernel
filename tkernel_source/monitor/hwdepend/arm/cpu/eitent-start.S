@@ -208,6 +208,7 @@ Csym(_gio7Hdr):	gio_o	GIO_MST(GIO_HHH), EITVEC(EIT_GPIO(127))
  *       lr = indeterminate
  */
 undef_entry:
+	mov	r0, #'U'; bl	serial_putchar
 #if __TRON_ARM_ARCH__ >= 6
 	srsdb	sp!, #PSR_UND		// save registers
 	stmfd	sp!, {ip}
@@ -236,6 +237,7 @@ undef_entry:
  *       lr = indeterminate
  */
 svc_entry:
+	mov	r0, #'U'; bl	serial_putchar
 #if __TRON_ARM_ARCH__ >= 6
 	srsdb	sp!, #PSR_SVC		// save registers
 	stmfd	sp!, {ip}

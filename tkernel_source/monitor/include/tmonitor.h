@@ -34,6 +34,9 @@
 /*
  * console display
  */
+ 
+IMPORT W serial_putchar(W ch);
+
 #define	DSP_S(s)	putString(s)
 #define	DSP_LF		putChar('\n')
 #define	DSP_SP		putChar(' ')

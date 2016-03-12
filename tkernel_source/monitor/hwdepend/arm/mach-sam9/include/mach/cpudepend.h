@@ -60,7 +60,7 @@ Inline void out_b( INT port, UB data )
 	*(_UB*)port = data;
 }
 
-Inline UW in_w( INT port )
+Inline _UW in_w( INT port )
 {
 	return *(_UW*)port;
 }
