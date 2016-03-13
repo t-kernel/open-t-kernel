@@ -39,6 +39,8 @@
 	.globl	startup_entry
 	.type	startup_entry, %function
 startup_entry:
+@ ARM926EJ-S NZCVQ--J -------- -------- IFTMMMMM
+@ CORTEX-R4  NZCVQ[IT 1:0] J [DNM][GE 3:0][IT 7:2]EAIFTMMMMM page 3-9
 @ ARM lowlevel initial
 // SVC mode, FIQ/IRQ interrupt disabled
 #if __TRON_ARM_ARCH__ >= 6
@@ -46,8 +48,8 @@ startup_entry:
 	msr	cpsr_fsxc, r0
 #else
 	mrs	r0, cpsr
-	bic	r0, #0x1f
-	orr	r0, #0xd3
+	bic	r0, #0x1F
+	orr	r0, #0xD3	@ disable FIQ IRQ Supervisor Mode
 	msr	cpsr, r0
 #endif
 
@@ -55,16 +57,20 @@ startup_entry:
 #if CONFIG_MACH_EM1D
 	ldr	sp, =0xa0020000
 #endif
-#if CONFIG_MACH_ASM9
-	ldr	sp, =0x40002000		@ shall we do it some where else?
-	sub	sp, #0x10
-#endif
 #ifdef CONFIG_INIT_SP
 	ldr	sp, =CONFIG_INIT_SP
 #endif
 
 // not in effect: MMU, cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
+@ MMU
+@ DCache
+@ ICache
+@ High vector
+@ VIC/AIC
+@ Force AP?
+@ TEX remap?
+@ Subpage AP?
 
 #if __TRON_ARM_ARCH__ >= 6
 	dsb
@@ -84,10 +90,18 @@ flush_dcache:
         mcr     p15, 0, r0, c8, c7, 0   /* invalidate TLB */
         mcr     p15, 0, r0, c7, c5, 0   /* invalidate I Cache */
 
-        /*
-         * disable MMU and D cache
-         * enable I cache if CONFIG_SYS_ICACHE_OFF is not defined
-         */
+/*
+ * Register c1 is the Control Register for the ARM926EJ-S processor. This
+ * register specifies the configuration used to enable and disable the caches
+ * and MMU. It is recommended that you access this register using a
+ * read-modify-write sequence.
+ *
+ * For both reading and writing, the CRm and Opcode_2 fields Should Be Zero.
+ * To read and write this register, use the instructions:
+ * MRC p15, <Rd>, c1, c0, 0 ; read control register
+ * MCR p15, <Rd>, c1, c0, 0 ; write control register
+ */
+
         mrc     p15, 0, r0, c1, c0, 0
         bic     r0, r0, #0x00000300     /* clear bits 9:8 (---- --RS) */
         bic     r0, r0, #0x00000087     /* clear bits 7, 2:0 (B--- -CAM) */
@@ -153,22 +167,6 @@ flush_dcache:
 	mov	r0, #'2'
 	bl	serial_putchar
 #endif
-#if CONFIG_MACH_SAM9
-	mov	r0, #'S'
-	bl	serial_putchar
-	mov	r0, #'A'
-	bl	serial_putchar
-	mov	r0, #'M'
-	bl	serial_putchar
-	mov	r0, #'9'
-	bl	serial_putchar
-	mov	r0, #0x0D
-	bl	serial_putchar
-	mov	r0, #0x0A
-	bl	serial_putchar
-#endif
-	mov	r0, #'9'
-	bl	serial_putchar
 
 // perform reset processing
 @ no return jump?
