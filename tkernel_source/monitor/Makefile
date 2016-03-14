@@ -10,7 +10,7 @@ MACH := mach-sam9
 include Makefile.src
 -include Makefile.obj
 
-CROSS_COMPILE ?= arm-none-eabi-
+CROSS_COMPILE ?= arm-eabi-
 
 GNUCC := $(CROSS_COMPILE)gcc
 ARMCC := armcc
@@ -30,7 +30,7 @@ INCLUDE = \
 	-I../include \
 	-Icmdsvc
 
-CFLAGS := -O2 -msoft-float -mfpu=vfp -mthumb-interwork -mstructure-size-boundary=8 -ffreestanding -Wno-pointer-sign -D_TEF_EM1D_
+CFLAGS := -O2 -msoft-float -mthumb-interwork -mstructure-size-boundary=8 -ffreestanding -Wno-pointer-sign -D_TEF_EM1D_ -nostdlib
 
 -include hwdepend/$(ARCH)/Makefile
 
@@ -59,23 +59,30 @@ CFLAGS += -DCONFIG_MACH_ASM9
 CFLAGS += -DCONFIG_INIT_SP=0x40002000
 endif
 
-ifeq ($(MACH),mach-asm9) 
+ifeq ($(MACH),mach-sam9) 
 CFLAGS += -mcpu=arm926ej-s
 CFLAGS += -D__TRON_ARCH_ARM=5
 CFLAGS += -DCONFIG_MACH_SAM9
-CFLAGS += -DCONFIG_INIT_SP=0x00000000
+# t-monitor drivers
+CFLAGS += -DCONFIG_TM_INIT_SP=0x00010000 # 64KiB
+CFLAGS += -DCONFIG_TM_SIO
+CFLAGS += -DCONFIG_TM_DISK
+CFLAGS += -DCONFIG_TM_FLASHROM
+CFLAGS += -D__TMONITOR__
+# t-monitor
+CFLAGS += -DCONFIG_TM_WRKBUF_SZ="(1<<10)"
 endif
 
 %.o: %.S
 	@echo	"     AS\t"	$@
-	@$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
+	@$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@ #-D_in_asm_source_
 
 %.o: %.c
 	@echo	"     CC\t"	$@
 	@$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
 
 tmonitor: $(OBJ)
-	@$(CROSS_COMPILE)gcc $^ -o $@ $(INCLUDE) -T$(LDS) -lgcc -nostdlib -static 
+	@$(CROSS_COMPILE)gcc $^ -o $@ $(INCLUDE) -T$(LDS) -nostdlib -lgcc
 	@echo	"     LD\t"	$@
 	@$(CROSS_COMPILE)objdump -DS $@ >tm.S
 	@echo	"    DIS\t"	tm.S

@@ -74,4 +74,8 @@ SRC += driver/flash/cfi_16x1.c
 SRC += driver/flash/cfi.c
 SRC += driver/memdisk/memdsk.c
 SRC += tmmain/version.c
+
+SRC += lib/printk.c
+SRC += lib/vprintk.c
+
 endif

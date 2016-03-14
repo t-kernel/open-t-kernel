@@ -58,19 +58,11 @@ startup_entry:
 	ldr	sp, =0xa0020000
 #endif
 #ifdef CONFIG_INIT_SP
-	ldr	sp, =CONFIG_INIT_SP
+	ldr	sp, =(DCONFIG_TM_INIT_SP-16)
 #endif
 
 // not in effect: MMU, cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
-@ MMU
-@ DCache
-@ ICache
-@ High vector
-@ VIC/AIC
-@ Force AP?
-@ TEX remap?
-@ Subpage AP?
 
 #if __TRON_ARM_ARCH__ >= 6
 	dsb
@@ -82,14 +74,9 @@ startup_entry:
 	orr	r0, r0, r1
 	mcr	p15, 0, r0, cr1, cr0, 0
 #else
-        mov     r0, #0
-flush_dcache:
-        mrc     p15, 0, r15, c7, c10, 3
-        bne     flush_dcache
-
-        mcr     p15, 0, r0, c8, c7, 0   /* invalidate TLB */
-        mcr     p15, 0, r0, c7, c5, 0   /* invalidate I Cache */
-
+tc_loop:
+        mrc     p15, 0, r15, c7, c10, 3		@ test and clean
+        bne     tc_loop
 /*
  * Register c1 is the Control Register for the ARM926EJ-S processor. This
  * register specifies the configuration used to enable and disable the caches
@@ -98,34 +85,23 @@ flush_dcache:
  *
  * For both reading and writing, the CRm and Opcode_2 fields Should Be Zero.
  * To read and write this register, use the instructions:
- * MRC p15, <Rd>, c1, c0, 0 ; read control register
- * MCR p15, <Rd>, c1, c0, 0 ; write control register
+ * MRC p15, 0, <Rd>, c1, c0, 0 ; read control register
+ * MCR p15, 0, <Rd>, c1, c0, 0 ; write control register
+ *
+ * ARM DDI 0198E 2-14
  */
-
-        mrc     p15, 0, r0, c1, c0, 0
-        bic     r0, r0, #0x00000300     /* clear bits 9:8 (---- --RS) */
-        bic     r0, r0, #0x00000087     /* clear bits 7, 2:0 (B--- -CAM) */
-        bic     r0, r0, #0x00002000     /* clear bit 13 (--V- ----) */
-        orr     r0, r0, #0x00000002     /* set bit 2 (A) Align */
+	mrc	p15, 0, r0, c1, c0, 0
+	bic	r0, #(1<<9)		@ ROM protection
+	bic	r0, #(1<<8)		@ System protection
+	bic	r0, #(1<<7)		@ Little-endian operation
+	bic	r0, #(1<<2)		@ DCache disabled
+	orr	r0, #(1<<1)		@ Alignment fault enable
+	bic	r0, #(1<<0)		@ MMU disabled
         mcr     p15, 0, r0, c1, c0, 0
 #endif
 @ Machine/Board initial
 // Setup clock divider
 	bl	startup_entry_lowlevel
-
-	mov	r0, #'s'
-	bl	serial_putchar
-	mov	r0, #'a'
-	bl	serial_putchar
-	mov	r0, #'m'
-	bl	serial_putchar
-	mov	r0, #'9'
-	bl	serial_putchar
-	mov	r0, #0x0D
-	bl	serial_putchar
-	mov	r0, #0x0A
-	bl	serial_putchar
-
 
 @ ARM initial cp15 and enable mmu.
 #ifdef CONFIG_MACH_EM1D
@@ -135,24 +111,32 @@ flush_dcache:
 	ldr	r0, =(PAGETBL_BASE + 0x09)	// WB/WA, no-shared, cachable
 	mcr	p15, 0, r0, cr2, cr0, 1		// TTBR1
 	mcr	p15, 0, r0, cr2, cr0, 0		// TTBR0
-#if __TRON_ARM_ARCH__ >= 6
 	ldr	r0, =EITENT_BASE
 	mcr	p15, 0, r0, cr12, cr0, 0	// VBAR
-#else
+
 @	DDI0198E_arm926ejs_r0p5_trm.pdf
 @	2.3.12 Register c11 and c12
 @	Accessing, reading or writing, these registers causes Unpredicatable behavior.
-#endif 
+
 	ldr	r0, =0x000a8aa4
 	mcr	p15, 0, r0, cr10, cr2, 0 	// PRRR
 	ldr	r0, =0x44e048e0
 	mcr	p15, 0, r0, cr10, cr2, 1	// NMRR
 	ldr	r0, =0x55555555			// All client
 	mcr	p15, 0, r0, cr3, cr0, 0		// Domain access
+#else
+	mrc	p15, 0, r0, c1, c0, 0
+	bic	r0, #(1<<9)		@ ROM protection
+	bic	r0, #(1<<8)		@ System protection
+	bic	r0, #(1<<7)		@ Little-endian operation
+	bic	r0, #(1<<2)		@ DCache disabled
+	orr	r0, #(1<<1)		@ Alignment fault enable
+	bic	r0, #(1<<0)		@ MMU disabled
+        mcr     p15, 0, r0, c1, c0, 0
 #endif
 
 // MMU enable
-#if __TRON_ARM_ARCH__ >= 6
+#if CONFIG_MMU
 	dsb
 	mcr	p15, 0, r0, cr8, cr7, 0		// I/D TLB invalidate
 	mcr	p15, 0, r0, cr7, cr5, 6		// invalidate BTC
@@ -163,9 +147,6 @@ flush_dcache:
 	orr	r0, r0, #0x00000001
 	mcr	p15, 0, r0, cr1, cr0, 0
 	isb
-#else
-	mov	r0, #'2'
-	bl	serial_putchar
 #endif
 
 // perform reset processing
@@ -184,10 +165,8 @@ flush_dcache:
 	.globl	reset_entry
 	.type	reset_entry, %function
 reset_entry:
-	mov	r0, #'R'; bl	serial_putchar
-
 // SVC mode, FIQ/IRQ interrupt disabled
-#if __TRON_ARM_ARCH__ >= 6
+#if CONFIG_MACH_EM1D
 	mov	r0, #(PSR_SVC | PSR_I | PSR_F)
 	msr	cpsr_fsxc, r0
 #else
@@ -196,17 +175,13 @@ reset_entry:
 	orr	r0, #0xd3
 	msr	cpsr, r0
 #endif
-	mov	r0, #'2'; bl	serial_putchar
 
 // Switch to T-Monitor stack
 	ldr	sp, =__stack_bottom
 
 // not in effect: cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
-
-	mov	r0, #'3'; bl	serial_putchar
-
-#if __TRON_ARM_ARCH__ >= 6
+#if CONFIG_MACH_EM1D
 	dsb
 	mrc	p15, 0, r0, cr1, cr0, 0
 	ldr	r1, =~0x01003f84
@@ -218,27 +193,16 @@ reset_entry:
 	mcr	p15, 0, r0, cr8, cr7, 0		// I/D TLB invalidate
 	dsb
 #else
-#if 0
-1:	mrc	p15, 0, r0, c7, c10, 3	@ flush D cache before disabling it
-	bne	1b
+	mrc	p15, 0, r0, c1, c0, 0
+	bic	r0, #(1<<9)		@ ROM protection
+	bic	r0, #(1<<8)		@ System protection
+	bic	r0, #(1<<7)		@ Little-endian operation
+	bic	r0, #(1<<2)		@ DCache disabled
+	orr	r0, #(1<<1)		@ Alignment fault enable
+	bic	r0, #(1<<0)		@ MMU disabled
+        mcr     p15, 0, r0, c1, c0, 0
 
-	mov	r0, #0
-	mcr	p15, 0, r0, c8, c7, 0	@ invalidate TLB
-	mcr	p15, 0, r0, c7, c5, 0	@ invalidate I cache
-
-	mrc     p15, 0, r0, c1, c0, 0
-	bic     r0, r0, #0x00000300
-	bic     r0, r0, #0x00000087
-	bic     r0, r0, #0x00002000	@ disable high vector
-	orr     r0, r0, #0x00000002
-	mcr     p15, 0, r0, c1, c0, 0
-
-	mcr	p15, 0, r0, cr7, c5, 4
-	mcr	p15, 0, r0, cr7, c10, 4
 #endif
-#endif
-	mov	r0, #'4'; bl	serial_putchar
-
 	bl	Csym(FlushCache)		// Clean/invalidate I/D cache
 #if	__TRON_ARM_ARCH__ >= 6
 // Turn on VFP
@@ -247,9 +211,7 @@ reset_entry:
 	bic	r0, r0, #0xc0000000	// Should be Zero
 	mcr	p15, 0, r0, cr1, cr0, 2
 	isb				// Flush Prefetch buffer
-#else
 #endif
-	mov	r0, #'5'; bl	serial_putchar
 
 @ go setup C
 // initialize data area
@@ -257,7 +219,6 @@ reset_entry:
 // clear in units of 16 bytes
 	bl	reset_entry_setupc
 @ End of setup C
-	mov	r0, #'p'; bl	serial_putchar
 // reset processing
 	bl	procReset
 
@@ -309,17 +270,14 @@ reset_entry:
 
 	ldmia	r7, {r0-r7}		// r0-r7
 
-	mov	r0, #'R'
-	bl	serial_putchar
-
-	ldr	r0, =rr
+	ldr	r0, =hello
 	bl	putString
 
 // enter monitor by means of SVC #0 instruction (SVC mode)
   resetLoop:
 	svc	#0
 	b	resetLoop		// return will cause another reset
-rr:
-.asciz "reset-reset"
+hello:
+.asciz "Hello World!\n"
 
 	.pool

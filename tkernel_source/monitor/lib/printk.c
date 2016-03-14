@@ -21,24 +21,18 @@
  * This code is based on code by: Jose Rufino - IST
  */
 
-#if HAVE_CONFIG_H
-#include "config.h"
-#endif
-
+#include <stddef.h>
 #include <stdarg.h>
-//#include <stdio.h>
-//#include <rtems/bspIo.h>
 
 /**
  *  Kernel printf function requiring minimal infrastructure.
  */
 void printk(const char *fmt, ...)
 {
+  extern void vprintk(const char *fmt, va_list ap);
   va_list  ap;       /* points to each unnamed argument in turn */
-  putString("printk: [1]\n");
+
   va_start(ap, fmt); /* make ap point to 1st unnamed arg */
-  putString("printk: [1]\n");
-//vprintk(fmt, ap);
-  putString("printk: [1]\n");
+  vprintk(fmt, ap);
   va_end(ap);        /* clean up when done */
 }

@@ -21,32 +21,18 @@
  * This code is based on code by: Jose Rufino - IST
  */
 
-#if HAVE_CONFIG_H
-#include "config.h"
-#endif
-
+#include <stddef.h>
 #include <stdarg.h>
-//#include <stdio.h>
-#define NULL ((void *)0)
-//#include <stdbool.h>
-typedef enum {
-	false,
-	true
-}bool;
-//#include <rtems/bspIo.h>
 void rtems_putc(char c)
 {
-//	extern void serial_putchar(char c);
 	putChar(c);
-	putChar('c');
-//	serial_putchar(c);
 }
 
 
 static void printNum(
   long long num,
   unsigned base,
-  bool sign,
+  int sign,
   unsigned maxwidth,
   char lead
 );
@@ -71,8 +57,8 @@ void vprintk(
       LFLAG_LONG,
       LFLAG_LONG_LONG
     } lflag = LFLAG_INT;
-    bool minus = false;
-    bool sign = false;
+    int minus = 0;
+    int sign = 0;
     char lead = ' ';
     char c = *fmt;
     long long num;
@@ -90,7 +76,7 @@ void vprintk(
     }
 
     if (c == '-') {
-      minus = true;
+      minus = 1;
       ++fmt; c = *fmt;
     }
 
@@ -155,16 +141,16 @@ void vprintk(
 
     /* must be a numeric format or something unsupported */
     if ( c == 'o' || c == 'O' ) {
-      base = 8; sign = false;
+      base = 8; sign = 0;
     } else if ( c == 'i' || c == 'I' ||
                 c == 'd' || c == 'D' ) {
-      base = 10; sign = true;
+      base = 10; sign = 1;
     } else if ( c == 'u' || c == 'U' ) {
-      base = 10; sign = false;
+      base = 10; sign = 0;
     } else if ( c == 'x' || c == 'X' ) {
-      base = 16; sign = false;
+      base = 16; sign = 0;
     } else if ( c == 'p' ) {
-      base = 16; sign = false; lflag = LFLAG_LONG;
+      base = 16; sign = 0; lflag = LFLAG_LONG;
     } else {
       rtems_putc(c);
       continue;
@@ -197,7 +183,7 @@ void vprintk(
 static void printNum(
   long long num,
   unsigned base,
-  bool sign,
+  int sign,
   unsigned maxwidth,
   char lead
 )
@@ -227,7 +213,6 @@ static void printNum(
     rtems_putc(lead);
 
   for (n = 0; n < count; n++) {
-  	char tmp[]="0123456789ABCDEF";
-    rtems_putc(tmp[(int)(toPrint[count-(n+1)])]);
+    rtems_putc("0123456789ABCDEF"[(int)(toPrint[count-(n+1)])]);
   }
 }

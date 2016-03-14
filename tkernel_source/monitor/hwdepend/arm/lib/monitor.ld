@@ -20,8 +20,10 @@
 
 MEMORY
 {
-	RAM0 (rxw) : ORIGIN = 0x00000000, LENGTH = 0x02000000
-	ROM0 (rx)  : ORIGIN = 0x80000000, LENGTH = 0x00080000
+	RAM0 (rxw) : ORIGIN = 0x00000000, LENGTH =  64K
+	RAM1 (rxw) : ORIGIN = 0x72200000, LENGTH = 128M
+	ROM0 (rx)  : ORIGIN = 0x80000000, LENGTH =  64K
+	ROM1 (r)   : ORIGIN = 0x00000000, LENGTH = 256M
 }
 
 OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
@@ -29,30 +31,26 @@ OUTPUT_ARCH(arm)
 ENTRY(_start)
 
 SECTIONS {
+	.eitbra : {
+		__loadaddr = .;
 
-	__stack_size = 0x10000;
-	__heap_size  = 0x10000;
-
-	EITBRA_START = 0x72200000;
-
-	. = EITBRA_START;
-
-	__loadaddr = .;
-
-	.eitbra EITBRA_START : AT(__loadaddr) {
 		__eitbra_start = .;
 		*(EITBRA)
 		. = ALIGN(0x10);
-	}
-
-	__startup_org = _start + SIZEOF(.eitbra);
-	.startup __startup_org : {
+		__eitbra_end = .;
+		__eitbra_size = SIZEOF(.eitbra);
+	} > RAM1
+ 
+	.startup : {
+		__startup_org = .;
+		__startup_start = .;
 		*(.startup)
 		. = ALIGN(0x10);
-	}
+		__startup_end = .;
+	} > RAM1
 	
-	__text_org = __loadaddr + SIZEOF(.startup) + SIZEOF(.eitbra);
-	.text __text_org : {
+	.text : {
+		__text_org = . ;
 		_stext = .;
 		KEEP (*(.init))
 		*(.text)
@@ -68,9 +66,20 @@ SECTIONS {
 		*(.rodata.*)
 		*(.rodata1)
 		. = ALIGN(0x10);
-	}
+	} > RAM1
+	.ARM.extab : 
+	{
+		*(.ARM.extab* .gnu.linkonce.armextab.*)
+	} > RAM1
+	__exidx_start = .;
+	.ARM.exidx :
+	{
+		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
+	} > RAM1
+	__exidx_end = .;
+	__etext = .;
+	.data : {
 	__data_org = . ;
-	.data __data_org : AT(LOADADDR(.text) + SIZEOF(.text)) {
 		__data_start = . ;
 		*(flashwr.rodata)
 		*(.data)
@@ -94,8 +103,8 @@ SECTIONS {
 		. = ALIGN(0x10);
 		_edata = .;
 		PROVIDE (edata = .);
-	}
-	.bss (NOLOAD) : AT(LOADADDR(.data) + SIZEOF(.data)) {
+	} > RAM1
+	.bss (NOLOAD) : {
 		__bss_start = .;
 		PROVIDE (__sbss_start = .);
 		PROVIDE (___sbss_start = .);
@@ -110,9 +119,9 @@ SECTIONS {
 		. = ALIGN(0x10);
 		_end = .;
 		PROVIDE (end = .);
-	}
-	__flashwr_org = __data_org + SIZEOF(.data);
-	OVERLAY : AT(LOADADDR(.bss)) {
+	} > RAM1
+	__flashwr_org = .;
+	OVERLAY : {
 		.flashwr {
 			__flashwr_start = .;
 			*(flashwr.text)
@@ -123,15 +132,24 @@ SECTIONS {
 			*/wrkbuf.o(COMMON)
 			. = ALIGN(0x10);
 		}
-	}
-	.heap ALIGN(0x10) (NOLOAD) : {
-		__heap_top    = .;
-		. = ALIGN(__heap_top + __heap_size, 4); 
-		__heap_bottom = .;
-	}
-	.stack ALIGN(0x10) (NOLOAD) : {
-		__stack_top    = .;
-		. = ALIGN(__stack_top + __stack_size, 4); 
+	} > RAM1
+	.heap (COPY) : {
+		__heap_base    = .;
+		PROVIDE(heap_base = .);
+		*(.heap*)
+		__heap_limit = .;
+	} > RAM1
+	.stack (COPY) : {
+		*(.stack*)
+	} > RAM1
+
+	/* Set stack top to end of RAM, and stack limit move down by
+	 * size of stack_dummy section */
+	__stack_top = ORIGIN(RAM1) + LENGTH(RAM1);
+	__stack_limit = __stack_top - SIZEOF(.stack);
+	PROVIDE(__stack = __StackTop);
+	/* Check if data + heap + stack exceeds RAM limit */
+	ASSERT(__stack_limit >= __heap_limit, "region RAM overflowed with stack")
 		__stack_bottom = .;
-	}
+
 }

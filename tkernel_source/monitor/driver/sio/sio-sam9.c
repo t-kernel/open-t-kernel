@@ -171,8 +171,6 @@ EXPORT ER initSIO_sam9(SIOCB *scb, const CFGSIO *csio, W baudrate)
 	W mode = AT91C_US_PAR_NONE;
 	W mck  = BOARD_MCK;
 
-	baudrate = 9600;
-
 	if ( (UW)csio->info >= N_DEFSIO ) return E_PAR;
 
         /* select the target port */

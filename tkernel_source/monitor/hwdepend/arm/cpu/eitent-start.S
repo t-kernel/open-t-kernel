@@ -43,14 +43,14 @@
 	.section EITBRA, "ax"
 	.global  _start
 _start:
-	b	startup_entry		// 00 : reset
-	b	undef_entry		// 04 : undefined instruction
-	b	svc_entry		// 08 : software interrupt
-	b	iabort_entry		// 0C : prefetch abort
-	b	dabort_entry		// 10 : data abort
-	nop				// 14 : reserved
-	b	irq_entry		// 18 : IRQ
-fiq_entry:				// 1C : FIQ
+	b	startup_entry		@ 00 : reset
+	b	undef_entry		@ 04 : undefined instruction
+	b	svc_entry		@ 08 : software interrupt
+	b	iabort_entry		@ 0C : prefetch abort
+	b	dabort_entry		@ 10 : data abort
+	nop				@ 14 : reserved
+	b	irq_entry		@ 18 : IRQ
+fiq_entry:				@ 1C : FIQ
 /*
  * fast interrupt
  *       calls the handler defined at FIQ interrupt vector unconditionally.
@@ -237,7 +237,6 @@ undef_entry:
  *       lr = indeterminate
  */
 svc_entry:
-	mov	r0, #'U'; bl	serial_putchar
 #if __TRON_ARM_ARCH__ >= 6
 	srsdb	sp!, #PSR_SVC		// save registers
 	stmfd	sp!, {ip}

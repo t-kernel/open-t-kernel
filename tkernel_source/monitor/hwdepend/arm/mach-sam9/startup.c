@@ -21,7 +21,7 @@
 #include "hwdepend.h"
 
 /* No support for the progress report yet */
-#if 0
+#ifdef CONFIG_MACH_EM1D
 #define	DispProgress(n)		/* nop */
 #else
 void DispProgress(W progress)
@@ -50,10 +50,7 @@ EXPORT void procReset( void )
 {
 	const MEMSEG	*mp;
 	W	i;
-	W	speed;
-
-	serial_putchar('C');
-	putSIO_sam9(NULL, 'S');
+	W	speed = 115200;
 
 	DispProgress(0x01);
 
@@ -62,7 +59,7 @@ EXPORT void procReset( void )
 	DispProgress(0x02);
 
         /* setting up the initial count for micro-wait */
-//	setupWaitUsec();
+	setupWaitUsec();
 	DispProgress(0x03);
 
         /* initialize console serial port */
@@ -71,7 +68,7 @@ EXPORT void procReset( void )
 #else
 	speed = ( (DipSw & SW_BHI) != 0 )? HI_BAUD_RATE: LO_BAUD_RATE;
 #endif
-	initSIO(getConPort(), speed);
+	initSIO(getConPort(), 115200);
 	DispProgress(0x04);
 	putString("[driver]: sio driver attached\n");
 
