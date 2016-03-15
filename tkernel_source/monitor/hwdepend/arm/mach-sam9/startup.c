@@ -21,14 +21,7 @@
 #include "hwdepend.h"
 
 /* No support for the progress report yet */
-#ifdef CONFIG_MACH_EM1D
 #define	DispProgress(n)		/* nop */
-#else
-void DispProgress(W progress)
-{
-	serial_putchar('.');
-}
-#endif
 
 /*
  * debug port speed
@@ -37,10 +30,10 @@ void DispProgress(W progress)
  *       LO_BAUD_RATE, and HI_BAUD_RATE.
  */
 #ifndef	LO_BAUD_RATE
-#  define LO_BAUD_RATE	 38400
+#  define LO_BAUD_RATE	 CONFIG_TM_BAUD_RATE
 #endif
 #ifndef	HI_BAUD_RATE
-#  define HI_BAUD_RATE	115200
+#  define HI_BAUD_RATE	CONFIG_TM_BAUD_RATE
 #endif
 
 /*
@@ -50,17 +43,17 @@ EXPORT void procReset( void )
 {
 	const MEMSEG	*mp;
 	W	i;
-	W	speed = 115200;
+	W	speed;
 
 	DispProgress(0x01);
 
         /* system basic set up */
-//	resetSystem(0);
-	DispProgress(0x02);
+	resetSystem(0);
+	DispProgress(0x06);
 
         /* setting up the initial count for micro-wait */
 	setupWaitUsec();
-	DispProgress(0x03);
+	DispProgress(0x07);
 
         /* initialize console serial port */
 #if SW_BHI == 0
@@ -68,9 +61,8 @@ EXPORT void procReset( void )
 #else
 	speed = ( (DipSw & SW_BHI) != 0 )? HI_BAUD_RATE: LO_BAUD_RATE;
 #endif
-	initSIO(getConPort(), 115200);
-	DispProgress(0x04);
-	putString("[driver]: sio driver attached\n");
+	initSIO(getConPort(), speed);
+	DispProgress(0x08);
 
         /* initialize hardware (peripherals) */
 	initHardware();
@@ -97,5 +89,4 @@ EXPORT void procReset( void )
         /* Invoking user reset initialization routine */
 	callUserResetInit();
 	DispProgress(0x0f);
-	putString("end of startup.c\n");
 }
