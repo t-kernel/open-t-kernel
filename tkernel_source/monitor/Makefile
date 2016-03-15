@@ -42,26 +42,26 @@ CFLAGS += -D__MIPS__
 endif
 ifeq ($(MACH),mach-em1d)
 CFLAGS += -mcpu=arm1176jzf-s
-CFLAGS += -D__TRON_ARCH_ARM=6
+CFLAGS += -D__TRON_ARM_ARCH=6
 CFLAGS += -DCONFIG_MACH_EM1D
 endif
 
 ifeq ($(MACH),mach-acd2)
 CFLAGS += -mcpu=cortex-r4
-CFLAGS += -D__TRON_ARCH_ARM=7
+CFLAGS += -D__TRON_ARM_ARCH=7
 CFLAGS += -DCONFIG_MACH_ACD2
 endif
 
 ifeq ($(MACH),mach-asm9) 
 CFLAGS += -mcpu=arm926ej-s
-CFLAGS += -D__TRON_ARCH_ARM=5
+CFLAGS += -D__TRON_ARM_ARCH=5
 CFLAGS += -DCONFIG_MACH_ASM9
 CFLAGS += -DCONFIG_INIT_SP=0x40002000
 endif
 
 ifeq ($(MACH),mach-sam9) 
 CFLAGS += -mcpu=arm926ej-s
-CFLAGS += -D__TRON_ARCH_ARM=5
+CFLAGS += -D__TRON_ARM_ARCH=5
 CFLAGS += -DCONFIG_MACH_SAM9
 # t-monitor drivers
 CFLAGS += -DCONFIG_TM_INIT_SP=0x00010000 # 64KiB
