@@ -23,10 +23,11 @@
 	If not, uncomment the define below and
 	replace outbyte(c) by your own function call.
 
-#define putchar(c) outbyte(c)
 */
 
 #include <stdarg.h>
+
+#define putchar(c) putChar(c)
 
 static void printchar(char **str, int c)
 {
