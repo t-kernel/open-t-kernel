@@ -191,8 +191,7 @@ static void printNum(
   unsigned long long unsigned_num;
   unsigned long long n;
   unsigned count;
-  #define UINT64_MAX_IN_OCTAL_FORMAT "1777777777777777777777"
-  char toPrint[sizeof(UINT64_MAX_IN_OCTAL_FORMAT)];
+  char toPrint[32];
 
   if ( sign && (num <  0) ) {
     rtems_putc('-');
