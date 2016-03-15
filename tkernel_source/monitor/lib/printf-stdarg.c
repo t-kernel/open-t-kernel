@@ -160,6 +160,14 @@ static int print(char **out, const char *format, va_list args )
 				pc += printi (out, va_arg( args, int ), 16, 0, width, pad, 'A');
 				continue;
 			}
+			if( *format == 'p' ) {
+				printchar(out, '0');
+				printchar(out, 'x');
+				width = 8;
+				pad |= PAD_ZERO;
+				pc += printi (out, va_arg( args, int ), 16, 0, width, pad, 'A');
+				continue;
+			}
 			if( *format == 'u' ) {
 				pc += printi (out, va_arg( args, int ), 10, 0, width, pad, 'a');
 				continue;
