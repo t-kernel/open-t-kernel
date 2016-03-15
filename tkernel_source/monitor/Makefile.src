@@ -78,4 +78,5 @@ SRC += tmmain/version.c
 SRC += lib/printk.c
 SRC += lib/vprintk.c
 
+SRC += printf-stdarg.c
 endif
