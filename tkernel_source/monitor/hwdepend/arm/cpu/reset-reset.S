@@ -270,14 +270,23 @@ reset_entry:
 
 	ldmia	r7, {r0-r7}		// r0-r7
 
-	ldr	r0, =hello
+	ldr	r0, =banner
 	bl	putString
+	ldr	r0, =Version
+	bl	putString
+	ldr	r0, =patch
+	bl	putString
+
+	ldr	r0, =EIT_DEFAULT
+	bl	entMonitor
 
 // enter monitor by means of SVC #0 instruction (SVC mode)
   resetLoop:
 	svc	#0
 	b	resetLoop		// return will cause another reset
-hello:
-.asciz "Hello World!\n"
-
+banner:
+.asciz "Open T-Monitor! "
+patch:
+.asciz " p0.9\r\n"
+	.align	4
 	.pool

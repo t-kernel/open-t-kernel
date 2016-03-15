@@ -45,6 +45,11 @@ EXPORT void procReset( void )
 	W	i;
 	W	speed;
 
+#ifdef CONFIG_TM_EARLY_PRINTK
+	speed = 115200;
+	initSIO(getConPort(), speed);
+	printk("early printk enabled\n");
+#endif
 	DispProgress(0x01);
 
         /* system basic set up */
@@ -71,14 +76,15 @@ EXPORT void procReset( void )
         /* memory clear is not done to save time when automatic reboot is under way. */
 	if ( bootSelect() == BS_MONITOR ) {
 		cpuLED(LED_MEMCLR);
-
+#ifdef CONFIG_TM_CLEAR_MEMORY
                 /* all memory clear (save the monitor area) */
-		for ( i = 1;; ++i ) {
+		for ( i = 1; ; ++i ) {
 			mp = MemArea(MSA_OS|MSA_ERAM, i);
 			if ( mp == NULL ) break;
 
 			memset((void*)mp->top, 0, mp->end - mp->top);
 		}
+#endif
 	}
 	cpuLED(LED_POWERUP);
 	DispProgress(0x0e);

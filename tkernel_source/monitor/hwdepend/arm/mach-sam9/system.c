@@ -144,6 +144,9 @@ EXPORT	void	resetSystem(W boot)
 	MEMSEG	*mp;
 	UW	i, va;
 
+	printk("%s:%s\n", __FILE__, __func__);
+	return ;
+
         /* obtain DipSw status */
 	if (!boot) DipSw = DipSwStatus();
 

@@ -25,6 +25,9 @@
  */
 EXPORT void callUserResetInit( void )
 {
+	printk("%s:%s\n", __FILE__, __func__);
+	return ;
+
 	UW	wp = (UW)ROMInfo->resetinit;
 
 	if (  invalidPC2(wp)

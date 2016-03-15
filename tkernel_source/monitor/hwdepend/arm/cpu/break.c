@@ -272,6 +272,9 @@ EXPORT	void	dspBreak(void)
 */
 EXPORT	void	initBreak(void)
 {
+	printk("%s:%s\n", __FILE__, __func__);
+	return ;
+
         /* clear all breakpoints */
 	memset(&brkPt[0], 0, sizeof(brkPt));
 

@@ -368,7 +368,8 @@ EXPORT	void	resetStart(void)
 /* initialize hardware peripherals (executed only during reset) */
 EXPORT	void	initHardware(void)
 {
-	putString("initHardware");
+	printk("%s:%s\n", __FILE__, __func__);
+	return ;
 #if 0
         /* enable abort switch interrupt */
 	out_w(GIO_IDT1(GIO_L), 0x00000008);	/* asynchronous leading-edge high interrupt */
@@ -382,11 +383,13 @@ EXPORT	void	initHardware(void)
 /* LED on/off */
 EXPORT	void	cpuLED(UW v)
 {
+	printk("%s:%s\n", __FILE__, __func__);
+
 	if(v == LED_POWERUP) {
-		putString("[info]: LED power up\n");
+		putString("[info]:\tLED power up\n");
 	}
 	else if (v == LED_MEMCLR) {
-		putString("[info]: LED mem clear\n");
+		putString("[info]:\tLED mem clear\n");
 	}
 #if 0
 	UB	m, d, r, c;
