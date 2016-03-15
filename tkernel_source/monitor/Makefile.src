@@ -14,7 +14,7 @@ SRC := hwdepend/mips/mach-m150/startup.c
 SRC := hwdepend/mips/mach-m150/svc.c
 SRC := hwdepend/mips/mach-m150/printf.c
 else
-SRC := hwdepend/arm/$(MACH)/startup.c
+SRC := tmmain/startup.c
 SRC += hwdepend/arm/$(MACH)/hwinfo.c
 SRC += driver/sio/sio.c
 SRC += hwdepend/arm/$(MACH)/diskio.c
