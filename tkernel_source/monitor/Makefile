@@ -6,6 +6,7 @@ ARCH := arm
 # MACH := mach-acd2
 
 MACH := mach-sam9
+GPL := -gpl
 
 include Makefile.src
 -include Makefile.obj
