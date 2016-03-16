@@ -52,6 +52,20 @@
 	.globl	reset_entry_setupc
 	.type	reset_entry_setupc, %function
 reset_entry_setupc:
+
+#ifdef CONFIG_TM_XIP
+@ run in rom(xip)
+@   1. check load address and link address
+@      1.1 different -> error_p
+       1.2 copy .data, clear .bss and .stack if needed
+#else
+@ load image to link address
+@   1. load the full image
+@      1.1 load from ram, eg. relocated to ram
+@      1.2 load from nand, spi, etc.
+@   2. clear .bss, .stack, etc
+#endif
+
 @Setup C environment
 // initialize data area
 	ldr	r1, =__data_org
