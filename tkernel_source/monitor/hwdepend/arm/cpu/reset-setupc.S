@@ -66,6 +66,10 @@ reset_entry_setupc:
 @   2. clear .bss, .stack, etc
 #endif
 
+#if __load_addr
+@   1. prepare vector table to 0x00000000 or 0xFFFF0000
+#endif
+
 @Setup C environment
 // initialize data area
 	ldr	r1, =__data_org
