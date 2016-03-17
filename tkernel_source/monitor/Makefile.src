@@ -79,4 +79,6 @@ SRC += lib/printk.c
 SRC += lib/vprintk.c
 
 SRC += lib/printf-stdarg.c
+
+SRC += tmmain/monkey.S
 endif

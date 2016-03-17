@@ -97,14 +97,26 @@ void putSIO_sam9( SIOCB *scb, UB c )
 {
 #ifdef __GNUC__
 	unsigned val;
-wait:
+check_ready:
 	val = in_w(AT91C_BASE_DBGU+0x14);
 	val &= (1<<9);
-	if(val == 0) goto wait;
+	if(val == 0) goto check_ready;
 #else
 	while (in_w(AT91C_BASE_DBGU+0x14) & (1<<9) == 0);
 #endif
 	out_b(AT91C_BASE_DBGU+0x1C, c);
+
+#ifdef __GNUC__
+wait_done:
+	val = in_w(AT91C_BASE_DBGU+0x14);
+	val &= (1<<9);
+	if(val == 0) goto wait_done;
+#else
+	while (in_w(AT91C_BASE_DBGU+0x14) & (1<<9) == 0);
+#endif
+
+
+
 	return;
 }
 
@@ -197,6 +209,7 @@ EXPORT ER initSIO_sam9(SIOCB *scb, const CFGSIO *csio, W baudrate)
 	/* I/O function default */
 	scb->put = putSIO_sam9;
 	scb->get = getSIO_sam9;
+
 
 	return E_OK;
 }

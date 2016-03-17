@@ -21,7 +21,37 @@
 #include "hwdepend.h"
 
 /* No support for the progress report yet */
+#if 0
 #define	DispProgress(n)		/* nop */
+#else
+EXPORT void DispProgress( W n )
+{
+	char *progress[] = {
+		"0",
+		"1",
+		"2",
+		"3",
+		"4",
+		"5",
+		"6. System reset",
+		"7",
+		"8. Initialize console serial port",
+		"9",
+		"A",
+		"B",
+		"C",
+		"D. Initialize hardware (peripherals)",
+		"E. LED powered up",
+		"F. Call user reset init",
+		"",
+	};
+
+	if(n<8) printk("%s\n", progress[n]);
+	else printf("%s\n", progress[n]);
+
+	return;
+}
+#endif
 
 /*
  * debug port speed
@@ -50,6 +80,7 @@ EXPORT void procReset( void )
 	initSIO(getConPort(), speed);
 	printk("early printk enabled\n");
 #endif
+
 	DispProgress(0x01);
 
         /* system basic set up */
@@ -95,4 +126,5 @@ EXPORT void procReset( void )
         /* Invoking user reset initialization routine */
 	callUserResetInit();
 	DispProgress(0x0f);
+
 }

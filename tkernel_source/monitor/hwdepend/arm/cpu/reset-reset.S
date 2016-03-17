@@ -277,6 +277,14 @@ reset_entry:
 	ldr	r0, =patch
 	bl	putString
 
+	svc	#0
+	nop
+	nop
+	mov	r0, #8
+	bl	svc_r0
+
+
+
 	ldr	r0, =EIT_DEFAULT
 	bl	entMonitor
 

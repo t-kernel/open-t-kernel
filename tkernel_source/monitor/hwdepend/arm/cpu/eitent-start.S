@@ -43,9 +43,9 @@
 	.section EITBRA, "ax"
 	.global  _start
 _start:
-	b	startup_entry		@ 00 : reset
+	b	__startup_entry		@ 00 : reset
 	b	undef_entry		@ 04 : undefined instruction
-	b	svc_entry		@ 08 : software interrupt
+	b	__svc_entry		@ 08 : software interrupt
 	b	iabort_entry		@ 0C : prefetch abort
 	b	dabort_entry		@ 10 : data abort
 	nop				@ 14 : reserved
@@ -61,6 +61,107 @@ fiq_entry:				@ 1C : FIQ
 	ldr	ip, [ip, #offs(EITVEC(EIT_FIQ))]
 	bx	ip
 
+
+__startup_entry:
+#if 0
+	mov	r2, pc
+	ldr	r1, =1f
+	sub	r0, r2, r1
+1:	ldr	r2, =__eitbra_start
+	add	r2, r2, r0
+#else
+	ldr	r2, =__eitbra_start
+#endif
+	mov	r1, #0
+
+copy:	ldr	r0, [r2]
+	str	r0, [r1]
+__check:
+	ldr	r3, [r1]
+	cmp	r0, r3
+	movne	r0, #'E'
+	moveq	r0, #'C'
+	bl	serial_putchar
+
+	add	r1, #4
+	add	r2, #4
+	ldr	r0, =____eitbra_end
+	cmp	r0, r2
+	bne	copy
+
+	b	startup_entry
+
+__svc_entry:
+	str	lr, __svc_stack
+	mov	r0, #'V'
+	bl	serial_putchar
+	ldr	lr, __svc_stack
+	bx	lr
+__svc_stack:
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	b	svc_entry
+
+
+__start_______________________________________________________________________:
+__eitbra_start:
+20:     ldr     pc, 10f
+21:     ldr     pc, 11f
+22:     ldr     pc, 12f
+23:     ldr     pc, 13f
+24:     ldr     pc, 14f
+25:     ldr     pc, 15f
+26:     ldr     pc, 16f
+
+10:     .word   startup_entry
+11:     .word   undef_entry
+12:     .word   __svc_entry
+13:     .word   iabort_entry
+14:     .word   dabort_entry
+15:     .word   0xdeadc0de
+16:     .word   fiq_entry
+____eitbra_end:
+__end_________________________________________________________________________:
+
+
+
+
+
+
+	.global svc
+svc_r0: .word	0
+	bx	lr
+svc:
+#if 1
+	bic	r0, #0xFF000000
+	orr	r0, #0xEF000000
+	str	r0, svc_r0
+	b	svc_r0
+#endif
+	bx	lr
 /*
  * interrupt
  *       ACPU interrupt mask status register of Interrupt controller (AINT)

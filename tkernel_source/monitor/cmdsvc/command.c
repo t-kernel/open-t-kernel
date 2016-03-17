@@ -1137,6 +1137,11 @@ LOCAL	const	CMDTAB	cmdTab[] = {
 	{"DUMPBYTE    ","DB  ",	cmdDump,	1,		&helpDB	  },
 	{"DUMPHALF    ","DH  ",	cmdDump,	2,		&helpDH	  },
 	{"DUMPWORD    ","DW  ",	cmdDump,	4,		&helpDW	  },
+#define CONFIG_TM_UBOOT_COMMAND 1
+#ifdef CONFIG_TM_UBOOT_COMMAND
+	{"DUMPWORD    ","MD  ",	cmdDump,	4,		&helpDW	  },
+	{"MODIFYWORD  ","MM  ",	cmdModify,	4,		&helpMW	  },
+#endif
 	{"MODIFY      ","M   ",	cmdModify,	1,		&helpM	  },
 	{"MODIFYBYTE  ","MB  ",	cmdModify,	1,		&helpMB	  },
 	{"MODIFYHALF  ","MH  ",	cmdModify,	2,		&helpMH	  },
