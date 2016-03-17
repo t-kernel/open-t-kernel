@@ -33,9 +33,11 @@ ENTRY(_start)
 SECTIONS {
 	.eitbra : {
 		__loadaddr = .;
-
 		__eitbra_start = .;
-		*(EITBRA)
+
+		hwdepend/arm/cpu/eitent-start.o (*)
+		KEEP(*(.eitbra))
+
 		. = ALIGN(0x10);
 		__eitbra_end = .;
 		__eitbra_size = SIZEOF(.eitbra);
@@ -44,9 +46,10 @@ SECTIONS {
 	.startup : {
 		__startup_org = .;
 		__startup_start = .;
-		*(.startup)
+		KEEP(*(.startup))
 		. = ALIGN(0x10);
 		__startup_end = .;
+		__startup_size = .;
 	} > RAM1
 	
 	.text : {
@@ -102,6 +105,7 @@ SECTIONS {
 		*(.sdata.*)
 		. = ALIGN(0x10);
 		_edata = .;
+		__data_end = .;
 		PROVIDE (edata = .);
 	} > RAM1
 	.bss (NOLOAD) : {
@@ -118,6 +122,8 @@ SECTIONS {
 		*(EXCLUDE_FILE(*/wrkbuf.o) COMMON)
 		. = ALIGN(0x10);
 		_end = .;
+		__bss_end = .;
+		__bss_size = SIZEOF(.bss);
 		PROVIDE (end = .);
 	} > RAM1
 	__flashwr_org = .;
