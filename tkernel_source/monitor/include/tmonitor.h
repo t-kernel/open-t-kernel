@@ -35,9 +35,9 @@
  * console display
  */
 #define	DSP_S(s)	putString(s)
-#define	DSP_LF		putChar('\n')
-#define	DSP_SP		putChar(' ')
-#define	DSP_CH(c)	putChar(c)
+#define	DSP_LF		putchar('\n')
+#define	DSP_SP		putchar(' ')
+#define	DSP_CH(c)	putchar(c)
 #define	DSP_02X(x)	putHex2(x)
 #define	DSP_04X(x)	putHex4(x)
 #define	DSP_08X(x)	putHex8(x)
@@ -294,7 +294,7 @@ IMPORT BOOL isOverlapMemArea( UW top, UW end, UW attr );
  *       return value       0 : normal
  *                         -1 : CTRL-C input exists
  */
-IMPORT W putChar( W c );
+IMPORT W putchar( W c );
 IMPORT W putString( const UB *str );
 
 /*

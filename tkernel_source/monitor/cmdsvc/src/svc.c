@@ -113,7 +113,7 @@ EXPORT W procSVC( W fno, W p1, W p2, W p3, W p4 )
 		break;
 
 	  case TM_PUTCHAR:	/* INT	tm_putchar( INT c ) */
-		er = putChar(p1);
+		er = putchar(p1);
 		break;
 
 	  case TM_GETLINE:	/* INT	tm_getline( UB *buff ) */

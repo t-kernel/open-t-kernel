@@ -65,7 +65,7 @@ EXPORT BOOL checkAbort( void )
  *       return value       0 : normal
  *                         -1 : CTRL-C input exists
  */
-EXPORT W putChar( W c )
+EXPORT W putchar( W c )
 {
 	W	ch;
 
@@ -91,7 +91,7 @@ EXPORT W putString( const UB *str )
 	UB	c;
 
 	while ((c = *str++)) {
-		if (putChar(c) < 0) return -1;
+		if (putchar(c) < 0) return -1;
 	}
 	return 0;
 }
@@ -105,8 +105,8 @@ EXPORT W putString( const UB *str )
  */
 EXPORT W putHex2( UB val )
 {
-	if (putChar(Digit[(val >> 4) & 0x0f]) < 0) return -1;
-	if (putChar(Digit[(val >> 0) & 0x0f]) < 0) return -1;
+	if (putchar(Digit[(val >> 4) & 0x0f]) < 0) return -1;
+	if (putchar(Digit[(val >> 0) & 0x0f]) < 0) return -1;
 	return 0;
 }
 
@@ -145,7 +145,7 @@ EXPORT W putDec( UW val )
 	}
 
 	for (; i >= 0; i--) {
-		if (putChar(d[i]) < 0) return -1;
+		if (putchar(d[i]) < 0) return -1;
 	}
 
 	return 0;

@@ -59,8 +59,8 @@ EXPORT ER writeFrom( UW addr, UW data, W nsec, W msg )
 		if (msg > 0) {
 			DSP_S("OK (y/n)? ");
 			c = (UB)getChar(1);
-			putChar(c);
-			putChar('\n');
+			putchar(c);
+			putchar('\n');
 			if (c != 'Y' && c != 'y') return E_OK;
 		} else if (msg < 0) {
 			DSP_S("Restart System after Writing.");
