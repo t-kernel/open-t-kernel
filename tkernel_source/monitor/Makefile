@@ -31,7 +31,7 @@ INCLUDE = \
 	-I../include \
 	-Icmdsvc
 
-CFLAGS := -O2 -msoft-float -mthumb-interwork -mstructure-size-boundary=8 -ffreestanding -Wno-pointer-sign -D_TEF_EM1D_ -nostdlib
+CFLAGS := -msoft-float -mthumb-interwork -mstructure-size-boundary=8 -ffreestanding -Wno-pointer-sign -D_TEF_EM1D_ -nostdlib
 
 -include hwdepend/$(ARCH)/Makefile
 
@@ -65,17 +65,21 @@ CFLAGS += -mcpu=arm926ej-s
 CFLAGS += -D__TMONITOR__
 CFLAGS += -DCONFIG_MACH_SAM9
 CFLAGS += -D__TRON_ARM_ARCH=5
-# t-monitor drivers
+CFLAGS += -DCONFIG_SKIP_LOWLEVEL
+
+# memory
 CFLAGS += -DCONFIG_TM_INIT_SP=0x00010000 # 64KiB
+CFLAGS += -DCONFIG_TM_STACK_TOP=0x72300000
+CFLAGS += -DCONFIG_TM_STACK_SIZE=0x00010000
+CFLAGS += -DCONFIG_TM_HEAP_TOP=0
+CFLAGS += -DCONFIG_TM_HEAP_SIZE=0
+
+# drivers
 CFLAGS += -DCONFIG_TM_SIO
 CFLAGS += -DCONFIG_TM_DISK
 CFLAGS += -DCONFIG_TM_FLASHROM
 CFLAGS += -DCONFIG_TM_BAUD_RATE=115200
 CFLAGS += -DCONFIG_TM_EARLY_PRINTK
-CFLAGS += -DCONFIG_SKIP_LOWLEVEL
-
-CFLAGS += -DCONFIG_STACK_SIZE=0x80000
-CFLAGS += -DCONFIG_HEAP_SIZE=0x80000
 
 # t-monitor
 CFLAGS += -DCONFIG_TM_WRKBUF_SZ="(1<<10)"
