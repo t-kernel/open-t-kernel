@@ -96,14 +96,14 @@ __end_________________________________________________________________________:
 __startup_entry:
 @	mov	r8-r12
 @ if we called from u-boot or...
-	mov	r11, sp
-	mov	r12, lr
+@	mov	r11, sp
+@	mov	r12, lr
 
 @ calc run-time offset
 	mov	r2, pc
 	ldr	r1, =1f
 	sub	r0, r2, r1
-1:	ldr	r2, =__eitbra_start
+1:	ldr	r2, =__vectors_start
 	add	r2, r2, r0		@ run-time address of 1
 	mov	r1, #0			@ assume V bit is zero
 
@@ -125,6 +125,8 @@ verify:
 
 	b	startup_entry
 
+#define CONFIG_TM_DBG_VECTORS
+#ifdef CONFIG_TM_DBG_VECTORS
 __svc_entry:
 	str	lr, __svc_stack
 	mov	r0, #'V'
@@ -134,7 +136,7 @@ __svc_entry:
 	b	svc_entry
 __svc_stack:
 	.word	0
-
+#endif
 
 
 
@@ -437,7 +439,7 @@ default_entry:
 #ifdef CONFIG_MACH_ASM9
 #endif
 
-
+#if 0
         .section .stack
         .align  4
         .globl  __stack_top
@@ -464,9 +466,6 @@ __heap_limit:
 
 @ 7.99 .size This directive is used to set the size associated with a symbol.
 
-
-
-
-
+#endif
 
 	.pool

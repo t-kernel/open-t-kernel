@@ -45,22 +45,14 @@ startup_entry:
 @ CORTEX-R4  NZCVQ[IT 1:0] J [DNM][GE 3:0][IT 7:2]EAIFTMMMMM page 3-9
 @ ARM lowlevel initial
 // SVC mode, FIQ/IRQ interrupt disabled
-#if __TRON_ARM_ARCH__ >= 6
-	mov	r0, #(PSR_SVC | PSR_I | PSR_F)
-	msr	cpsr_fsxc, r0
-#else
 	mrs	r0, cpsr
 	bic	r0, #0x1F
 	orr	r0, #0xD3	@ disable FIQ IRQ Supervisor Mode
 	msr	cpsr, r0
-#endif
 
 // use On-Chip SRAM as stack area
-#if CONFIG_MACH_EM1D
-	ldr	sp, =0xa0020000
-#endif
-#ifdef CONFIG_INIT_SP
-	ldr	sp, =(DCONFIG_TM_INIT_SP-16)
+#ifdef CONFIG_TM_INIT_SP
+	ldr	sp, =(CONFIG_TM_INIT_SP-16)
 #endif
 
 // not in effect: MMU, cache (D/I), program-flow prediction, High-Vector, VIC
@@ -179,7 +171,7 @@ reset_entry:
 
 #if CONFIG_MACH_EM1D
 // Switch to T-Monitor stack
-	ldr	sp, =__stack_bottom
+	ldr	sp, __stack_bottom
 
 // not in effect: cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
@@ -224,19 +216,21 @@ reset_entry:
 	bl	procReset
 
 
-	ldr	sp, =__stack_top
+	ldr	sp, __stack_top
 	mrs	r7, cpsr
-
-#define __stack_fiq		(__stack_top   - 0x10000)
-#define __stack_irq		(__stack_fiq   - 0x200)
-#define __stack_svc		(__stack_irq   - 0x200)
-#define __stack_abort		(__stack_svc   - 0x200)
-#define __stack_undefined	(__stack_abort - 0x200)
-#define __stack_system		(__stack_top)
+#define __STACK_TOP		(CONFIG_TM_STACK_TOP)
+#define __STACK_SIZE		(CONFIG_TM_STACK_SIZE)
+#define __STACK_LIMIT		(__STACK_TOP   - __STACK_SIZE)
+#define __STACK_FIQ		(__STACK_TOP   + 0x200 - __STACK_SIZE)
+#define __STACK_IRQ		(__STACK_FIQ   + 0x200)
+#define __STACK_SVC		(__STACK_IRQ   + 0x200)
+#define __STACK_ABORT		(__STACK_SVC   + 0x200)
+#define __STACK_UNDEFINED	(__STACK_ABORT + 0x200)
+#define __STACK_SYSTEM		(__STACK_TOP)
 
 @ +--------------------------
 @ +
-@ + main	64KiB
+@ + main	64KiB-
 @ +
 @ +--------------------------
 @ + fiq		512B
@@ -247,7 +241,7 @@ reset_entry:
 @ +--------------------------
 @ + abort	512B
 @ +--------------------------
-@ + undefined	not assigned
+@ + undefined	512B
 @ +--------------------------
 
 @ prepare stacks and registers
@@ -275,8 +269,8 @@ reset_entry:
 	mov	r11, r0
 	mov	r12, r0
 
-	ldr	r13, =__stack_fiq
-	ldr	r14, =__unknow
+	ldr	r13, __stack_fiq
+	ldr	r14, __unknow
 
 @ IRQ: 10010
 	bic	r7, #0x1F
@@ -284,7 +278,7 @@ reset_entry:
 	msr	cpsr, r7		@ switch to irq mode
 	msr	spsr, r0
 
-	ldr	r13, =__stack_irq
+	ldr	r13, __stack_irq
 	ldr	r14, =__unknow
 
 @ SVC: 10011
@@ -293,7 +287,7 @@ reset_entry:
 	msr	cpsr, r7
 	msr	spsr, r0
 
-	ldr	r13, =__stack_svc
+	ldr	r13, __stack_svc
 	ldr	r14, =__unknow
 
 @ abort: 10111
@@ -302,7 +296,7 @@ reset_entry:
 	msr	cpsr, r7
 	msr	spsr, r0
 
-	ldr	r13, =__stack_abort
+	ldr	r13, __stack_abort
 	ldr	r14, =__unknow
 	
 @ undefined: 11011
@@ -311,7 +305,7 @@ reset_entry:
 	msr	cpsr, r7
 	msr	spsr, r0
 
-	ldr	r13, =__stack_undefined
+	ldr	r13, __stack_undefined
 	ldr	r14, =__unknow
 
 @ system: 11111
@@ -320,7 +314,7 @@ reset_entry:
 	orr	r7, #0x1F
 	msr	cpsr, r7
 
-	ldr	r13, =__stack_top
+	ldr	r13, __stack_top
 	ldr	r14, =__unknow
 
 #ifdef CONFIG_ARM_VFP
@@ -346,53 +340,8 @@ reset_entry:
 	mov	r11, r0
 	mov	r12, r0
 
-#if CONFIG_MACH_EM1D
-// clear registers & initialize stack pointer
-	ldr	r7, =__stack_top	// since it is 0-cleared, why not use it.
-
-	ldmia	r7, {r8-r12,sp,lr}^	// usr: r8-r12, sp, lr [just clear registers]
-
-	mov	r0, #(PSR_FIQ | PSR_I | PSR_F)
-	msr	cpsr_fsxc, r0
-	ldmia	r7, {r8-r12,sp,lr}	// fiq: r8-r12, sp, lr, spsr
-	msr	spsr_fsxc, lr
-	ldr	sp, =__stack_fiq
-
-	mov	r0, #(PSR_IRQ | PSR_I | PSR_F)
-	msr	cpsr_fsxc, r0
-	ldr	sp, =__stack_top_irq	// irq: sp, lr, spsr
-	mov	lr, #0
-	msr	spsr_fsxc, lr
-
-	mov	r0, #(PSR_ABT | PSR_I | PSR_F)
-	msr	cpsr_fsxc, r0
-	ldr	sp, =__stack_top_abort	// abt: sp, lr, spsr
-	mov	lr, #0
-	msr	spsr_fsxc, lr
-
-	mov	r0, #(PSR_UND | PSR_I | PSR_F)
-	msr	cpsr_fsxc, R0
-	ldr	sp, =__stack_top_undefined	// und: sp, lr, spsr
-	mov	lr, #0
-	msr	spsr_fsxc, lr
-#endif
-
-
 #ifdef CONFIG_ARM_VFP
-        // clear VFP
-	mov	r0, #0x40000000		// EX=0,EN=1,SBZ/other flags = 0
-	fmxr	fpexc, r0
-
-	mov	r1, #0x00000000		// SBZ/other flags = 0
-	fmxr	fpscr, r1
-
-	fldmiad	r7, {d0-d15}		// zero clear
-
-        // return to SVC mode
-	mov	r0, #(PSR_SVC | PSR_I | PSR_F)
-	msr	cpsr_fsxc, r0
-
-	ldmia	r7, {r0-r7}		// r0-r7
+	b	.			@ TODO
 #endif
 
 #define puts_ll putString
@@ -408,6 +357,7 @@ reset_entry:
 	svc	#0
 	b	resetLoop		// return will cause another reset
 
+	.global	__unknow
 __unknow:
 	mov	__lr, lr
 	ldr	r0, =__unknow_msg
@@ -425,6 +375,29 @@ __magic:
 	.word	0xdeadbeef
 @ GCC will place const here, but not checking align,
 @ without this magic, will cause a exception.
+	.global	__stack_top
+	.global	__stack_size
+	.global	__stack_limit
+	.global	__stack_bottom
+__stack_top:
+	.word	__STACK_TOP
+__stack_size:
+	.word	__STACK_SIZE
+__stack_limit:
+__stack_bottom:
+	.word	__STACK_LIMIT
+__stack_fiq:
+	.word	__STACK_FIQ
+__stack_irq:
+	.word	__STACK_IRQ
+__stack_svc:
+	.word	__STACK_SVC
+__stack_abort:
+	.word	__STACK_ABORT
+__stack_undefined:
+	.word	__STACK_UNDEFINED
+__stack_system:
+	.word	__STACK_SYSTEM
 	.pool
 	.end
 

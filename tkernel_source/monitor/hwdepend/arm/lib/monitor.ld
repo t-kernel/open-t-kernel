@@ -140,24 +140,9 @@ SECTIONS {
 			. = ALIGN(0x10);
 		}
 	} > RAM1
-	.heap (COPY) : {
-		__heap_base    = .;
-		PROVIDE(heap_base = .);
-		*(.heap*)
-		__heap_limit = .;
-	} > RAM1
-	.stack (COPY) : {
-		*(.stack*)
-	} > RAM1
 
 	/* Set stack top to end of RAM, and stack limit move down by
 	 * size of stack_dummy section */
-	__stack_top = ORIGIN(RAM1) + LENGTH(RAM1);
-	__stack_limit = __stack_top - SIZEOF(.stack);
-	__stack_bottom = __stack_top - SIZEOF(.stack);
-	PROVIDE(__stack = __stack_top);
-	/* Check if data + heap + stack exceeds RAM limit */
-	ASSERT(__stack_limit >= __heap_limit, "region RAM overflowed with stack")
-		__stack_bottom = .;
+	__tm_stack_top = ORIGIN(RAM1) + LENGTH(RAM1);
 
 }
