@@ -62,6 +62,7 @@ IMPORT W getSIO( W tmo );
  */
 typedef struct siocb	SIOCB;
 struct siocb {
+	UB	name[8];		/* name of this driver */
 	UW	info;			/* driver can use this for arbitrary purposes */
 	UB	rcvbuf[SIO_RCVBUFSZ];	/* receive buffer */
 	UW	iptr;			/* input pointer */

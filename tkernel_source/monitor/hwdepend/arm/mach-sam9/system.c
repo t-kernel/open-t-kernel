@@ -260,17 +260,10 @@ EXPORT	void	sysExit(W reset)
 	cpuLED(0x00);
 
         /* all interrupts disabled */
-	out_w(IT0_IDS0, ~0);		/* CPU: all interrupts disabled */
-	out_w(IT0_IDS1, ~0);
-	out_w(IT0_IDS2, ~0);
-	out_w(IT3_IPI0_CLR, 0x0000003f);
-	out_w(IT3_IDS0, ~0);		/* DSP: all interrupts disabled */
-	out_w(IT3_IDS1, ~0);
-	out_w(IT3_IDS2, ~0);
-	out_w(IT0_IPI3_CLR, 0x0000003f);
-	out_w(IT0_FID, 0x00000001);	/* FIQ disabled */
-	out_w(IT0_LIIR, 0x0000000f);	/* internal interrupt disabled */
-
+	/* CPU: all interrupts disabled */
+	/* DSP: all interrupts disabled */
+	/* FIQ disabled */
+	/* internal interrupt disabled */
         /* power on controller initialization */
 	pmicInit();
 

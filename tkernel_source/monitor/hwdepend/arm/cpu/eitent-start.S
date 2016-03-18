@@ -40,7 +40,12 @@
  *       EIT entry
  */
 
-	.section EITBRA, "ax"
+
+/*
+ * r0-r7, r8-r12, r13(sp), r14(lr), r15(pc)
+ */
+
+	.section eitbra
 	.global  _start
 _start:
 	b	__startup_entry		@ 00 : reset
@@ -61,73 +66,9 @@ fiq_entry:				@ 1C : FIQ
 	ldr	ip, [ip, #offs(EITVEC(EIT_FIQ))]
 	bx	ip
 
-
-__startup_entry:
-#if 0
-	mov	r2, pc
-	ldr	r1, =1f
-	sub	r0, r2, r1
-1:	ldr	r2, =__eitbra_start
-	add	r2, r2, r0
-#else
-	ldr	r2, =__eitbra_start
-#endif
-	mov	r1, #0
-
-copy:	ldr	r0, [r2]
-	str	r0, [r1]
-__check:
-	ldr	r3, [r1]
-	cmp	r0, r3
-	movne	r0, #'E'
-	moveq	r0, #'C'
-	bl	serial_putchar
-
-	add	r1, #4
-	add	r2, #4
-	ldr	r0, =____eitbra_end
-	cmp	r0, r2
-	bne	copy
-
-	b	startup_entry
-
-__svc_entry:
-	str	lr, __svc_stack
-	mov	r0, #'V'
-	bl	serial_putchar
-	ldr	lr, __svc_stack
-	bx	lr
-__svc_stack:
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	b	svc_entry
-
-
 __start_______________________________________________________________________:
-__eitbra_start:
+@ vectors for relocate to 0x00000000 or 0xFFFF0000
+__vectors_start:
 20:     ldr     pc, 10f
 21:     ldr     pc, 11f
 22:     ldr     pc, 12f
@@ -143,8 +84,58 @@ __eitbra_start:
 14:     .word   dabort_entry
 15:     .word   0xdeadc0de
 16:     .word   fiq_entry
-____eitbra_end:
+__vectors_end:
+__vectors_size:
+	.word	__vectors_end-__vectors_start
 __end_________________________________________________________________________:
+
+
+
+
+
+__startup_entry:
+@	mov	r8-r12
+@ if we called from u-boot or...
+	mov	r11, sp
+	mov	r12, lr
+
+@ calc run-time offset
+	mov	r2, pc
+	ldr	r1, =1f
+	sub	r0, r2, r1
+1:	ldr	r2, =__eitbra_start
+	add	r2, r2, r0		@ run-time address of 1
+	mov	r1, #0			@ assume V bit is zero
+
+					@ ok, r0 = offset
+
+copy:	ldr	r0, [r2]
+	str	r0, [r1]		@ abort?
+verify:
+	ldr	r3, [r1]
+	cmp	r0, r3
+	movne	r0, #0xE1		@ Error #1, dest is not writeable?
+	bne	.			@ Error #1, hang
+
+	add	r1, #4
+	add	r2, #4
+	ldr	r0, =__vectors_end
+	cmp	r0, r2
+	bne	copy
+
+	b	startup_entry
+
+__svc_entry:
+	str	lr, __svc_stack
+	mov	r0, #'V'
+	bl	serial_putchar
+	ldr	lr, __svc_stack
+	bx	lr
+	b	svc_entry
+__svc_stack:
+	.word	0
+
+
 
 
 
@@ -152,15 +143,13 @@ __end_________________________________________________________________________:
 
 
 	.global svc
-svc_r0: .word	0
+svc_r0: .word	0xEF0000EF
 	bx	lr
 svc:
-#if 1
 	bic	r0, #0xFF000000
 	orr	r0, #0xEF000000
 	str	r0, svc_r0
 	b	svc_r0
-#endif
 	bx	lr
 /*
  * interrupt
@@ -447,4 +436,37 @@ default_entry:
 	bx	lr
 #ifdef CONFIG_MACH_ASM9
 #endif
+
+
+        .section .stack
+        .align  4
+        .globl  __stack_top
+        .globl  __stack_limit
+	.globl	__stack_bottom			@ japanese prefer bottom
+__stack_limit:
+__stack_bottom:
+        .space  CONFIG_STACK_SIZE
+        .size   __stack_limit, . - __stack_limit
+	.size	__stack_bottom, . - __stack_bottom
+__stack_top:
+        .size   __stack_top, . - __stack_top
+
+        .section .heap
+        .align  4
+        .globl  __heap_base
+	.globl	__heap_limit
+__heap_base:
+	.space	CONFIG_HEAP_SIZE
+        .size   __heap_base, . - __heap_base
+__heap_limit:
+        .size   __heap_limit, . - __heap_limit
+
+
+@ 7.99 .size This directive is used to set the size associated with a symbol.
+
+
+
+
+
+
 	.pool

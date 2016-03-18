@@ -17,8 +17,8 @@
  *
  *       EM1-D512: initial setting after a reset.
  *
- *	reset-lowlevel.S
- *	Board initial, should place to arch/arm/mach-asm9/.
+ *	hwdepend/arm/mach-sam9/reset-lowlevel.S
+ *	Board initial
  */
 
 #define	_in_asm_source_
@@ -37,7 +37,7 @@
 	.globl	startup_entry_lowlevel
 	.globl	serial_putchar
 startup_entry_lowlevel:
-	mov	r6, lr
+#ifndef CONFIG_SKIP_LOWLEVEL
 @ Machine/Board initial
 // Setup clock divider
 // automatic frequency change function is off
@@ -53,9 +53,7 @@ startup_entry_lowlevel:
 // creation of temporary page table
 // Mapping of FlashROM area (0x70000000 - 0x72000000 --> 0x00000000 -)
 @ End of Machine/Board initial
-	mov	r0, #'1'
-	bl	serial_putchar
-	mov	lr, r6
+#endif /* skip lowlevel*/
 	bx	lr
 
 serial_putchar:
@@ -67,6 +65,11 @@ serial_putchar:
 	ldr	r7, =0xFFFFEE00
 	strb	r0, [r7, #0x1C]
 
+1:	ldr	r7, =0xFFFFEE00			@ Wait for the transmitter to be ready
+	ldr	r7, [r7, #0x14] 
+	tst	r7, #(1<<9)
+	beq	1b
+	
 	bx	lr
 	.pool
 

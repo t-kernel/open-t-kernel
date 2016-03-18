@@ -21,7 +21,7 @@
 MEMORY
 {
 	RAM0 (rxw) : ORIGIN = 0x00000000, LENGTH =  64K
-	RAM1 (rxw) : ORIGIN = 0x72200000, LENGTH = 128M
+	RAM1 (rxw) : ORIGIN = 0x72200000, LENGTH =  64M
 	ROM0 (rx)  : ORIGIN = 0x80000000, LENGTH =  64K
 	ROM1 (r)   : ORIGIN = 0x00000000, LENGTH = 256M
 }
@@ -81,6 +81,7 @@ SECTIONS {
 	} > RAM1
 	__exidx_end = .;
 	__etext = .;
+
 	.data : {
 	__data_org = . ;
 		__data_start = . ;
@@ -153,7 +154,8 @@ SECTIONS {
 	 * size of stack_dummy section */
 	__stack_top = ORIGIN(RAM1) + LENGTH(RAM1);
 	__stack_limit = __stack_top - SIZEOF(.stack);
-	PROVIDE(__stack = __StackTop);
+	__stack_bottom = __stack_top - SIZEOF(.stack);
+	PROVIDE(__stack = __stack_top);
 	/* Check if data + heap + stack exceeds RAM limit */
 	ASSERT(__stack_limit >= __heap_limit, "region RAM overflowed with stack")
 		__stack_bottom = .;

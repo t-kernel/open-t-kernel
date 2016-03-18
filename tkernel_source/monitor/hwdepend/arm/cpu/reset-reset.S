@@ -24,6 +24,12 @@
  */
 
 #define	_in_asm_source_
+#define __lr			r5
+#define __stack_fiq		(__stack_top   - 4*32)
+#define __stack_irq		(__stack_fiq   - 4*32)
+#define __stack_svc		(__stack_irq   - 4*32)
+#define __stack_abort		(__stack_svc   - 4*128)
+#define __stack_undefined	(__stack_abort - 4*32)
 
 #include <machine.h>
 #include <tk/sysdef.h>
@@ -31,6 +37,7 @@
 
 #include <mach/em1d512.h>
 #include <setup_em1d512.h>
+
 
 /*----------------------------------------------------------------------
         T-Monitor boot processing
@@ -222,38 +229,141 @@ reset_entry:
 // reset processing
 	bl	procReset
 
+
+	ldr	sp, =__stack_top
+	mrs	r7, cpsr
+
+
+
+@ prepare stacks and registers
+@ r7: cpsr
+@ r6: scatch
+@ r0: zero
+	mrs	r7, cpsr
+	bic	r7, #0x1F
+	orr	r7, #(0<<5)		@ Thumb state bit
+	orr	r7, #(1<<6)		@ FIQ disable
+	orr	r7, #(1<<7)		@ IRQ disable
+#if __TRON_ARM_ARCH__ > 7
+	orr	r7, #(0<<8)		@ Imprecise abort disable bit
+#endif
+	orr	r7, #(0<<9)		@ Data endianness bit
+
+@ FIQ: 10001
+	bic	r7, #0x1F
+	orr	r7, #0x13
+	msr	cpsr, r7		@ switch to fiq mode
+	msr	spsr, r0
+	mov	r8,  r0
+	mov	r9,  r0
+	mov	r10, r0
+	mov	r11, r0
+	mov	r12, r0
+
+	ldr	r13, =__stack_fiq
+	ldr	r14, =__unknow
+
+@ IRQ: 10010
+	bic	r7, #0x1F
+	orr	r7, #0x12
+	msr	cpsr, r7		@ switch to irq mode
+	msr	spsr, r0
+
+	ldr	r13, =__stack_irq
+	ldr	r14, =__unknow
+
+@ SVC: 10011
+	bic	r7, #0x1F
+	orr	r7, #0x13
+	msr	cpsr, r7
+	msr	spsr, r0
+
+	ldr	r13, =__stack_svc
+	ldr	r14, =__unknow
+
+@ abort: 10111
+	bic	r7, #0x1F
+	orr	r7, #0x17
+	msr	cpsr, r7
+	msr	spsr, r0
+
+	ldr	r13, =__stack_abort
+	ldr	r14, =__unknow
+	
+@ undefined: 11011
+	bic	r7, #0x1F
+	orr	r7, #0x1B
+	msr	cpsr, r7
+	msr	spsr, r0
+
+	ldr	r13, =__stack_undefined
+	ldr	r14, =__unknow
+
+@ system: 11111
+@   user: 10000
+	bic	r7, #0x1F
+	orr	r7, #0x1F
+	msr	cpsr, r7
+
+	ldr	r13, =__stack_top
+	ldr	r14, =__unknow
+
+#ifdef CONFIG_ARM_VFP
+	b	.			@ TODO
+#endif
+
+@ back to SVC mode
+	bic	r7, #0x1F
+	orr	r7, #0x13
+	msr	cpsr, r7
+
+	mov	r1, r0			@ r0 is zero
+	mov	r2, r0
+	mov	r3, r0
+	mov	r4, r0
+	mov	r5, r0
+	mov	r6, r0
+	mov	r7, r0
+	
+	mov	r8, r0
+	mov	r9, r0
+	mov	r10, r0
+	mov	r11, r0
+	mov	r12, r0
+
+#if CONFIG_MACH_EM1D
 // clear registers & initialize stack pointer
 	ldr	r7, =__stack_top	// since it is 0-cleared, why not use it.
 
-	ldmia	r7, {r8-r12,sp,lr}^	// usr: r8-r12, sp, lr
+	ldmia	r7, {r8-r12,sp,lr}^	// usr: r8-r12, sp, lr [just clear registers]
 
 	mov	r0, #(PSR_FIQ | PSR_I | PSR_F)
 	msr	cpsr_fsxc, r0
 	ldmia	r7, {r8-r12,sp,lr}	// fiq: r8-r12, sp, lr, spsr
 	msr	spsr_fsxc, lr
-	ldr	sp, =__stack_top + 32
+	ldr	sp, =__stack_fiq
 
 	mov	r0, #(PSR_IRQ | PSR_I | PSR_F)
 	msr	cpsr_fsxc, r0
-	ldr	sp, =__stack_top + 16	// irq: sp, lr, spsr
+	ldr	sp, =__stack_top_irq	// irq: sp, lr, spsr
 	mov	lr, #0
 	msr	spsr_fsxc, lr
 
 	mov	r0, #(PSR_ABT | PSR_I | PSR_F)
 	msr	cpsr_fsxc, r0
-	ldr	sp, =__stack_top + 64	// abt: sp, lr, spsr
+	ldr	sp, =__stack_top_abort	// abt: sp, lr, spsr
 	mov	lr, #0
 	msr	spsr_fsxc, lr
 
 	mov	r0, #(PSR_UND | PSR_I | PSR_F)
 	msr	cpsr_fsxc, R0
-	ldr	sp, =__stack_top + 48	// und: sp, lr, spsr
+	ldr	sp, =__stack_top_undefined	// und: sp, lr, spsr
 	mov	lr, #0
 	msr	spsr_fsxc, lr
+#endif
 
 
-
-#if __TRON_ARM_ARCH__ >= 6
+#ifdef CONFIG_ARM_VFP
         // clear VFP
 	mov	r0, #0x40000000		// EX=0,EN=1,SBZ/other flags = 0
 	fmxr	fpexc, r0
@@ -262,36 +372,34 @@ reset_entry:
 	fmxr	fpscr, r1
 
 	fldmiad	r7, {d0-d15}		// zero clear
-#endif
 
         // return to SVC mode
 	mov	r0, #(PSR_SVC | PSR_I | PSR_F)
 	msr	cpsr_fsxc, r0
 
 	ldmia	r7, {r0-r7}		// r0-r7
+#endif
 
+#define puts_ll putString
 	ldr	r0, =banner
-	bl	putString
+	bl	puts_ll
 	ldr	r0, =Version
-	bl	putString
+	bl	puts_ll
 	ldr	r0, =patch
-	bl	putString
-
-	svc	#0
-	nop
-	nop
-	mov	r0, #8
-	bl	svc_r0
-
-
-
-	ldr	r0, =EIT_DEFAULT
-	bl	entMonitor
+	bl	puts_ll
 
 // enter monitor by means of SVC #0 instruction (SVC mode)
   resetLoop:
 	svc	#0
 	b	resetLoop		// return will cause another reset
+
+__unknow:
+	mov	__lr, lr
+	ldr	r0, =__unknow_msg
+	bl	puts_ll
+	b	.
+__unknow_msg:
+.asciz	"You should not return here."
 banner:
 .asciz "Open T-Monitor! "
 patch:

@@ -333,36 +333,23 @@ EXPORT	UW	DipSwStatus(void)
 /* USB power control */
 EXPORT	void	usbPower(BOOL power)
 {
-	pmicWrite(27, (pmicRead(27) & 0x0f) |
-		  		(power ? USBPowerOn : USBPowerOff));
-	pmicDelay();
+	printf("[info] usb power %s\n", power ? "ON" : "OFF");
+	return ;
+
 }
 
 /* power off */
 EXPORT	void	powerOff(void)
 {
-	W	i;
-
-	for (i = 10; i < 14; i++) pmicWrite(i, 0xff);	/* IRQ_MASK_A-D (mask) */
-	pmicDelay();
-
-	for (i = 5 ; i < 9; i++) pmicWrite(i, 0xff);	/* EVENT_A-D (clear) */
-	pmicDelay();
-
-	while (1) {
-		pmicWrite(15, 0x60);	/* DEEP_SLEEP */
-		pmicDelay();
-	}
+	printf("[info] Power off\n");
+	return ;
 }
 
 /* reset start*/
 EXPORT	void	resetStart(void)
 {
-	while (1) {
-                /* reset */
-		pmicWrite(15, 0xac);		/* SHUTDOWN */
-		pmicDelay();
-	}
+	printf("[info] reset board!\n");
+	return ;
 }
 
 /* initialize hardware peripherals (executed only during reset) */

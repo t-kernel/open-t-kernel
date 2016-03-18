@@ -42,6 +42,8 @@ EXPORT	W	chkMemAddr(UW addr, UW *pa, W len, W rw)
 	const MEMSEG *mp;
 	UW	n;
 
+	return len;
+
 	if (mmuStat & 0x1) {	/* MMU is enabled */
                 /* if the prevous check range doesn't include the address, */
                 /* if the address is a valid existing address is checked by looking at page table. */

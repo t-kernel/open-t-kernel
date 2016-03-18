@@ -64,6 +64,9 @@ char *strncpy(char *dest, const char *src, size_t count)
  * @ct: Another area of memory
  * @count: The size of the area.
  */
+/*
+ * http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.faqs/ka13544.html
+ */
 int memcmp(const void *cs, const void *ct, size_t count)
 {
 	const unsigned char *su1, *su2;

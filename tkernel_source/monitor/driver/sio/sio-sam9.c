@@ -187,6 +187,7 @@ EXPORT ER initSIO_sam9(SIOCB *scb, const CFGSIO *csio, W baudrate)
 
         /* select the target port */
 	scb->info = DefSIO[csio->info].iob;
+	strncpy(scb->name, "sam9-sio", sizeof(scb->name));
 
         /* initialize serial controller */
 	// Reset & disable receiver and transmitter, disable interrupts
