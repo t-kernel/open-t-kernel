@@ -25,11 +25,6 @@
 
 #define	_in_asm_source_
 #define __lr			r5
-#define __stack_fiq		(__stack_top   - 4*32)
-#define __stack_irq		(__stack_fiq   - 4*32)
-#define __stack_svc		(__stack_irq   - 4*32)
-#define __stack_abort		(__stack_svc   - 4*128)
-#define __stack_undefined	(__stack_abort - 4*32)
 
 #include <machine.h>
 #include <tk/sysdef.h>
@@ -44,7 +39,7 @@
 ----------------------------------------------------------------------*/
 	.section .startup
 	.globl	startup_entry
-	.type	startup_entry, %function
+	.arm
 startup_entry:
 @ ARM926EJ-S NZCVQ--J -------- -------- IFTMMMMM
 @ CORTEX-R4  NZCVQ[IT 1:0] J [DNM][GE 3:0][IT 7:2]EAIFTMMMMM page 3-9
@@ -168,9 +163,8 @@ tc_loop:
         Reset processing
 ----------------------------------------------------------------------*/
 	.text
-	.balign	4
+	.align	2
 	.globl	reset_entry
-	.type	reset_entry, %function
 reset_entry:
 // SVC mode, FIQ/IRQ interrupt disabled
 #if CONFIG_MACH_EM1D
@@ -183,12 +177,12 @@ reset_entry:
 	msr	cpsr, r0
 #endif
 
+#if CONFIG_MACH_EM1D
 // Switch to T-Monitor stack
 	ldr	sp, =__stack_bottom
 
 // not in effect: cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
-#if CONFIG_MACH_EM1D
 	dsb
 	mrc	p15, 0, r0, cr1, cr0, 0
 	ldr	r1, =~0x01003f84
@@ -233,7 +227,28 @@ reset_entry:
 	ldr	sp, =__stack_top
 	mrs	r7, cpsr
 
+#define __stack_fiq		(__stack_top   - 0x10000)
+#define __stack_irq		(__stack_fiq   - 0x200)
+#define __stack_svc		(__stack_irq   - 0x200)
+#define __stack_abort		(__stack_svc   - 0x200)
+#define __stack_undefined	(__stack_abort - 0x200)
+#define __stack_system		(__stack_top)
 
+@ +--------------------------
+@ +
+@ + main	64KiB
+@ +
+@ +--------------------------
+@ + fiq		512B
+@ +--------------------------
+@ + irq		512B
+@ +--------------------------
+@ + svc		512B
+@ +--------------------------
+@ + abort	512B
+@ +--------------------------
+@ + undefined	not assigned
+@ +--------------------------
 
 @ prepare stacks and registers
 @ r7: cpsr
@@ -404,5 +419,12 @@ banner:
 .asciz "Open T-Monitor! "
 patch:
 .asciz " p0.9\r\n"
-	.align	4
+
+	.align	2
+__magic:
+	.word	0xdeadbeef
+@ GCC will place const here, but not checking align,
+@ without this magic, will cause a exception.
 	.pool
+	.end
+
