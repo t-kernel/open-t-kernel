@@ -34,7 +34,7 @@
 /*
  * console display
  */
-#define	DSP_S(s)	putString(s)
+#define	DSP_S(s)	puts(s)
 #define	DSP_LF		putchar('\n')
 #define	DSP_SP		putchar(' ')
 #define	DSP_CH(c)	putchar(c)
@@ -295,7 +295,7 @@ IMPORT BOOL isOverlapMemArea( UW top, UW end, UW attr );
  *                         -1 : CTRL-C input exists
  */
 IMPORT W putchar( W c );
-IMPORT W putString( const UB *str );
+IMPORT W puts( const UB *str );
 
 /*
  * console output (hexadecimal: 2, 4, or 8 columns)

@@ -126,7 +126,7 @@ EXPORT W procSVC( W fno, W p1, W p2, W p3, W p4 )
 	  case TM_PUTSTRING:	/* INT	tm_putstring( const UB *buff ) */
 		n = readMemStr(p1, wrkBuf, WRKBUF_SZ);
 		if ( n < 0 ) { er = E_MACV; break; }
-		er = putString(wrkBuf);
+		er = puts(wrkBuf);
 		break;
 
 	  case TM_COMMAND:	/* INT	tm_command( const UB *buff ) */

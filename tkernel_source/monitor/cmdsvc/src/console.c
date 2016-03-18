@@ -86,7 +86,7 @@ EXPORT W putchar( W c )
  *       return value       0 : normal
  *                         -1 : CTRL-C input exists
  */
-EXPORT W putString( const UB *str )
+EXPORT W puts( const UB *str )
 {
 	UB	c;
 
