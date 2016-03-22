@@ -44,6 +44,9 @@ endif
 ifeq ($(MACH),mach-sam9)
 SRC += driver/sio/sio-sam9.c
 endif
+ifeq ($(MACH),mach-mx28)
+SRC += driver/sio/sio-mx28.c
+endif
 
 SRC += hwdepend/arm/$(MACH)/system.c
 SRC += hwdepend/arm/$(MACH)/waitusec.c

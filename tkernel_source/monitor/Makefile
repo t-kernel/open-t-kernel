@@ -4,8 +4,9 @@ ARCH := arm
 # MACH := mach-em1d
 # MACH := mach-asm9
 # MACH := mach-acd2
+# MACH := mach-mx28
 
-MACH := mach-sam9
+MACH := mach-mx28
 GPL := -gpl
 
 include Makefile.src
@@ -85,6 +86,30 @@ CFLAGS += -DCONFIG_TM_EARLY_PRINTK
 CFLAGS += -DCONFIG_TM_WRKBUF_SZ="(1<<10)"
 endif
 
+ifeq ($(MACH),mach-mx28) 
+CFLAGS += -mcpu=arm926ej-s
+CFLAGS += -D__TMONITOR__
+CFLAGS += -DCONFIG_MACH_MX28
+CFLAGS += -D__TRON_ARM_ARCH=5
+CFLAGS += -DCONFIG_SKIP_LOWLEVEL
+
+# memory
+CFLAGS += -DCONFIG_TM_INIT_SP=0x00010000 # 64KiB
+CFLAGS += -DCONFIG_TM_STACK_TOP=0x72300000
+CFLAGS += -DCONFIG_TM_STACK_SIZE=0x00010000
+CFLAGS += -DCONFIG_TM_HEAP_TOP=0
+CFLAGS += -DCONFIG_TM_HEAP_SIZE=0
+
+# drivers
+CFLAGS += -DCONFIG_TM_SIO
+CFLAGS += -DCONFIG_TM_DISK
+CFLAGS += -DCONFIG_TM_FLASHROM
+CFLAGS += -DCONFIG_TM_BAUD_RATE=115200
+CFLAGS += -DCONFIG_TM_EARLY_PRINTK
+
+# t-monitor
+CFLAGS += -DCONFIG_TM_WRKBUF_SZ="(1<<10)"
+endif
 %.o: %.S
 	@echo	"     AS\t"	$@
 	@$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@ #-D_in_asm_source_
