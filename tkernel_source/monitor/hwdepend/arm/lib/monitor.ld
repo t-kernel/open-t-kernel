@@ -20,10 +20,11 @@
 
 MEMORY
 {
-	RAM0 (rxw) : ORIGIN = 0x00000000, LENGTH =  64K
-	RAM1 (rxw) : ORIGIN = 0x72200000, LENGTH =  64M
+	RAM2 (rxw) : ORIGIN = 0x43F00000, LENGTH =   1M
+	RAM0 (rxw) : ORIGIN = 0x00000000, LENGTH = 128K
+	RAM1 (rxw) : ORIGIN = 0x40000000, LENGTH =  63M
 	ROM0 (rx)  : ORIGIN = 0x80000000, LENGTH =  64K
-	ROM1 (r)   : ORIGIN = 0x00000000, LENGTH = 256M
+	ROM1 (r)   : ORIGIN = 0x90000000, LENGTH = 256M
 }
 
 OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
@@ -31,18 +32,15 @@ OUTPUT_ARCH(arm)
 ENTRY(_start)
 
 SECTIONS {
+
 	.eitbra : {
 		__loadaddr = .;
-		__eitbra_start = .;
-
 		hwdepend/arm/cpu/eitent-start.o (*)
 		KEEP(*(.eitbra))
-
 		. = ALIGN(0x10);
-		__eitbra_end = .;
-		__eitbra_size = SIZEOF(.eitbra);
-	} > RAM1
- 
+	}
+
+
 	.startup : {
 		__startup_org = .;
 		__startup_start = .;
@@ -50,7 +48,7 @@ SECTIONS {
 		. = ALIGN(0x10);
 		__startup_end = .;
 		__startup_size = .;
-	} > RAM1
+	}
 	
 	.text : {
 		__text_org = . ;
@@ -69,16 +67,16 @@ SECTIONS {
 		*(.rodata.*)
 		*(.rodata1)
 		. = ALIGN(0x10);
-	} > RAM1
+	}
 	.ARM.extab : 
 	{
 		*(.ARM.extab* .gnu.linkonce.armextab.*)
-	} > RAM1
+	}
 	__exidx_start = .;
 	.ARM.exidx :
 	{
 		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
-	} > RAM1
+	}
 	__exidx_end = .;
 	__etext = .;
 
@@ -108,7 +106,7 @@ SECTIONS {
 		_edata = .;
 		__data_end = .;
 		PROVIDE (edata = .);
-	} > RAM1
+	}
 	.bss (NOLOAD) : {
 		__bss_start = .;
 		PROVIDE (__sbss_start = .);
@@ -126,23 +124,9 @@ SECTIONS {
 		__bss_end = .;
 		__bss_size = SIZEOF(.bss);
 		PROVIDE (end = .);
-	} > RAM1
+	}
 	__flashwr_org = .;
-	OVERLAY : {
-		.flashwr {
-			__flashwr_start = .;
-			*(flashwr.text)
-			__flashwr_end = .;
-			. = ALIGN(0x10);
-		}
-		.wrkbuf {
-			*/wrkbuf.o(COMMON)
-			. = ALIGN(0x10);
-		}
-	} > RAM1
-
-	/* Set stack top to end of RAM, and stack limit move down by
-	 * size of stack_dummy section */
-	__tm_stack_top = ORIGIN(RAM1) + LENGTH(RAM1);
+	__flashwr_start = .;
+	__flashwr_end = .;
 
 }
