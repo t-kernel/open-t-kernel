@@ -134,4 +134,4 @@ clean:
 
 prepare:
 	@sed 's/^SRC/OBJ/g' Makefile.src | sed 's/[cS]$$/o/g' >Makefile.obj
-	@echo	"   GEN\tMakefile"
+	@echo	"   GEN\tMakefile: " $(MACH)
