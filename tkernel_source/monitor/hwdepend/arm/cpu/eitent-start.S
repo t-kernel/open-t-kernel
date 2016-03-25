@@ -107,7 +107,7 @@ __startup_entry:
 	add	r2, r2, r0		@ run-time address of 1
 	mov	r1, #0			@ assume V bit is zero
 
-					@ ok, r0 = offset
+	mov	r8, r0			@ ok, r0 = offset
 
 copy:	ldr	r0, [r2]
 	str	r0, [r1]		@ abort?
@@ -172,120 +172,9 @@ svc:
  *       lr = indeterminate
  */
 irq_entry:
-	sub	lr, lr, #4		// return address adjustment
-#if __TRON_ARM_ARCH__ >= 6
-	srsdb	sp!, #PSR_IRQ		// save registers
-	stmfd	sp!, {r3, ip}
-#else
-	push	{r3, ip, lr}
-	mrs	r3, spsr
-	push	{r3}
-#endif
-
-	ldr	lr, =base(AINTBase)
-	ldr	ip, =EITVEC(EIT_IRQ(95))
-
-	ldr	r3, [lr, #offs(IT0_MST2)]
-	cmp	r3, #0
-	bne	l_irq_br
-
-	sub	ip, ip, #32*4
-	ldr	r3, [lr, #offs(IT0_MST1)]
-	cmp	r3, #0
-	bne	l_irq_br
-
-	sub	ip, ip, #32*4
-	ldr	r3, [lr, #offs(IT0_MST0)]
-	cmp	r3, #0
-	bne	l_irq_br
-
-	ldr	ip, =EITVEC(EIT_IRQ(95))
-
-  l_irq_br:
-	clzne	r3, r3
-	ldr	lr, [ip, -r3, lsl #2]!
-	cmp	lr, #0
-	bxne	lr
-	b	default_entry
+	bx	lr
 
 #ifdef CONFIG_MACH_EM1D
-/*
- * GPIO interrupt
- *      Interrupt obtained by means of input port interrupt maskable status register (GIO_MST)
- *       is analyzed to check the interrupt priority, and if appropriate, the highest priority interrupt handler is entered.
- *       branch and call handler.
- *       interrupt priority is descending order of input port NUMBER (port 0 - port 127). port 127 has the highest priority, and
- *       port 0 has the lowest priority GPIO interrupts are grouped : each group has 16 interrupts, and
- *       their priorities are considered only within the context of each group.
- *       if there is no cause of interupt, the handler of IRQ95 is called.
- *		+---------------+
- *	sp  ->	|R3		|
- *		|R12=ip		|
- *              |R14=lr         | <- return address from interrupt
- *		|SPSR		|
- *		+---------------+
- *      registers upon handler invocation
- *       ip = vector table address
- *       lr = indeterminate
- */
- .macro gio_e reg, vec
-	ldr	lr, =base(\reg)
-	ldr	r3, [lr, #offs(\reg)]
-	lsls	r3, r3, #16
-	beq	l_gio_spurious
-
-	ldr	ip, =\vec
-	clz	r3, r3
-	ldr	lr, [ip, -r3, lsl #2]!
-	cmp	lr, #0
-	bxne	lr
-	b	default_entry
- .endm
- .macro gio_o reg, vec
-	ldr	lr, =base(\reg)
-	ldr	r3, [lr, #offs(\reg)]
-	lsrs	ip, r3, #16
-	beq	l_gio_spurious
-
-	ldr	ip, =\vec
-	clz	r3, r3
-	ldr	lr, [ip, -r3, lsl #2]!
-	cmp	lr, #0
-	bxne	lr
-	b	default_entry
- .endm
-
-	.globl	Csym(_gio0Hdr)
-	.type	Csym(_gio0Hdr), %function
-	.globl	Csym(_gio1Hdr)
-	.type	Csym(_gio1Hdr), %function
-	.globl	Csym(_gio2Hdr)
-	.type	Csym(_gio2Hdr), %function
-	.globl	Csym(_gio3Hdr)
-	.type	Csym(_gio3Hdr), %function
-	.globl	Csym(_gio4Hdr)
-	.type	Csym(_gio4Hdr), %function
-	.globl	Csym(_gio5Hdr)
-	.type	Csym(_gio5Hdr), %function
-	.globl	Csym(_gio6Hdr)
-	.type	Csym(_gio6Hdr), %function
-	.globl	Csym(_gio7Hdr)
-	.type	Csym(_gio7Hdr), %function
-Csym(_gio0Hdr):	gio_e	GIO_MST(GIO_L),   EITVEC(EIT_GPIO( 15))
-Csym(_gio1Hdr):	gio_o	GIO_MST(GIO_L),   EITVEC(EIT_GPIO( 31))
-Csym(_gio2Hdr):	gio_e	GIO_MST(GIO_H),   EITVEC(EIT_GPIO( 47))
-Csym(_gio3Hdr):	gio_o	GIO_MST(GIO_H),   EITVEC(EIT_GPIO( 63))
-Csym(_gio4Hdr):	gio_e	GIO_MST(GIO_HH),  EITVEC(EIT_GPIO( 79))
-Csym(_gio5Hdr):	gio_o	GIO_MST(GIO_HH),  EITVEC(EIT_GPIO( 95))
-Csym(_gio6Hdr):	gio_e	GIO_MST(GIO_HHH), EITVEC(EIT_GPIO(111))
-Csym(_gio7Hdr):	gio_o	GIO_MST(GIO_HHH), EITVEC(EIT_GPIO(127))
-
-  l_gio_spurious:
-	ldr	ip, =base(EITVEC(EIT_IRQ(95)))
-	ldr	lr, [ip, #offs(EITVEC(EIT_IRQ(95)))]!
-	cmp	lr, #0
-	bxne	lr
-	b	default_entry
 #endif
 
 /*
@@ -300,20 +189,7 @@ Csym(_gio7Hdr):	gio_o	GIO_MST(GIO_HHH), EITVEC(EIT_GPIO(127))
  *       lr = indeterminate
  */
 undef_entry:
-	mov	r0, #'U'; bl	serial_putchar
-#if __TRON_ARM_ARCH__ >= 6
-	srsdb	sp!, #PSR_UND		// save registers
-	stmfd	sp!, {ip}
-#else
-	push	{ip, lr}
-	mrs	ip, spsr
-	push	{ip}
-#endif
-	ldr	ip, =base(EITVEC(EIT_UNDEF))
-	ldr	lr, [ip, #offs(EITVEC(EIT_UNDEF))]!
-	cmp	lr, #0
-	bxne	lr
-	b	default_entry
+	bx	lr
 
 /*
  * supervisor call(SVC)
@@ -367,27 +243,7 @@ svc_entry:
  *       lr = indeterminate
  */
 iabort_entry:
-	sub	lr, lr, #4		// return address adjustment
-#if __TRON_ARM_ARCH__ >= 6
-	srsdb	sp!, #PSR_ABT		// save registers
-	stmfd	sp!, {ip}
-#else
-	push	{ip}
-	mrs	ip, spsr
-	push	{ip}
-#endif
-
-	mrc	p15, 0, ip, c5, c0, 1	// IFSR
-	tst	ip, #0x400		// FS[4]
-	and	ip, ip, #0x00f		// FS[3:0]
-	cmpeq	ip, #FSR_DebugEvent
-
-	ldr	ip, =base(EITVEC(EIT_IABORT))
-	ldrne	lr, [ip, #offs(EITVEC(EIT_IABORT))]!
-	ldreq	lr, [ip, #offs(EITVEC(EIT_IDEBUG))]!
-	cmp	lr, #0
-	bxne	lr
-	b	default_entry
+	bx	lr
 
 /*
  * data abort
@@ -403,27 +259,7 @@ iabort_entry:
  *       lr = indeterminate
  */
 dabort_entry:
-	sub	lr, lr, #8		// return address adjustment
-#if __TRON_ARM_ARCH__ >= 6
-	srsdb	sp!, #PSR_ABT		// save registers
-	stmfd	sp!, {ip}
-#else
-	push	{ip}
-	mrs	ip, spsr
-	push	{ip}
-#endif
-
-	mrc	p15, 0, ip, c5, c0, 0	// DFSR
-	tst	ip, #0x400		// FS[4]
-	and	ip, ip, #0x00f		// FS[3:0]
-	cmpeq	ip, #FSR_DebugEvent
-
-	ldr	ip, =base(EITVEC(EIT_DABORT))
-	ldrne	lr, [ip, #offs(EITVEC(EIT_DABORT))]!
-	ldreq	lr, [ip, #offs(EITVEC(EIT_DDEBUG))]!
-	cmp	lr, #0
-	bxne	lr
-	b	default_entry
+	bx	lr
 
 /*
  * default handler
@@ -433,39 +269,7 @@ dabort_entry:
  *       lr = indeterminate
  */
 default_entry:
-	ldr	lr, =base(EITVEC(EIT_DEFAULT))
-	ldr	lr, [lr, #offs(EITVEC(EIT_DEFAULT))]
 	bx	lr
-#ifdef CONFIG_MACH_ASM9
-#endif
 
-#if 0
-        .section .stack
-        .align  4
-        .globl  __stack_top
-        .globl  __stack_limit
-	.globl	__stack_bottom			@ japanese prefer bottom
-__stack_limit:
-__stack_bottom:
-        .space  CONFIG_STACK_SIZE
-        .size   __stack_limit, . - __stack_limit
-	.size	__stack_bottom, . - __stack_bottom
-__stack_top:
-        .size   __stack_top, . - __stack_top
-
-        .section .heap
-        .align  4
-        .globl  __heap_base
-	.globl	__heap_limit
-__heap_base:
-	.space	CONFIG_HEAP_SIZE
-        .size   __heap_base, . - __heap_base
-__heap_limit:
-        .size   __heap_limit, . - __heap_limit
-
-
-@ 7.99 .size This directive is used to set the size associated with a symbol.
-
-#endif
 
 	.pool
