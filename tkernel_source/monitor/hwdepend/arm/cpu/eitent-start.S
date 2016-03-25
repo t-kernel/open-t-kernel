@@ -47,6 +47,11 @@
 
 	.section eitbra
 	.global  _start
+	.global fiq_entry
+	.global dabort_entry
+	.global __svc_entry
+	.global iabort_entry
+	.global undef_entry
 _start:
 	b	__startup_entry		@ 00 : reset
 	b	undef_entry		@ 04 : undefined instruction
@@ -66,34 +71,25 @@ fiq_entry:				@ 1C : FIQ
 	ldr	ip, [ip, #offs(EITVEC(EIT_FIQ))]
 	bx	ip
 
-__start_______________________________________________________________________:
-@ vectors for relocate to 0x00000000 or 0xFFFF0000
-__vectors_start:
-20:     ldr     pc, 10f
-21:     ldr     pc, 11f
-22:     ldr     pc, 12f
-23:     ldr     pc, 13f
-24:     ldr     pc, 14f
-25:     ldr     pc, 15f
-26:     ldr     pc, 16f
 
-10:     .word   startup_entry
-11:     .word   undef_entry
-12:     .word   __svc_entry
-13:     .word   iabort_entry
-14:     .word   dabort_entry
-15:     .word   0xdeadc0de
-16:     .word   fiq_entry
-__vectors_end:
-__vectors_size:
-	.word	__vectors_end-__vectors_start
-__end_________________________________________________________________________:
+
+
 
 
 
 
 
 __startup_entry:
+	mov	r0, #0
+	mov	r1, #'A'
+	bl	putSIO_mx28
+	bl	putSIO_mx28
+	bl	putSIO_mx28
+	bl	putSIO_mx28
+	bl	putSIO_mx28
+	bl	putSIO_mx28
+#if 0
+
 @	mov	r8-r12
 @ if we called from u-boot or...
 @	mov	r11, sp
@@ -122,20 +118,13 @@ verify:
 	ldr	r0, =__vectors_end
 	cmp	r0, r2
 	bne	copy
-
+#endif
 	b	startup_entry
 
 #define CONFIG_TM_DBG_VECTORS
 #ifdef CONFIG_TM_DBG_VECTORS
 __svc_entry:
-	str	lr, __svc_stack
-	mov	r0, #'V'
-	bl	serial_putchar
-	ldr	lr, __svc_stack
 	bx	lr
-	b	svc_entry
-__svc_stack:
-	.word	0
 #endif
 
 
@@ -188,6 +177,7 @@ irq_entry:
  *       ip = vector table address
  *       lr = indeterminate
  */
+ 	
 undef_entry:
 	bx	lr
 

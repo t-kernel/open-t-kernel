@@ -39,6 +39,7 @@
 ----------------------------------------------------------------------*/
 	.section .startup
 	.globl	startup_entry
+	.global __vectors_start
 	.arm
 startup_entry:
 @ ARM926EJ-S NZCVQ--J -------- -------- IFTMMMMM
@@ -52,21 +53,14 @@ startup_entry:
 
 // use On-Chip SRAM as stack area
 #ifdef CONFIG_TM_INIT_SP
-	ldr	sp, =(CONFIG_TM_INIT_SP-16)
+	ldr	sp, =(0x00000000 + 128 * 1024)	@ freescale sram
 #endif
 
 // not in effect: MMU, cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
 
 #if __TRON_ARM_ARCH__ >= 6
-	dsb
-	mcr	p15, 0, r0, cr7, c10, 4
-	mrc	p15, 0, r0, cr1, cr0, 0
-	ldr	r1, =~0x01003f85
-	and	r0, r0, r1
-	ldr	r1, =0x30800000
-	orr	r0, r0, r1
-	mcr	p15, 0, r0, cr1, cr0, 0
+	b	.
 #else
 tc_loop:
         mrc     p15, 0, r15, c7, c10, 3		@ test and clean
@@ -98,27 +92,11 @@ tc_loop:
 	bl	startup_entry_lowlevel
 
 @ ARM initial cp15 and enable mmu.
-#ifdef CONFIG_MACH_EM1D
-// initialization of CP15
-	ldr	r0, =0x00000004
-	mcr	p15, 0, r0, cr2, cr0, 2		// TTBCR
-	ldr	r0, =(PAGETBL_BASE + 0x09)	// WB/WA, no-shared, cachable
-	mcr	p15, 0, r0, cr2, cr0, 1		// TTBR1
-	mcr	p15, 0, r0, cr2, cr0, 0		// TTBR0
-	ldr	r0, =EITENT_BASE
-	mcr	p15, 0, r0, cr12, cr0, 0	// VBAR
 
 @	DDI0198E_arm926ejs_r0p5_trm.pdf
 @	2.3.12 Register c11 and c12
 @	Accessing, reading or writing, these registers causes Unpredicatable behavior.
 
-	ldr	r0, =0x000a8aa4
-	mcr	p15, 0, r0, cr10, cr2, 0 	// PRRR
-	ldr	r0, =0x44e048e0
-	mcr	p15, 0, r0, cr10, cr2, 1	// NMRR
-	ldr	r0, =0x55555555			// All client
-	mcr	p15, 0, r0, cr3, cr0, 0		// Domain access
-#else
 	mrc	p15, 0, r0, c1, c0, 0
 	bic	r0, #(1<<9)		@ ROM protection
 	bic	r0, #(1<<8)		@ System protection
@@ -127,20 +105,10 @@ tc_loop:
 	orr	r0, #(1<<1)		@ Alignment fault enable
 	bic	r0, #(1<<0)		@ MMU disabled
         mcr     p15, 0, r0, c1, c0, 0
-#endif
 
 // MMU enable
 #if CONFIG_MMU
-	dsb
-	mcr	p15, 0, r0, cr8, cr7, 0		// I/D TLB invalidate
-	mcr	p15, 0, r0, cr7, cr5, 6		// invalidate BTC
-	dsb
-	isb
-
-	mrc	p15, 0, r0, cr1, cr0, 0
-	orr	r0, r0, #0x00000001
-	mcr	p15, 0, r0, cr1, cr0, 0
-	isb
+	b	.
 #endif
 
 // perform reset processing
@@ -170,21 +138,7 @@ reset_entry:
 #endif
 
 #if CONFIG_MACH_EM1D
-// Switch to T-Monitor stack
-	ldr	sp, __stack_bottom
 
-// not in effect: cache (D/I), program-flow prediction, High-Vector, VIC
-// in effect: Force AP, TEX remap, Subpage AP
-	dsb
-	mrc	p15, 0, r0, cr1, cr0, 0
-	ldr	r1, =~0x01003f84
-	and	r0, r0, r1
-	ldr	r1, =0x30800000
-	orr	r0, r0, r1
-	mcr	p15, 0, r0, cr1, cr0, 0	
-	isb
-	mcr	p15, 0, r0, cr8, cr7, 0		// I/D TLB invalidate
-	dsb
 #else
 	mrc	p15, 0, r0, c1, c0, 0
 	bic	r0, #(1<<9)		@ ROM protection
@@ -356,6 +310,28 @@ reset_entry:
   resetLoop:
 	svc	#0
 	b	resetLoop		// return will cause another reset
+
+	
+@ vectors for relocate to 0x00000000 or 0xFFFF0000
+__vectors_start:
+20:     ldr     pc, 10f
+21:     ldr     pc, 11f
+22:     ldr     pc, 12f
+23:     ldr     pc, 13f
+24:     ldr     pc, 14f
+25:     ldr     pc, 15f
+26:     ldr     pc, 16f
+
+10:     .word   startup_entry
+11:     .word   undef_entry
+12:     .word   __svc_entry
+13:     .word   iabort_entry
+14:     .word   dabort_entry
+15:     .word   0xdeadc0de
+16:     .word   fiq_entry
+__vectors_end:
+
+
 
 	.global	__unknow
 __unknow:
