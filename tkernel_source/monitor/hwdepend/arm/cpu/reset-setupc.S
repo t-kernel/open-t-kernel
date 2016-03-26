@@ -66,14 +66,12 @@ reset_entry_setupc:
 @   2. clear .bss, .stack, etc
 #endif
 
-#if __load_addr
-@   1. prepare vector table to 0x00000000 or 0xFFFF0000
-#endif
-
 @Setup C environment
 // initialize data area
 	ldr	r1, =__data_org
 	ldr	r2, =__data_start
+	cmp	r1, r2
+	beq	clear		@ skip
 	ldr	r3, =_edata
 data_loop:
 	ldmia	r1!, {r4-r7}	// copy in unit of 16 bytes
@@ -81,9 +79,10 @@ data_loop:
 	cmp	r2, r3
 	blo	data_loop
 
-// clear bss and stack area
+clear:
+// clear bss and [x]stack area
 	ldr	r2, =__bss_start
-	ldr	r3, =__stack_bottom
+	ldr	r3, =__bss_end
 	ldr	r4, =0
 	ldr	r5, =0
 	ldr	r6, =0

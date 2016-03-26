@@ -24,7 +24,7 @@
  */
 
 #define	_in_asm_source_
-#define __lr			r5
+#define puts_ll printk
 
 #include <machine.h>
 #include <tk/sysdef.h>
@@ -304,7 +304,6 @@ reset_entry:
 	b	.			@ TODO
 #endif
 
-#define puts_ll putString
 	ldr	r0, =banner
 	bl	puts_ll
 	ldr	r0, =Version
@@ -326,14 +325,8 @@ reset_entry:
 	svc	101			@ syscall
 	svc	88			@ syscall
 
-	b	resetLoop
-
 	ldr	r0, =0x44000003
 	ldr	r1, [r0]		@ data abort
-
-	mov	r1, #'M'
-	bl	putSIO_mx28
-
 	
 @	b	resetLoop		// return will cause another reset
 	b	.
@@ -364,7 +357,7 @@ __vectors_end:
 
 	.global	__unknow
 __unknow:
-	mov	__lr, lr
+	mov	r10, lr
 	ldr	r0, =__unknow_msg
 	bl	puts_ll
 	b	.
