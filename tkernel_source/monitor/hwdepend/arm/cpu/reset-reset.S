@@ -53,7 +53,7 @@ startup_entry:
 
 // use On-Chip SRAM as stack area
 #ifdef CONFIG_TM_INIT_SP
-	ldr	sp, =(0x00000000 + 128 * 1024)	@ freescale sram
+	ldr	sp, =CONFIG_TM_INIT_SP
 #endif
 
 // not in effect: MMU, cache (D/I), program-flow prediction, High-Vector, VIC
@@ -87,9 +87,11 @@ tc_loop:
 	bic	r0, #(1<<0)		@ MMU disabled
         mcr     p15, 0, r0, c1, c0, 0
 #endif
+
 @ Machine/Board initial
 // Setup clock divider
 	bl	startup_entry_lowlevel
+
 
 @ ARM initial cp15 and enable mmu.
 
@@ -113,7 +115,6 @@ tc_loop:
 
 // perform reset processing
 @ no return jump?
-@	ldr	pc, =reset_entry
 	b	reset_entry
 @ End of startup_entry
 	.pool
@@ -127,19 +128,12 @@ tc_loop:
 	.globl	reset_entry
 reset_entry:
 // SVC mode, FIQ/IRQ interrupt disabled
-#if CONFIG_MACH_EM1D
-	mov	r0, #(PSR_SVC | PSR_I | PSR_F)
-	msr	cpsr_fsxc, r0
-#else
 	mrs	r0, cpsr
 	bic	r0, #0x1f
 	orr	r0, #0xd3
 	msr	cpsr, r0
-#endif
 
-#if CONFIG_MACH_EM1D
 
-#else
 	mrc	p15, 0, r0, c1, c0, 0
 	bic	r0, #(1<<9)		@ ROM protection
 	bic	r0, #(1<<8)		@ System protection
@@ -149,43 +143,50 @@ reset_entry:
 	bic	r0, #(1<<0)		@ MMU disabled
         mcr     p15, 0, r0, c1, c0, 0
 
-#endif
 	bl	Csym(FlushCache)		// Clean/invalidate I/D cache
-#if	__TRON_ARM_ARCH__ >= 6
-// Turn on VFP
-	mrc	p15, 0, r0, cr1, cr0, 2
-	orr	r0, r0, #0x00f00000	// VFP(CP11,CP10) enable
-	bic	r0, r0, #0xc0000000	// Should be Zero
-	mcr	p15, 0, r0, cr1, cr0, 2
-	isb				// Flush Prefetch buffer
+
+#if CONFIG_VFP
+	b	.
 #endif
 
 @ go setup C
 // initialize data area
-// clear bss and stack area
+// clear bss and stacks area
 // clear in units of 16 bytes
 	bl	reset_entry_setupc
+
 @ End of setup C
 // reset processing
 	bl	procReset
 
+@ copy vectors
+1:	mrc	p15, 0, r15, c7, c10, 3	@ clean entire dcache using test and clean
+	bne	1b
 
-	ldr	sp, __stack_top
-	mrs	r7, cpsr
+	mcr	p15, 0, r0, c7, c10, 4
+
+	ldr	r8, =__vectors_start
+	mov	r9, #0
+	ldmia	r8!, {r0-r7}
+	stmia	r9!, {r0-r7}
+	ldmia	r8, {r0-r7}
+	stmia	r9, {r0-r7}
+
+	mcr	p15, 0, r0, c7, c5, 0
+
 #define __STACK_TOP		(CONFIG_TM_STACK_TOP)
 #define __STACK_SIZE		(CONFIG_TM_STACK_SIZE)
-#define __STACK_LIMIT		(__STACK_TOP   - __STACK_SIZE)
-#define __STACK_FIQ		(__STACK_TOP   + 0x200 - __STACK_SIZE)
-#define __STACK_IRQ		(__STACK_FIQ   + 0x200)
-#define __STACK_SVC		(__STACK_IRQ   + 0x200)
-#define __STACK_ABORT		(__STACK_SVC   + 0x200)
-#define __STACK_UNDEFINED	(__STACK_ABORT + 0x200)
-#define __STACK_SYSTEM		(__STACK_TOP)
-
+#define __STACK_LIMIT		(__STACK_TOP - __STACK_SIZE)
+#define __STACK_FIQ		(__STACK_TOP        - 0x010)	/* fiq top   */
+#define __STACK_IRQ		(__STACK_FIQ        - 0x200)	/* fiq	     */
+#define __STACK_SVC		(__STACK_IRQ        - 0x200)	/* irq	     */
+#define __STACK_ABORT		(__STACK_SVC        - 0x200)	/* svc	     */
+#define __STACK_UNDEFINED	(__STACK_ABORT      - 0x200)	/* abort     */
+#define __STACK_SYSTEM		(__STACK_UNDEFINED  - 0x200)	/* undefined */
+	ldr	sp, =__stack_system
+	mrs	r7, cpsr
 @ +--------------------------
-@ +
-@ + main	64KiB-
-@ +
+@ + not used     16B
 @ +--------------------------
 @ + fiq		512B
 @ +--------------------------
@@ -197,6 +198,11 @@ reset_entry:
 @ +--------------------------
 @ + undefined	512B
 @ +--------------------------
+@ +
+@ + main	???KiB
+@ +
+@ +--------------------------
+
 
 @ prepare stacks and registers
 @ r7: cpsr
@@ -207,7 +213,7 @@ reset_entry:
 	orr	r7, #(0<<5)		@ Thumb state bit
 	orr	r7, #(1<<6)		@ FIQ disable
 	orr	r7, #(1<<7)		@ IRQ disable
-#if __TRON_ARM_ARCH__ > 7
+#if __TRON_ARM_ARCH__ >= 7
 	orr	r7, #(0<<8)		@ Imprecise abort disable bit
 #endif
 	orr	r7, #(0<<9)		@ Data endianness bit
@@ -268,7 +274,7 @@ reset_entry:
 	orr	r7, #0x1F
 	msr	cpsr, r7
 
-	ldr	r13, __stack_top
+	ldr	r13, __stack_system
 	ldr	r14, =__unknow
 
 #ifdef CONFIG_ARM_VFP
@@ -294,7 +300,7 @@ reset_entry:
 	mov	r11, r0
 	mov	r12, r0
 
-#ifdef CONFIG_ARM_VFP
+#ifdef CONFIG_VFP
 	b	.			@ TODO
 #endif
 
@@ -308,8 +314,17 @@ reset_entry:
 
 // enter monitor by means of SVC #0 instruction (SVC mode)
   resetLoop:
-	svc	#0
-	b	resetLoop		// return will cause another reset
+	.word	0xFFFFFFFF		@ undefined
+	svc	0x1234			@ syscall
+	ldr	r0, =0x44000003
+	ldr	r1, [r0]		@ data abort
+
+	mov	r1, #'M'
+	bl	putSIO_mx28
+
+	
+@	b	resetLoop		// return will cause another reset
+	b	.
 
 	
 @ vectors for relocate to 0x00000000 or 0xFFFF0000
@@ -321,14 +336,16 @@ __vectors_start:
 24:     ldr     pc, 14f
 25:     ldr     pc, 15f
 26:     ldr     pc, 16f
+ 7:	.word	0
 
 10:     .word   startup_entry
 11:     .word   undef_entry
 12:     .word   __svc_entry
 13:     .word   iabort_entry
 14:     .word   dabort_entry
-15:     .word   0xdeadc0de
+15:     .word   0
 16:     .word   fiq_entry
+ 7:	.word	0
 __vectors_end:
 
 
