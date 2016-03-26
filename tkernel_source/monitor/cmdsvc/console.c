@@ -68,6 +68,9 @@ EXPORT BOOL checkAbort( void )
 EXPORT W putChar( W c )
 {
 	W	ch;
+	
+	putSIO_mx28(0, ch);
+	return 0;
 
 	if (XOFF_IN || (ch = getSIO(0)) == XOFF) {
 		while ((ch = getSIO(1)) != XON && ch != CTLC);

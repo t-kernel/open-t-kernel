@@ -25,7 +25,8 @@
 #include <stdarg.h>
 void rtems_putc(char c)
 {
-	putChar(c);
+	if(c=='\n') putSIO_mx28(0, '\r');
+	putSIO_mx28(0, c);
 }
 
 
