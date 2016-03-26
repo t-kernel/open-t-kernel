@@ -34,14 +34,15 @@ IMPORT	void	powerOff(void);
 IMPORT	void	resetStart(void);
 
 /* interrupt entry point (eitent.S) */
-LOCAL void	_gio0Hdr(void) {}
-LOCAL void	_gio1Hdr(void) {}
-LOCAL void	_gio2Hdr(void) {}
-LOCAL void	_gio3Hdr(void) {}
-LOCAL void	_gio4Hdr(void) {}
-LOCAL void	_gio5Hdr(void) {}
-LOCAL void	_gio6Hdr(void) {}
-LOCAL void	_gio7Hdr(void) {}
+LOCAL void helloworld(unsigned int vec)
+{
+	static long random = 0;
+	volatile int i = 1*1024*1024;
+
+	random++;
+	printk("[%u]: Hello World(%u)\n", vec, random);
+	while(i--);
+}
 
 /* default handler (cmdsvc) */
 IMPORT	void	_defaultHdr(void);
@@ -93,7 +94,7 @@ LOCAL	void	pmicWait(void)
 	}
 	if (!i) pmicInit();
 #else
-	putString("[driver]: pmicWait\n");
+	printk("[driver]: pmicWait\n");
 #endif
 
 	return;
@@ -131,7 +132,7 @@ EXPORT	void	pmicWrite(W reg, W dat)
 	pmicWait();
 
 	pmicCSassert(FALSE);			/* CS de-assert */
-	putString("[driver]: pmicWrite\n");
+	printk("[driver]: pmicWrite\n");
 
 	return;
 }
@@ -143,9 +144,10 @@ EXPORT	void	resetSystem(W boot)
 {
 	MEMSEG	*mp;
 	UW	i, va;
+//	extern void svc(unsigned vec);
 
 	printk("%s:%s\n", __FILE__, __func__);
-	return ;
+	goto setup_eit;
 
         /* obtain DipSw status */
 	if (!boot) DipSw = DipSwStatus();
@@ -186,15 +188,23 @@ EXPORT	void	resetSystem(W boot)
 	SCInfo.ramtop = (void*)mp->top;
 	if (va < mp->top || va > mp->end) va = mp->end;
 	SCInfo.ramend = (void*)va;
-
+setup_eit:
         /* set up EIT vectors */
         /* we do not need _defaultHdr absolutely, but just in case set it up */
 	for (i=0; i<256; i++) {
-		SCArea->intvec[EIT_DEFAULT] = _defaultHdr;
+		SCArea->intvec[i] = helloworld;
 	}
-	SCArea->intvec[EIT_DEFAULT]	= _defaultHdr;	/* default handler */
-	SCArea->intvec[EIT_UNDEF]	= _defaultHdr;	/* undefined instruction */
-	SCArea->intvec[SWI_MONITOR]	= _defaultHdr;	/* SWI - monitor SVC */
+	SCArea->intvec[EIT_DEFAULT]	= helloworld;	/* default handler */
+	SCArea->intvec[EIT_UNDEF]	= helloworld;	/* undefined instruction */
+	SCArea->intvec[SWI_MONITOR]	= helloworld;	/* SWI - monitor SVC */
+
+//	for (i=0; i<256; i++) {
+//		syscall(i);
+//	}
+
+
+	
+	return ;
 
         /* set up initial page table */
 	for (i = 0; i < N_MemSeg; ++i) {

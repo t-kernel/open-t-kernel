@@ -197,7 +197,7 @@ LOCAL	ER	iic_start(void)
 /* stop IIC send/receive */
 LOCAL	void	iic_finish(void)
 {
-	putString(__func__);putString("\n");
+	printk("%s\n", __func__);
 	return;
 }
 
@@ -205,7 +205,7 @@ LOCAL	void	iic_finish(void)
 LOCAL	W	IICGPIORead(W addr)
 {
 	W	dat;
-	printk(__func__);putString("\n");
+	printk("%s\n", __func__);
 	return dat;
 }
 
@@ -247,7 +247,7 @@ EXPORT	UW	DipSwStatus(void)
 /* USB power control */
 EXPORT	void	usbPower(BOOL power)
 {
-	printf("[info] usb power %s\n", power ? "ON" : "OFF");
+	printk("[info] usb power %s\n", power ? "ON" : "OFF");
 	return ;
 
 }
@@ -255,14 +255,14 @@ EXPORT	void	usbPower(BOOL power)
 /* power off */
 EXPORT	void	powerOff(void)
 {
-	printf("[info] Power off\n");
+	printk("[info] Power off\n");
 	return ;
 }
 
 /* reset start*/
 EXPORT	void	resetStart(void)
 {
-	printf("[info] reset board!\n");
+	printk("[info] reset board!\n");
 	return ;
 }
 

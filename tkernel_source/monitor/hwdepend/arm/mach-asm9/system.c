@@ -154,37 +154,18 @@ EXPORT	void	resetSystem(W boot)
         /* obtain DipSw status */
 	if (!boot) DipSw = DipSwStatus();
 
-	DisCacheMMU();
+//	DisCacheMMU();
 
         /* set up interrupt controller */
-	out_w(IT0_IDS0, ~0);		/* CPU: all interrupts disabled */
-	out_w(IT0_IDS1, ~0);
-	out_w(IT0_IDS2, ~0);
-	out_w(IT0_IIR, ~0);
-	out_w(IT3_IPI0_CLR, 0x0000003f);
-	out_w(IT3_IDS0, ~0);		/* DSP: all interrupts disabled */
-	out_w(IT3_IDS1, ~0);
-	out_w(IT3_IDS2, ~0);
-	out_w(IT3_IIR, ~0);
-	out_w(IT0_IPI3_CLR, 0x0000003f);
-	out_w(IT0_FID, 0x00000001);	/* CPU: FIQ disabled */
-	out_w(GIO_IIA(GIO_L), 0);	/* GPIO: interrupt disabled */
-	out_w(GIO_IIA(GIO_H), 0);
-	out_w(GIO_IIA(GIO_HH), 0);
-	out_w(GIO_IIA(GIO_HHH), 0);
-	out_w(GIO_GSW(GIO_L), 0);	/* GPIO: FIQ interrupt disabled */
-	out_w(GIO_GSW(GIO_H), 0);
-	out_w(GIO_GSW(GIO_HH), 0);
-	out_w(GIO_GSW(GIO_HHH), 0);
-	out_w(IT0_LIIR, 0x0000000f);	/* internal interrupt disabled */
-	out_w(IT_PINV_CLR0, ~0);	/* inhibit interrupt polarity inversion */
-	out_w(IT_PINV_CLR1, ~0);
-	out_w(IT_PINV_CLR2, ~0);
-	out_w(IT0_IEN0, 0x0c000000);	/* CPU: GPIO interrupt enabled */
-	out_w(IT0_IEN1, 0x003c0000);
-	out_w(IT0_IEN2, 0x00018000);
-
-        /* power on controller initialization */
+	/* CPU: all interrupts disabled */
+	/* DSP: all interrupts disabled */
+	/* CPU: FIQ disabled */
+	/* GPIO: interrupt disabled */
+	/* GPIO: FIQ interrupt disabled */
+	/* internal interrupt disabled */
+	/* inhibit interrupt polarity inversion */
+	/* CPU: GPIO interrupt enabled */
+	/* power on controller initialization */
 	pmicInit();
 
         /* USB power on */

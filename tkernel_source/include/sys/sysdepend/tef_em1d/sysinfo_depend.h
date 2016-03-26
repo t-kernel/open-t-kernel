@@ -76,7 +76,7 @@ typedef struct {
 	SysCommonInfo	scinfo;			/* System common information */
 } SysCommonArea;
 
-#define SCArea	( (SysCommonArea*)0x30004000 )
+#define SCArea	( (SysCommonArea*)(0x43EF8000))
 #define SCInfo	( SCArea->scinfo )
 
 #endif /* _in_asm_source_ */

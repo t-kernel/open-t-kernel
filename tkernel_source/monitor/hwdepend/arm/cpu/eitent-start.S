@@ -28,11 +28,21 @@
 #include <mach/em1d512.h>
 #include <sys/sysinfo.h>
 
-#define	base(n)		( (n) & 0xfffff000 )
-#define	offs(n)		( (n) & 0x00000fff )
-
 // see <sys/sysdepend/tef_em1d/sysinfo_depend.h>
+
+#define EIT_DEFAULT	0		/* default handler */
+#define EIT_UNDEF	1		/* undefined instruction */
+#define EIT_IABORT	2		/* prefetch abort */
+#define EIT_DABORT	3		/* data abort */
+#define EIT_IDEBUG	29		/* debug abort instruction */
+#define EIT_DDEBUG	30		/* debug abort data */
+#define EIT_FIQ		31		/* fast interrupt FIQ */
+#define EIT_IRQ(n)	(  32 + (n) )	/* interrupt		IRQ  0-95 */
+#define EIT_GPIO(n)	( 128 + (n) )	/* GPIO interrupt	port 0-127 */
+
+#define EIT_ENTRY(n)	(EIT_VECTBL+4*(n))
 #define	N_INTVEC	256
+
 
 /*
  *       EIT entry
@@ -65,10 +75,8 @@ fiq_entry:				@ 1C : FIQ
  *       no saving of registers to stack is performed.
  *       the content of R12_fiq(ip) register is overwritten.
  */
-	ldr	ip, =base(EIT_VECTBL)
-	ldr	ip, [ip, #offs(EITVEC(EIT_FIQ))]
-	bx	ip
-
+	ldr	ip, =EIT_ENTRY(EIT_FIQ)
+	ldr	pc, [ip]
 
 __startup_entry:
 	mov	r0, #0
@@ -115,6 +123,12 @@ __svc_entry:
 	mrs	r0, spsr
 	push	{r0-r12, lr}
 
+
+	ldrb	r0, [lr]
+	ldr	lr, =EIT_VECTBL
+
+	ldr	lr, [lr, r0, lsl #2]
+	blx	lr
 
 
 	mov	r0, sp
@@ -187,6 +201,10 @@ undef_entry:
 	mrs	r0, spsr
 @ TODO: check if sp < __stack_system
 	push	{r0-r12, r14}
+
+	ldr	lr, =EIT_ENTRY(EIT_UNDEF)
+	ldr	lr, [lr]
+	blx	lr
 
 	mov	r0, lr
 	bl	printh
@@ -284,8 +302,9 @@ dabort_entry:
 	mrs	r0, spsr
 	push	{r0-r12, r14}
 
-	mov	r1, #'D'
-	bl	putSIO_mx28
+	ldr	lr, =EIT_ENTRY(EIT_DABORT)
+	ldr	lr, [lr]
+	blx	lr
 
 	mov	r0, lr
 	bl	printh

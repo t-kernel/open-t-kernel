@@ -315,7 +315,19 @@ reset_entry:
 // enter monitor by means of SVC #0 instruction (SVC mode)
   resetLoop:
 	.word	0xFFFFFFFF		@ undefined
-	svc	0x1234			@ syscall
+	svc	1			@ syscall
+	svc	2			@ syscall
+	svc	3			@ syscall
+	svc	4			@ syscall
+	svc	51			@ syscall
+	svc	61			@ syscall
+	svc	71			@ syscall
+	svc	81			@ syscall
+	svc	91			@ syscall
+	svc	101			@ syscall
+
+	b	resetLoop
+
 	ldr	r0, =0x44000003
 	ldr	r1, [r0]		@ data abort
 
