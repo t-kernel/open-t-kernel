@@ -30,7 +30,7 @@
 #define HW_UARTDBG_DR	(HW_UARTDBG + 0x000)
 #define HW_UARTDBG_FR	(HW_UARTDBG + 0X018)
 #define TXFF		(1<<5)
-
+#define RXFE		(1<<4)
 
 /*
  * serial port hardware configuration definition
@@ -96,6 +96,13 @@ LOCAL W getSIO_mx28(SIOCB *scb, W tmo )
  */
 EXPORT ER initSIO_mx28(SIOCB *scb, const CFGSIO *csio, W baudrate)
 {
+
+	if ( (UW)csio->info >= N_DEFSIO ) return E_PAR;
+
+        /* select the target port */
+	scb->info = DefSIO[csio->info].iob;
+	strncpy(scb->name, "mx28-sio", sizeof(scb->name));
+
 	/* I/O function default */
 	scb->put = putSIO_mx28;
 	scb->get = getSIO_mx28;
