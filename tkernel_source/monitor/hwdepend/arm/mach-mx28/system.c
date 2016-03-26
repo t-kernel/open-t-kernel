@@ -189,18 +189,12 @@ EXPORT	void	resetSystem(W boot)
 
         /* set up EIT vectors */
         /* we do not need _defaultHdr absolutely, but just in case set it up */
+	for (i=0; i<256; i++) {
+		SCArea->intvec[EIT_DEFAULT] = _defaultHdr;
+	}
 	SCArea->intvec[EIT_DEFAULT]	= _defaultHdr;	/* default handler */
 	SCArea->intvec[EIT_UNDEF]	= _defaultHdr;	/* undefined instruction */
 	SCArea->intvec[SWI_MONITOR]	= _defaultHdr;	/* SWI - monitor SVC */
-	SCArea->intvec[EIT_IRQ(26)]	= _gio6Hdr;	/* GPIO branch */
-	SCArea->intvec[EIT_IRQ(27)]	= _gio7Hdr;
-	SCArea->intvec[EIT_IRQ(50)]	= _gio0Hdr;
-	SCArea->intvec[EIT_IRQ(51)]	= _gio1Hdr;
-	SCArea->intvec[EIT_IRQ(52)]	= _gio2Hdr;
-	SCArea->intvec[EIT_IRQ(53)]	= _gio3Hdr;
-	SCArea->intvec[EIT_IRQ(79)]	= _gio4Hdr;
-	SCArea->intvec[EIT_IRQ(80)]	= _gio5Hdr;
-	SCArea->intvec[EIT_GPIO(8)]	= _defaultHdr;	/* abort switch */
 
         /* set up initial page table */
 	for (i = 0; i < N_MemSeg; ++i) {

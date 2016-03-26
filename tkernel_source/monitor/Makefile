@@ -109,6 +109,9 @@ CFLAGS += -DCONFIG_TM_EARLY_PRINTK
 
 # t-monitor
 CFLAGS += -DCONFIG_TM_WRKBUF_SZ="(1<<10)"
+
+# t-kernel & t-monitor shared
+# CFLAGS += -DCONFIG_EIT_VECTBL=0
 endif
 %.o: %.S
 	@echo	"     AS\t"	$@
