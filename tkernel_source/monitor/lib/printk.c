@@ -29,7 +29,6 @@
  */
 void printk(const char *fmt, ...)
 {
-  extern void vprintk(const char *fmt, va_list ap);
   va_list  ap;       /* points to each unnamed argument in turn */
 
   va_start(ap, fmt); /* make ap point to 1st unnamed arg */
