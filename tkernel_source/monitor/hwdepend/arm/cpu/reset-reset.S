@@ -318,13 +318,13 @@ reset_entry:
 	svc	1			@ syscall
 	svc	2			@ syscall
 	svc	3			@ syscall
-	svc	4			@ syscall
 	svc	51			@ syscall
 	svc	61			@ syscall
 	svc	71			@ syscall
 	svc	81			@ syscall
 	svc	91			@ syscall
 	svc	101			@ syscall
+	svc	88			@ syscall
 
 	b	resetLoop
 
@@ -352,7 +352,7 @@ __vectors_start:
 
 10:     .word   startup_entry
 11:     .word   undef_entry
-12:     .word   __svc_entry
+12:     .word   svc_entry
 13:     .word   iabort_entry
 14:     .word   dabort_entry
 15:     .word   0

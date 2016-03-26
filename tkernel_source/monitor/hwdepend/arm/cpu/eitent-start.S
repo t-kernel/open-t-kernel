@@ -17,9 +17,30 @@
  *
  *       EM1D512 (ARM1176JZF-S) exception branch handling
  *
- *	eitent-start.S
- *	Startup Code (reset vector)
+ *	monitor/hwdepend/arm/cpu/eitent-start.S
+ *	Startup Code (reset vector) for T-Monitor
+ *	rewrite but keep the most of orignal global symbol names.
+ *	
  */
+
+/*
+ * Copyright (C) 2016  Du Huanpeng<u74147@gmail.com>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 
 #define	_in_asm_source_
 
@@ -41,7 +62,6 @@
 #define EIT_GPIO(n)	( 128 + (n) )	/* GPIO interrupt	port 0-127 */
 
 #define EIT_ENTRY(n)	(EIT_VECTBL+4*(n))
-#define	N_INTVEC	256
 
 
 /*
@@ -57,13 +77,13 @@
 	.global  _start
 	.global fiq_entry
 	.global dabort_entry
-	.global __svc_entry
+	.global svc_entry
 	.global iabort_entry
 	.global undef_entry
 _start:
 	b	__startup_entry		@ 00 : reset
 	b	undef_entry		@ 04 : undefined instruction
-	b	__svc_entry		@ 08 : software interrupt
+	b	svc_entry		@ 08 : software interrupt
 	b	iabort_entry		@ 0C : prefetch abort
 	b	dabort_entry		@ 10 : data abort
 	b	.			@ 14 : reserved
@@ -116,45 +136,10 @@ verify:
 #endif
 	b	startup_entry
 
-#define CONFIG_TM_DBG_VECTORS
-#ifdef CONFIG_TM_DBG_VECTORS
-__svc_entry:
-	push	{r0}
-	mrs	r0, spsr
-	push	{r0-r12, lr}
-
-
-	ldrb	r0, [lr]
-	ldr	lr, =EIT_VECTBL
-
-	ldr	lr, [lr, r0, lsl #2]
-	blx	lr
-
-
-	mov	r0, sp
-	bl	printh
-
-	mov	r1, #'V'
-	bl	putSIO_mx28
-
-	pop	{r0-r12, lr}
-	msr	spsr, r0
-	pop	{r0}
-
-	bx	lr
-
-#endif
-
-
-
-
-
-
-
-	.global svc
+	.global syscall
 svc_r0: .word	0xEF0000EF
 	bx	lr
-svc:
+syscall:
 	bic	r0, #0xFF000000
 	orr	r0, #0xEF000000
 	str	r0, svc_r0
@@ -227,31 +212,35 @@ undef_entry:
  *      registers upon handler invocation
  *       ip = vector table address
  *       lr = indeterminate
+ *
+ *	just care about the lowest byte of svc instruction, other bytes are ignored.
+ *	hope it works with thumb mode.
+ *	simply save all registers.
+ *	  r0 = the vector number.
+ *	+---------------+
+ *	| r0		|
+ *	| spsr		|
+ *	| r1-r12	|
+ *	| lr		|
+ *	+---------------+
  */
-svc_entry:
-#if __TRON_ARM_ARCH__ >= 6
-	srsdb	sp!, #PSR_SVC		// save registers
-	stmfd	sp!, {ip}
-	
-	mrs	ip, spsr
-#else
-	push	{ip}
-	mrs	ip,spsr
-	push	{ip}
-#endif
-	tst	ip, #PSR_T
-	ldrneh	ip, [lr, #-2]		// Thumb instruction
-	ldreq	ip, [lr, #-4]		// ARM instruction
-	bicne	lr, ip, #0xff00
-	biceq	lr, ip, #0xff000000
-	cmp	lr, #N_INTVEC		// lr = software interrupt number
-	movge	lr, #0
 
-	ldr	ip, =EIT_VECTBL
-	ldr	lr, [ip, lr, lsl #2]!
-	cmp	lr, #0
-	bxne	lr
-	b	default_entry
+svc_entry:
+	push	{r0}
+	mrs	r0, spsr
+	push	{r0-r12, lr}
+
+	ldrb	r0, [lr]
+	ldr	lr, =EIT_VECTBL
+
+	ldr	lr, [lr, r0, lsl #2]
+	blx	lr
+
+	pop	{r0-r12, lr}
+	msr	spsr, r0
+	pop	{r0}
+
+	bx	lr
 
 /*
  * prefetch abort
@@ -323,6 +312,8 @@ dabort_entry:
  *      registers upon handler invocation
  *       ip = address of the vector table for the raised exception
  *       lr = indeterminate
+ *
+ *	Not used, waster some bytes to repeat similar code for every mode.
  */
 default_entry:
 	bx	lr

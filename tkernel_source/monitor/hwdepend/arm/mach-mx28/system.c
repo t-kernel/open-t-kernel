@@ -147,7 +147,7 @@ EXPORT	void	resetSystem(W boot)
 //	extern void svc(unsigned vec);
 
 	printk("%s:%s\n", __FILE__, __func__);
-	goto setup_eit;
+	goto setup_vec;
 
         /* obtain DipSw status */
 	if (!boot) DipSw = DipSwStatus();
@@ -188,7 +188,7 @@ EXPORT	void	resetSystem(W boot)
 	SCInfo.ramtop = (void*)mp->top;
 	if (va < mp->top || va > mp->end) va = mp->end;
 	SCInfo.ramend = (void*)va;
-setup_eit:
+setup_vec:
         /* set up EIT vectors */
         /* we do not need _defaultHdr absolutely, but just in case set it up */
 	for (i=0; i<256; i++) {
@@ -196,7 +196,7 @@ setup_eit:
 	}
 	SCArea->intvec[EIT_DEFAULT]	= helloworld;	/* default handler */
 	SCArea->intvec[EIT_UNDEF]	= helloworld;	/* undefined instruction */
-	SCArea->intvec[SWI_MONITOR]	= helloworld;	/* SWI - monitor SVC */
+	SCArea->intvec[SWI_MONITOR]	= _defaultHdr;	/* SWI - monitor SVC */
 
 //	for (i=0; i<256; i++) {
 //		syscall(i);
