@@ -16,6 +16,9 @@
  *	startup.c
  *
  *       system boot processing
+ *
+ *	monitor/tmmain/startup.c
+ *	Copyright 2015, 2016 Du Huanpeng<u74147@gmail.com>
  */
 
 #include "hwdepend.h"
