@@ -25,9 +25,7 @@
 
 #include <machine.h>
 #include <tk/sysdef.h>
-@#ifdef CONFIG_MACH_EM1D
 #include <mach/em1d512.h>
-@#endif
 #include <sys/sysinfo.h>
 
 #define	base(n)		( (n) & 0xfffff000 )
@@ -58,7 +56,7 @@ _start:
 	b	__svc_entry		@ 08 : software interrupt
 	b	iabort_entry		@ 0C : prefetch abort
 	b	dabort_entry		@ 10 : data abort
-	nop				@ 14 : reserved
+	b	.			@ 14 : reserved
 	b	irq_entry		@ 18 : IRQ
 fiq_entry:				@ 1C : FIQ
 /*
@@ -72,22 +70,11 @@ fiq_entry:				@ 1C : FIQ
 	bx	ip
 
 
-
-
-
-
-
-
-
 __startup_entry:
 	mov	r0, #0
 	mov	r1, #'A'
 	bl	putSIO_mx28
-	bl	putSIO_mx28
-	bl	putSIO_mx28
-	bl	putSIO_mx28
-	bl	putSIO_mx28
-	bl	putSIO_mx28
+
 #if 0
 
 @	mov	r8-r12
@@ -124,7 +111,24 @@ verify:
 #define CONFIG_TM_DBG_VECTORS
 #ifdef CONFIG_TM_DBG_VECTORS
 __svc_entry:
+	push	{r0}
+	mrs	r0, spsr
+	push	{r0-r12, lr}
+
+
+
+	mov	r0, sp
+	bl	printh
+
+	mov	r1, #'V'
+	bl	putSIO_mx28
+
+	pop	{r0-r12, lr}
+	msr	spsr, r0
+	pop	{r0}
+
 	bx	lr
+
 #endif
 
 
@@ -179,6 +183,18 @@ irq_entry:
  */
  	
 undef_entry:
+	push	{r0}
+	mrs	r0, spsr
+@ TODO: check if sp < __stack_system
+	push	{r0-r12, r14}
+
+	mov	r0, lr
+	bl	printh
+
+	pop	{r0-r12, r14}
+	msr	spsr, r0
+	pop	{r0}
+
 	bx	lr
 
 /*
@@ -233,7 +249,22 @@ svc_entry:
  *       lr = indeterminate
  */
 iabort_entry:
+	push	{r0}
+	mrs	r0, spsr
+	push	{r0-r12, r14}
+
+	mov	r1, #'I'
+	bl	putSIO_mx28
+
+	mov	r0, lr
+	bl	printh
+
+	pop	{r0-r12, r14}
+	msr	spsr, r0
+	pop	{r0}
+
 	bx	lr
+
 
 /*
  * data abort
@@ -249,6 +280,22 @@ iabort_entry:
  *       lr = indeterminate
  */
 dabort_entry:
+	push	{r0}
+	mrs	r0, spsr
+	push	{r0-r12, r14}
+
+	mov	r1, #'D'
+	bl	putSIO_mx28
+
+	mov	r0, lr
+	bl	printh
+
+	pop	{r0-r12, r14}
+	msr	spsr, r0
+	pop	{r0}
+
+
+	sub	lr, lr, #4
 	bx	lr
 
 /*
