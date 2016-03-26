@@ -47,7 +47,7 @@ EXPORT void DispProgress( W n )
 	};
 
 	if(n<8) printk("%s\n", progress[n]);
-	else printf("%s\n", progress[n]);
+	else printk("%s\n", progress[n]);
 
 	return;
 }
@@ -97,7 +97,9 @@ EXPORT void procReset( void )
 #else
 	speed = ( (DipSw & SW_BHI) != 0 )? HI_BAUD_RATE: LO_BAUD_RATE;
 #endif
+#ifndef CONFIG_TM_EARLY_PRINTK
 	initSIO(getConPort(), speed);
+#endif
 	DispProgress(0x08);
 
         /* initialize hardware (peripherals) */
