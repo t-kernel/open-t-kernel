@@ -1,4 +1,13 @@
 /*
+ *	original: monitor/hwdepend/tef_em1d/src/startup.c
+ *
+ *       system boot processing
+ *
+ *	monitor/tmmain/startup.c
+ *	Copyright 2015, 2016 Du Huanpeng<u74147@gmail.com>
+ */
+
+/*
  *----------------------------------------------------------------------
  *    T-Kernel 2.0 Software Package
  *
@@ -12,14 +21,6 @@
  *----------------------------------------------------------------------
  */
 
-/*
- *	startup.c
- *
- *       system boot processing
- *
- *	monitor/tmmain/startup.c
- *	Copyright 2015, 2016 Du Huanpeng<u74147@gmail.com>
- */
 
 #include "hwdepend.h"
 
