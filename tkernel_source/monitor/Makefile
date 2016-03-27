@@ -131,7 +131,7 @@ tmonitor: $(OBJ)
 	@$(CROSS_COMPILE)nm $@ >tm.map
 	@echo   " SYSMAP\t"	tm.map
 clean:
-	@rm -f $(OBJ) tmonitor tm.S tm.bin
+	@rm -f $(OBJ) tmonitor tm.S tm.bin tm.map
 	@echo	"  CLEAN"
 
 prepare:
