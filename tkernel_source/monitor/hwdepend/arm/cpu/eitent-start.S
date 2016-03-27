@@ -198,7 +198,7 @@ undef_entry:
 	msr	spsr, r0
 	pop	{r0}
 
-	bx	lr
+	movs	pc, lr
 
 /*
  * supervisor call(SVC)
@@ -240,7 +240,7 @@ svc_entry:
 	msr	spsr, r0
 	pop	{r0}
 
-	bx	lr
+	movs	pc, lr
 
 /*
  * prefetch abort
@@ -287,24 +287,22 @@ iabort_entry:
  *       lr = indeterminate
  */
 dabort_entry:
-	push	{r0}
-	mrs	r0, spsr
+	push	{r7}
+	mrs	r7, spsr
+	tst	r7, #(1<<5)
+	subeq	lr, #4		@ arm
+	subne	lr, #6		@ thumb
 	push	{r0-r12, r14}
 
-	ldr	lr, =EIT_ENTRY(EIT_DABORT)
-	ldr	lr, [lr]
-	blx	lr
-
-	mov	r0, lr
-	bl	printh
+	ldr	r7, =EIT_ENTRY(EIT_DABORT)
+	ldr	r7, [r7]
+	blx	r7
 
 	pop	{r0-r12, r14}
-	msr	spsr, r0
-	pop	{r0}
+	msr	spsr, r7
+	pop	{r7}
 
-
-	sub	lr, lr, #4
-	bx	lr
+	movs	pc, lr
 
 /*
  * default handler
