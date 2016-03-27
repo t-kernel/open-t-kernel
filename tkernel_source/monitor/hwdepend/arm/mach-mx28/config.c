@@ -297,7 +297,7 @@ EXPORT	W	procHwInt(UW vec)
 
         /* clear interrupt */
 
-	printk("Abort Switch (SW1) Pressed");
+	printk("Abort Switch (SW1) Pressed\n");
 	return 1;
 }
 
@@ -307,4 +307,4 @@ EXPORT	W	procHwInt(UW vec)
  *        configure GPIO pin multiplexer
  */
     
-EXPORT	const UW	GPIOConfig[] __attribute__((section(".startup"))) = {0, 0};
+EXPORT	const UW	GPIOConfig[] = {0, 0};
