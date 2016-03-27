@@ -5,6 +5,7 @@
 
 
 	.global	syscall
+	.code 32
 
 __syscall:
 	svc	0
