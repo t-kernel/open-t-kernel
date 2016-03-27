@@ -86,3 +86,7 @@ SRC += lib/printf-stdarg.c
 
 SRC += tmmain/monkey.S
 endif
+
+OBJ := $(SRC)
+OBJ := $(OBJ:.S=.o)
+OBJ := $(OBJ:.c=.o)

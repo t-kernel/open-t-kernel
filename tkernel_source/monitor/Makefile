@@ -10,7 +10,6 @@ MACH := mach-mx28
 GPL := -gpl
 
 include Makefile.src
--include Makefile.obj
 
 CROSS_COMPILE ?= arm-eabi-
 
