@@ -74,7 +74,25 @@ void putSIO_mx28( SIOCB *scb, UB c )
  */
 LOCAL W getSIO_mx28(SIOCB *scb, W tmo )
 {
+	unsigned val;
 
+	tmo = 32;
+
+	do {
+		val = in_w(HW_UARTDBG_FR);
+		val &= RXFE;
+		tmo--;
+		if(tmo == 0) return -1;
+	} while(val);
+
+	val = in_b(HW_UARTDBG_DR);
+
+	scb->iptr %= SIO_PTRMSK;
+	scb->rcvbuf[scb->iptr] = val;
+	scb->iptr ++;
+	scb->optr = scb->iptr;
+
+	return val;
 }
 
 /* ------------------------------------------------------------------------ */
