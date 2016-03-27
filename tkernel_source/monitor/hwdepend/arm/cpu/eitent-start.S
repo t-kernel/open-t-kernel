@@ -136,8 +136,8 @@ verify:
 #endif
 	b	startup_entry
 
-	.global syscall
-svc_r0: .word	0xEF0000EF
+	.weak syscall
+svc_r0: .word	0xEFEFEFEF
 	bx	lr
 syscall:
 	bic	r0, #0xFF000000
