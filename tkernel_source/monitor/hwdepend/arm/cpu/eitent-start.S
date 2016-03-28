@@ -80,6 +80,7 @@
 	.global svc_entry
 	.global iabort_entry
 	.global undef_entry
+	.global irq_entry
 _start:
 	b	__startup_entry		@ 00 : reset
 	b	undef_entry		@ 04 : undefined instruction
