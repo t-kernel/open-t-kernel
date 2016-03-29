@@ -17,6 +17,9 @@
  * * Sat Feb 09 2002, Jason Thomas <jason@topic.com.au>,
  *                    Matthew Hawkins <matt@mh.dropbear.id.au>
  * -  Kissed strtok() goodbye
+ *
+ * * Wed Mar 16 2016, Du Huanpeng <u74147@gmail.com>,
+ * -  Adopted to t-monitor
  */
 #include <stddef.h>
 
