@@ -46,7 +46,6 @@ SRC += driver/sio/sio-sam9.c
 endif
 ifeq ($(MACH),mach-mx28)
 SRC += driver/sio/sio-mx28.c
-SRC += printk/printk.c
 endif
 
 SRC += hwdepend/arm/$(MACH)/system.c
@@ -80,9 +79,6 @@ SRC += driver/memdisk/memdsk.c
 SRC += tmmain/version.c
 
 SRC += lib/printk.c
-SRC += lib/vprintk.c
-
-SRC += lib/printf-stdarg.c
 
 SRC += tmmain/monkey.S
 endif
