@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 
+#include <tmonitor.h>
 #ifdef DEBUG
 
 #include <stdio.h>
@@ -112,21 +113,45 @@ int vprintks(const char *fmt, va_list args)
 			} else if (c == 's') {
 				prints(va_arg(args, const char *));
 				j=i;
-			} else if (i-j>8) {
+			} else if (i-j>=sizeof("%080lx")) {
 				while(j<i) printch(fmt[j++]);
 			}
 
 			if(pi) {
-				int w;
-				/* 12345..n
-				 * %0??f..f
-				 * ^   ^   ^
-				 * j   i   i
-				 */
+				int w, pad;
+			/*
+				 handled format:
+				 %x
+				 %nx
+				 %0nx
+				 %nnx
+				 %0nnx
+			 */
+				pad = fmt[++j];
+				if(pad != ' ' && pad != '0') {
+					pad = 0;
+				} else {
+					j++;
+				}
+
 				w = 0;
+				while(j<i) {
+					if(fmt[j]>='0' && fmt[j]<='9') {
+						w *= 10;
+						w += fmt[j] - '0';
+						if(w>10) break;
+					} else {
+						break;
+					}
+					j++;
+				}
+
+				/* printch('0' + i -j); */
+
+				/* w = 0 */
 				while(w+pi>0) {
 					w--;
-					printch('$');
+					printch(pad);
 				}
 				prints(printbufend+pi);
 				pi = 0;
@@ -156,6 +181,7 @@ int printf(const char *fmt, ...)
 	va_start(args, fmt);
 	return vprintks(fmt, args);
 }
+
 
 int printks(const char *fmt, ...)
 {
