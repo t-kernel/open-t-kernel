@@ -292,14 +292,14 @@ EXPORT	void	dispRegister(W regno)
 	for (n = i = 0; i < N_ACTREGS; i++) {
 		rid = regTab[i].id;
 		if (!(i == regno || ((id & R_GRP) && (rid & id)))) continue;
-		if (n != 0 && (rid & R_GAP)) DSP_LF;
+		if (n != 0 && (rid & R_GAP)) printk("\n");
 		if (n++ & 0x0f) printk("  ");
 		for (j = 0; j < L_REGNM; j++) DSP_CH(regTab[i].name[j]);
 		DSP_F2(S,": ", 08X,getRegister(i));
-		if (rid & R_LF) {DSP_LF; n = 0x10;}
+		if (rid & R_LF) {printk("\n"); n = 0x10;}
 		if ((id & R_GRP) == 0) break;
 	}
-	if (n & 0x0f) DSP_LF;
+	if (n & 0x0f) printk("\n");
 }
 /*
         obtain CPSR register value

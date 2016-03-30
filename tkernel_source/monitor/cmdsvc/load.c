@@ -314,7 +314,7 @@ EXPORT	ER	doLoading(W proto, UW addr, UW *range)
 	purgeInput();
 
 	if (er == E_END) er = E_OK;
-	DSP_LF;
+	printk("\n");
 	if (er == E_OK) {
 		e_addr--;
 		if (range) {

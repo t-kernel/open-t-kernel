@@ -151,7 +151,7 @@ LOCAL void prDiskHelp( const HELP *help )
 		if ( help == &helpWD && (attr & DA_RONLY) != 0 ) continue;
 		DSP_F2(CH,' ', S,devnm);
 	}
-	DSP_LF;
+	printk("\n");
 }
 
 /*

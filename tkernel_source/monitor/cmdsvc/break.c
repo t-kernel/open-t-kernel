@@ -264,7 +264,7 @@ EXPORT	void	dspBreak(void)
 		if (p->cmd[0] != '\0') {
 			DSP_F3(S," \"", S,p->cmd, CH,'"');
 		}
-		DSP_LF;
+		printk("\n");
 	}
 }
 /*
