@@ -20,13 +20,15 @@
  * THE SOFTWARE.
  */
 
-#include <tmonitor.h>
 #ifdef DEBUG
 
 #include <stdio.h>
 #define printch(c) putchar(c)
 
 #else
+
+#include <tmonitor.h>
+extern void putSIO_mx28( SIOCB *scb, UB c );
 
 int printch(int ch)
 {
@@ -128,7 +130,7 @@ int vprintks(const char *fmt, va_list args)
 				 %0nnx
 			 */
 				pad = fmt[++j];
-				if(pad != ' ' && pad != '0') {
+				if(pad != ' ' && pad != '0' && pad != '-') {
 					pad = 0;
 				} else {
 					j++;
@@ -207,8 +209,8 @@ int main(int argc, char *argv[])
 	printks("100: [%%]\n", 100);
 	printks("error in the middle of format: [%1234567890c]\n", 100);
 	printks("error format at the end: [%ASDF]\n", 100);
-	printks("Left pad zero: [%08X]\n", 0xABCDEF00);
-	printks("Right pad zero:[%-8X]\n", 0xABCDEF11);
+	printks("Left pad zero: [%016X]\n", 0xABCDEF00);
+	printks("Right pad zero(not supported):[%-16X]\n", 0xABCDEF11);
 	printks("percent 75 [75%]\n", 75);
 	return 0;
 
