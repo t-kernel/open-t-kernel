@@ -293,7 +293,7 @@ EXPORT	void	dispRegister(W regno)
 		rid = regTab[i].id;
 		if (!(i == regno || ((id & R_GRP) && (rid & id)))) continue;
 		if (n != 0 && (rid & R_GAP)) DSP_LF;
-		if (n++ & 0x0f) DSP_S("  ");
+		if (n++ & 0x0f) printk("  ");
 		for (j = 0; j < L_REGNM; j++) DSP_CH(regTab[i].name[j]);
 		DSP_F2(S,": ", 08X,getRegister(i));
 		if (rid & R_LF) {DSP_LF; n = 0x10;}

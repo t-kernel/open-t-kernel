@@ -55,15 +55,15 @@ EXPORT ER writeFrom( UW addr, UW data, W nsec, W msg )
         /* Confirm if monitor itself is to be written */
 	reset = isOverlapMemArea(addr, addr + sz, MSA_MON);
 	if ( reset && msg != 0 ) {
-		DSP_S("Update Monitor Area, ");
+		printk("Update Monitor Area, ");
 		if (msg > 0) {
-			DSP_S("OK (y/n)? ");
+			printk("OK (y/n)? ");
 			c = (UB)getChar(1);
 			putChar(c);
 			putChar('\n');
 			if (c != 'Y' && c != 'y') return E_OK;
 		} else if (msg < 0) {
-			DSP_S("Restart System after Writing.");
+			printk("Restart System after Writing.");
 		}
 	}
 

@@ -34,7 +34,7 @@ EXPORT void printHelp( const HELP *help )
  */
 LOCAL void prSimpleHelp( const HELP *help )
 {
-	DSP_S(help->msg);
+	printk(help->msg);
 }
 
 /*
@@ -141,8 +141,8 @@ LOCAL void prDiskHelp( const HELP *help )
 	UW	attr;
 	W	i;
 
-	DSP_S(help->msg);
-	DSP_S("  device :");
+	printk(help->msg);
+	printk("  device :");
 	for ( i = 0;; ++i ) {
 		devnm = ( help == &helpBD )? bootDevice(i): diskList(i, &attr);
 		if ( devnm == NULL ) break;
@@ -165,7 +165,7 @@ LOCAL void prWRomHelp( const HELP *help )
 	rom = MemArea(MSA_FROM, 1);
 	ram = MemArea(MSA_OS, 1);
 	if ( rom == NULL || ram == NULL ) {
-		DSP_S("Not Supported\n");
+		printk("Not Supported\n");
 		return;
 	}
 
@@ -173,7 +173,7 @@ LOCAL void prWRomHelp( const HELP *help )
 	sz = rom->end - rom->top;
 	if ( sz > ram->end - ram_top ) sz = ram->end - ram_top;
 
-	DSP_S(help->msg);
+	printk(help->msg);
 	DSP_F5(S,"  rom_addr      : 0x", 08X,rom->top,
 	       S," - 0x", 08X,(rom->end-FROM_SECSZ), CH,'\n');
 	DSP_F5(S,"  data_ram_addr : 0x", 08X,ram_top,
@@ -386,7 +386,7 @@ EXPORT void dispTitle( void )
 {
 	int i;
 
-	DSP_S("\n\n");
-	for ( i = 0; Title[i] != NULL; i++ ) DSP_S(Title[i]);
-	DSP_S("\n\n");
+	printk("\n\n");
+	for ( i = 0; Title[i] != NULL; i++ ) printk(Title[i]);
+	printk("\n\n");
 }

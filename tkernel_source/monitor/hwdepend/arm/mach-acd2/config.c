@@ -411,7 +411,7 @@ EXPORT	W	procHwInt(UW vec)
         /* clear interrupt */
 	out_w(GIO_IIR(GIO_L), 0x00000100);
 
-	DSP_S("Abort Switch (SW1) Pressed");
+	printk("Abort Switch (SW1) Pressed");
 	return 1;
 }
 
