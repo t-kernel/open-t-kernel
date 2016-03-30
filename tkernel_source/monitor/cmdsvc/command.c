@@ -158,9 +158,9 @@ LOCAL	void	dspError(void)
 		}
 	}
 	if (mp) {
-		DSP_F3(S,"ERR: ", S,mp, CH,'\n');
+		printk("ERR: %s\n", mp);
 	} else {
-		DSP_F3(S,"ERR: [", 08X,errcode, S,"]\n");
+		printk("ERR: [%08X]\n", errcode);
 	}
 }
 /*
@@ -168,7 +168,7 @@ LOCAL	void	dspError(void)
 */
 LOCAL	W	getLine(UB *msg)
 {
-	if (msg) DSP_S(msg);			/* display prompt */
+	if (msg) printk(msg);			/* display prompt */
 	memset(lineBuf, 0, sizeof(lineBuf));	/* clear buffer */
 	return getString(lptr = lineBuf);	/* input a line and initialize the line pointer */
 }
@@ -470,7 +470,7 @@ LOCAL	W	reaMemory(UW addr, void *dt, W len, W unit)
 	W	n;
 
 	if ((n = readMem(addr, dt, len, unit)) == len) return 0;
-	DSP_F3(S,"ERR: Memory Read at H'", 08X,(addr+n), CH,'\n');
+	printk("ERR: Memory Read at H\'%08X\n", addr+n);
 	return -1;
 }
 /*
@@ -481,7 +481,7 @@ LOCAL	W	wriMemory(UW addr, void *dt, W len, W unit)
 	W	n;
 
 	if ((n = writeMem(addr, dt, len, unit)) == len) return 0;
-	DSP_F3(S,"ERR: Memory Write at H'", 08X,(addr+n), CH,'\n');
+	printk("ERR: Memory Write at H\'%08X", addr+n);
 	return -1;
 }
 /*
@@ -490,9 +490,9 @@ LOCAL	W	wriMemory(UW addr, void *dt, W len, W unit)
 LOCAL	void	dspMemory(void *p, W unit)
 {
 	switch (unit) {
-	case 4:		DSP_F2(08X,*((UW*)p), CH,' ');	break;
-	case 2:		DSP_F2(04X,*((UH*)p), CH,' ');	break;
-	default:	DSP_F2(02X,*((UB*)p), CH,' ');
+	case 4:		printk("%08X ", *((UW*)p));	break;
+	case 2:		printk("%04X ", *((UH*)p));	break;
+	default:	printk("%02X ", *((UB*)p));	break;
 	}
 }
 /*
@@ -516,7 +516,7 @@ LOCAL	void	cmdDump(W unit)
 	ep = cp = wrkBuf;
 	for (dAddr = cAddr, i = 0; i < cLen;) {
                 /* display address */
-		if ((i % 16) == 0) DSP_F2(08X,dAddr, S,": ");
+		if ((i % 16) == 0) printk("%08X: ", dAddr);
 
                 /* obtain memory content */
 		if (cp >= ep) {
@@ -540,16 +540,16 @@ LOCAL	void	cmdDump(W unit)
 			k = 16 - n;
 			if (n) {	/* move forward to where we start character dump */
 				n = k / unit * (unit * 2 + 1);
-				while (n-- > 0)	DSP_CH(' ');
+				while (n-- > 0)	printk(" ");
 			}
 			k = (i % 16) ? (i % 16) : 16;
 			for (cp -= k; cAddr < dAddr; cAddr++) {
 				n = *cp++;
-				DSP_CH((n >= ' ' && n < 0x7f) ? n : '.');
+				printk("%c", (n >= ' ' && n < 0x7f) ? n : '.');
 			}
-			DSP_LF;
+			printk("\n");
 		}
-		if (checkAbort()) {DSP_LF; break;}
+		if (checkAbort()) {printk("\n"); break;}
 	}
 }
 /*
@@ -582,7 +582,7 @@ LOCAL	void	cmdModify(W unit)
 		svtoken = token;
 
 		for (;;) {
-			DSP_F2(08X,cAddr, S,": ");	/* display address */
+			printk("%08X: ", cAddr);	/* display address */
 			if (reaMemory(cAddr, buf, unit, unit)) break;
 			dspMemory(buf, unit);		/* display data */
 
@@ -685,10 +685,10 @@ LOCAL	void	cmdSearch(W unit)
                 /* check for the matching of whole data */
 		if (memcmp(cp, dt, len) == 0) {
 			if (++cnt > MAX_DSP_CNT) {
-				DSP_S("..More..\n");
+				printk("..More..\n");
 				break;
 			}
-			DSP_F2(08X,(cAddr - (ep - cp)), S,":\n");
+			printk("%08X:\n", cAddr - (ep - cp));
 		}
 		/* next */
 		cp += unit;
@@ -732,14 +732,11 @@ LOCAL	void	cmdCmpMov(W mov)
 			for (i = 0; i < n; i++) {
 				if (wrkBuf[i] == wrkBuf[BFSZ + i]) continue;
 				if (++cnt > MAX_DSP_CNT) {
-					DSP_S("..More..\n");
+					printk("..More..\n");
 					cLen = 0;	/* terminate */
 					break;
 				}
-				DSP_F4(08X,(cAddr + i), S,": ",
-				       02X,wrkBuf[i], S," -> ");
-				DSP_F4(08X,(dst + i), S,": ",
-				       02X,(wrkBuf[BFSZ + i]), CH,'\n');
+				printk("%08X: %02X -> %08X: %02X\n", cAddr+i, wrkBuf[i], dst+i, wrkBuf[BFSZ+i]);
 			}
 		}
 	}
@@ -769,13 +766,16 @@ LOCAL	void	cmdIO(W unit)
 		dir = "-->";
 	}
         /* display result */
-	DSP_F2(S,"Port ", 08X,port);
+	printk("Port %08X", port);
 	switch (unit) {
-	case 4:	DSP_F5(S,":W ", S,dir, CH,' ', 08X,(UW)data, CH,'\n');
+	case 4:	
+		printk(":W %s %08X\n", dir, (UW)data);
 		break;
-	case 2:	DSP_F5(S,":H ", S,dir, CH,' ', 04X,(UH)data, CH,'\n');
+	case 2:
+		printk(":H %s %04X\n", dir, (UH)data);
 		break;
-	default:DSP_F5(S,":B ", S,dir, CH,' ', 02X,(UB)data, CH,'\n');
+	default:
+		printk(":B %s %02X\n", dir, (UB)data);
 		break;
 	}
 }
@@ -1010,9 +1010,7 @@ LOCAL	void	cmdDisk(W kind)
 	case 2:		/* InfoDisk */
 		errcode = infoDisk(devnm, &blksz, &nblks);
 		if (errcode >= E_OK) {
-			DSP_S(devnm);
-			DSP_F5(S,": Bytes/block: ", D,blksz,
-			       S," Total blocks: ", D,nblks, CH,'\n');
+			printk("%s: Bytes/block: %d Total blocks: %d\n", devnm, blksz, nblks);
 		}
 		break;
 	case 3:		/* BootDisk */
@@ -1034,7 +1032,7 @@ LOCAL	void	cmdExit(void)
 	if (token <= tDLM) par = 0;
 	else if (getNumber(0, &par)) return;
 
-	DSP_S((par < 0) ? "** System Reset\n" : "** System Power Off\n");
+	printk((par < 0) ? "** System Reset\n" : "** System Power Off\n");
 	waitMsec(100);	/* give extra time for draining the remaining output */
 
 	sysExit(par);		/* system reset or power off (never returnes) */
@@ -1101,20 +1099,19 @@ LOCAL	void	cmdFlashLoad(void)
 	setupFlashLoad(0, addr);
 	i = addr[1] - addr[0] + 1;
 	if (mode) {
-		DSP_S("Fill Loading RAM Area with 0xFF\n");
+		printk("Fill Loading RAM Area with 0xFF\n");
 		memset((void*)addr[0], 0xFF, i);
 	} else {
-		DSP_S("Copy Flash ROM Image to RAM Area\n");
+		printk("Copy Flash ROM Image to RAM Area\n");
 		memcpy((void*)addr[0], (void*)(addr[0] - addr[2]), i);
 	}
-	DSP_S("> Load S-Format Data of Flash ROM\n");
+	printk("> Load S-Format Data of Flash ROM\n");
 	errcode = doLoading(proto, 0, addr);
 	if (errcode < 0) return;
 
         /* FLASH ROM write */
 	setupFlashLoad(-1, addr);
-	DSP_F5(S,"Writing Flash ROM at ", 08X,addr[0],
-	       S," [", D,addr[2], S," blks] ... wait\n");
+	printk("Writing Flash ROM at %08X [%d blks] ... wait\n", addr[0], addr[2]);
 	errcode = writeFrom(addr[0], addr[1], addr[2], -1);
 }
 /*
