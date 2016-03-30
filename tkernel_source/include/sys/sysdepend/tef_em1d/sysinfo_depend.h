@@ -76,7 +76,7 @@ typedef struct {
 	SysCommonInfo	scinfo;			/* System common information */
 } SysCommonArea;
 
-#define SCArea	( (SysCommonArea*)0x30004000 )
+#define SCArea	( (SysCommonArea*)(0x43EF8000))
 #define SCInfo	( SCArea->scinfo )
 
 #endif /* _in_asm_source_ */
@@ -88,7 +88,9 @@ typedef struct {
 /*
  * Vector table address
  */
-#define EIT_VECTBL	0x30004000	/* Vector table top */
+#define EIT_VECTBL	0x43EF8000	/* Vector table top */
+
+
 
 #define EITVEC(n)	( EIT_VECTBL + (n) * 4 )
 

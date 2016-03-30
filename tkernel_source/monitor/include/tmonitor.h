@@ -11,6 +11,9 @@
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
  *----------------------------------------------------------------------
+ * it seems use printk or printf is more friendly than these DSP_* macros.
+ * remove DSP_* macros.
+ * Copyright 2014-2016 Du Huanpeng <u74147@gmail.com>
  */
 
 /*
@@ -28,30 +31,14 @@
 
 /* CPU-dependent definitions */
 #if CPU_ARM
-#  include "arm/cpudepend.h"
+#  include <mach/cpudepend.h>
 #endif
 
 /*
  * console display
  */
-#define	DSP_S(s)	puts(s)
-#define	DSP_LF		putchar('\n')
-#define	DSP_SP		putchar(' ')
-#define	DSP_CH(c)	putchar(c)
-#define	DSP_02X(x)	putHex2(x)
-#define	DSP_04X(x)	putHex4(x)
-#define	DSP_08X(x)	putHex8(x)
-#define	DSP_D(x)	putDec(x)
-#define	DSP_F1(f0, a0)	\
-	{DSP_##f0(a0);}
-#define	DSP_F2(f0, a0, f1, a1)	\
-	{DSP_##f0(a0); DSP_##f1(a1);}
-#define	DSP_F3(f0, a0, f1, a1, f2, a2)	\
-	{DSP_##f0(a0); DSP_##f1(a1); DSP_##f2(a2);}
-#define	DSP_F4(f0, a0, f1, a1, f2, a2, f3, a3)	\
-	{DSP_##f0(a0); DSP_##f1(a1); DSP_##f2(a2); DSP_##f3(a3);}
-#define	DSP_F5(f0, a0, f1, a1, f2, a2, f3, a3, f4, a4)	\
-	{DSP_##f0(a0); DSP_##f1(a1); DSP_##f2(a2); DSP_##f3(a3); DSP_##f4(a4);}
+IMPORT int printf(const char *format, ...);
+IMPORT int printk(const char *format, ...);
 
 /*
  * error code

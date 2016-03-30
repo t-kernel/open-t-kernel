@@ -1,0 +1,53 @@
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+startup_entry -->
+@ ARM Lowlevel setup
+	same as reset_entry, use SRAM as temp stack
+
+@ Board initial seq
+
+@ ARM initial CP15 and enable MMU
+
+@ Branch to reset_entry--^
+
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+reset_entry ->
+@ ARM Lowlevel setup
+	SVC Mode, Disable FIQ/IRQ
+
+	Switch to T-Monitor stack
+
+
+	  * disable cache
+	  * disable program-flow prediction
+	  * disable high vector
+	  * disable VIC(board?)
+
+#if __TRON_ARCH_ARM__ > 5
+	enable force AP
+	enable TEX remap
+	enable  Subpage AP
+#endif
+#dedef CONFIG_VFP
+	turn vfp on
+#endif
+
+@ Setup C environment
+	all most done
+
+@ Call procReset, more init writen in C
+	startup.c: EXPORT void procReset( void )
+	done
+
+@ Clear registers, and initial stack pointers for all mode
+	done
+
+@ Clear vfp again
+
+@ Return to SVC Mode
+
+@ endless svc call
+	1:
+		svc	#0
+		b	1b
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

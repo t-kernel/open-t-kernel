@@ -1,0 +1,88 @@
+
+ifeq ($(MACH),mach-m150)
+SRC := hwdepend/mips/mach-m150/system.c
+SRC := hwdepend/mips/mach-m150/boot/eitent.S
+SRC := hwdepend/mips/mach-m150/sio.c
+SRC := hwdepend/mips/mach-m150/lib/monitor.lnk
+SRC := hwdepend/mips/mach-m150/m150_serial.c
+SRC := hwdepend/mips/mach-m150/command.c
+SRC := hwdepend/mips/mach-m150/console.c
+SRC := hwdepend/mips/mach-m150/mach/include/device.h
+SRC := hwdepend/mips/mach-m150/tmonitor.h
+SRC := hwdepend/mips/mach-m150/string$(GPL).c
+SRC := hwdepend/mips/mach-m150/startup.c
+SRC := hwdepend/mips/mach-m150/svc.c
+SRC := hwdepend/mips/mach-m150/printf.c
+else
+SRC := tmmain/startup.c
+SRC += hwdepend/arm/$(MACH)/hwinfo.c
+SRC += driver/sio/sio.c
+SRC += hwdepend/arm/$(MACH)/diskio.c
+SRC += hwdepend/arm/$(MACH)/eitproc.c
+SRC += hwdepend/arm/$(MACH)/cpuctrl.c
+SRC += hwdepend/arm/$(MACH)/misc.c
+
+ifeq ($(MACH),mach-em1d)
+SRC += hwdepend/arm/cpu/eitent.S
+SRC += hwdepend/arm/$(MACH)/reset.S
+else
+SRC += hwdepend/arm/cpu/eitent-start.S
+SRC += hwdepend/arm/$(MACH)/reset-lowlevel.S
+SRC += hwdepend/arm/cpu/reset-reset.S
+SRC += hwdepend/arm/cpu/reset-setupc.S
+endif
+
+ifeq ($(MACH),mach-em1d)
+SRC += driver/sio/ns16550.c
+endif
+ifeq ($(MACH),mach-acd2)
+SRC += driver/sio/sio-acd2.c
+endif
+ifeq ($(MACH),mach-asm9)
+SRC += driver/sio/sio-asm9.c
+endif
+ifeq ($(MACH),mach-sam9)
+SRC += driver/sio/sio-sam9.c
+endif
+ifeq ($(MACH),mach-mx28)
+SRC += driver/sio/sio-mx28.c
+endif
+
+SRC += hwdepend/arm/$(MACH)/system.c
+SRC += hwdepend/arm/$(MACH)/waitusec.c
+SRC += hwdepend/arm/$(MACH)/config.c
+SRC += hwdepend/arm/cpu/cpuctrl2.S
+SRC += hwdepend/arm/$(MACH)/memattr.S
+SRC += cmdsvc/command.c
+SRC += cmdsvc/helpmsg.c
+SRC += cmdsvc/register.c
+SRC += cmdsvc/break.c
+SRC += cmdsvc/disassemble.c
+SRC += cmdsvc/step.c
+SRC += cmdsvc/svc.c
+SRC += cmdsvc/memory.c
+SRC += cmdsvc/console.c
+SRC += cmdsvc/load.c
+SRC += cmdsvc/boot.c
+SRC += lib/string$(GPL).c
+SRC += hwdepend/arm/cpu/monhdr.S
+SRC += hwdepend/arm/monent.c
+SRC += hwdepend/arm/$(MACH)/chkaddr.c
+SRC += hwdepend/arm/misc.c
+SRC += cmdsvc/wrkbuf.c
+SRC += driver/flash/main.c
+SRC += driver/flash/setup-em1d.c
+SRC += driver/flash/reset-em1d.c
+SRC += driver/flash/cfi_16x1.c
+SRC += driver/flash/cfi.c
+SRC += driver/memdisk/memdsk.c
+SRC += tmmain/version.c
+
+SRC += lib/printk.c
+
+SRC += tmmain/monkey.S
+endif
+
+OBJ := $(SRC)
+OBJ := $(OBJ:.S=.o)
+OBJ := $(OBJ:.c=.o)
