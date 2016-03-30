@@ -11,7 +11,15 @@ GPL := -gpl
 
 include Makefile.src
 
-CROSS_COMPILE ?= arm-eabi-
+CROSS_COMPILE ?= arm-none-eabi-
+
+TFTPBOOT := "D:\\DATA\\APP\\tftpd\\"
+RM := del
+COPY := copy
+
+TFTPBOOT := "/var/lib/tftpboot/"
+RM := rm -f
+COPY := cp
 
 GNUCC := $(CROSS_COMPILE)gcc
 ARMCC := armcc
@@ -93,7 +101,8 @@ CFLAGS += -D__TRON_ARM_ARCH=5
 CFLAGS += -DCONFIG_SKIP_LOWLEVEL
 
 # memory
-CFLAGS += -DCONFIG_TM_INIT_SP="(0x00020000-0x10)" # 128KiB
+# 128K
+CFLAGS += -DCONFIG_TM_INIT_SP="(0x00020000-0x10)"
 CFLAGS += -DCONFIG_TM_STACK_TOP=0x44000000
 CFLAGS += -DCONFIG_TM_STACK_SIZE=0x00080000
 CFLAGS += -DCONFIG_TM_HEAP_TOP=0
@@ -114,7 +123,7 @@ CFLAGS += -DCONFIG_TM_WRKBUF_SZ="(1<<10)"
 endif
 %.o: %.S
 	@echo	"     AS\t"	$@
-	@$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@ #-D_in_asm_source_
+	@$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
 
 %.o: %.c
 	@echo	"     CC\t"	$@
@@ -127,12 +136,16 @@ tmonitor: $(OBJ)
 	@echo	"    DIS\t"	tm.S
 	@$(CROSS_COMPILE)objcopy -O binary $@ tm.bin
 	@echo	"OBJDUMP\t"	tm.bin
-	@cp tm.bin /var/lib/tftpboot/
+	@$(COPY) tm.bin $(TFTPBOOT)
 	@$(CROSS_COMPILE)nm $@ >tm.map
 	@echo   " SYSMAP\t"	tm.map
 clean:
-	@rm -f $(OBJ) tmonitor tm.S tm.bin tm.map
+	@$(RM) $(OBJ) tmonitor tm.S tm.bin tm.map
 	@echo	"  CLEAN"
+
+cleanw:
+	del /s *.o
+	del tmonitor tm.S tm.bin tm.map
 
 prepare:
 	@sed 's/^SRC/OBJ/g' Makefile.src | sed 's/[cS]$$/o/g' >Makefile.obj
