@@ -13,13 +13,17 @@ include Makefile.src
 
 CROSS_COMPILE ?= arm-none-eabi-
 
+HOST ?= windows
+
+ifeq ($(HOST),windows)
 TFTPBOOT := "D:\\DATA\\APP\\tftpd\\"
 RM := del
 COPY := copy
-
+else
 TFTPBOOT := "/var/lib/tftpboot/"
 RM := rm -f
 COPY := cp
+endif
 
 GNUCC := $(CROSS_COMPILE)gcc
 ARMCC := armcc
@@ -121,6 +125,12 @@ CFLAGS += -DCONFIG_TM_WRKBUF_SZ="(1<<10)"
 # t-kernel & t-monitor shared
 # CFLAGS += -DCONFIG_EIT_VECTBL=0
 endif
+
+.PHONY: all
+all: tmonitor
+
+
+
 %.o: %.S
 	@echo	"     AS\t"	$@
 	@$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
@@ -139,14 +149,15 @@ tmonitor: $(OBJ)
 	@$(COPY) tm.bin $(TFTPBOOT)
 	@$(CROSS_COMPILE)nm $@ >tm.map
 	@echo   " SYSMAP\t"	tm.map
-clean:
-	@$(RM) $(OBJ) tmonitor tm.S tm.bin tm.map
-	@echo	"  CLEAN"
 
-cleanw:
+clean:
+ifeq ($(HOST),windows)
 	del /s *.o
 	del tmonitor tm.S tm.bin tm.map
-
+else
+	@$(RM) $(OBJ) tmonitor tm.S tm.bin tm.map
+	@echo	"  CLEAN"
+endif
 prepare:
 	@sed 's/^SRC/OBJ/g' Makefile.src | sed 's/[cS]$$/o/g' >Makefile.obj
 	@echo	"   GEN\tMakefile: " $(MACH)
