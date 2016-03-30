@@ -122,8 +122,7 @@ EXPORT W procEIT( UW vec )
 		}
 	}
 
-	printk("\n");
-	printk("PC: %08X CPSR: %08X\n", pc, cpsr);
+	printk("\nPC: %08X CPSR: %08X\n", pc, cpsr);
 
 	return 0;
 }
