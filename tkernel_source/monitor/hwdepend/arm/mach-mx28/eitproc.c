@@ -51,7 +51,7 @@ LOCAL W vf_msg( const VECINFO *vi, UW vec, UW pc, UW cpsr )
 	opt = 0;
 	if ( *msg < ' ' ) opt = *msg++;
 
-	DSP_F5(S,"Exception ", D,vec, S," (", S,msg, CH,')');
+	printk("Exception %d vec (%s)", vec, msg);
 
 	return ( opt & 020 )? 1: 0;
 }
@@ -59,19 +59,15 @@ LOCAL W vf_msg( const VECINFO *vi, UW vec, UW pc, UW cpsr )
 /* undefined instruction */
 LOCAL W vf_undef( const VECINFO *vi, UW vec, UW pc, UW cpsr )
 {
-	if (cpsr & PSR_T) {
-		DSP_F3(S,vi->msg, CH,' ', 04X,*((UH*)(pc - 2)));
-	} else {
-		DSP_F3(S,vi->msg, CH,' ', 08X,*((UW*)(pc - 4)));
-	}
+	printk("%s\n", vi->msg);
 	return 1;
 }
 
 /* data abort */
 LOCAL W vf_dabort( const VECINFO *vi, UW vec, UW pc, UW cpsr )
 {
-	DSP_F1(S,vi->msg);
-	DSP_F4(S," ADDR: ", 08X,getCP15(6, 0), S," STAT: ", 08X,getCP15(5, 0));
+	printk("%s", vi->msg);
+	printk(" ADDR: %08X STAT: %08X", getCP15(6, 0), getCP15(5, 0));
 	return 0;
 }
 
@@ -126,7 +122,8 @@ EXPORT W procEIT( UW vec )
 		}
 	}
 
-	DSP_F5(S,"\nPC: ", 08X,pc, S," CPSR: ", 08X,cpsr, CH,'\n');
+	printk("\n");
+	printk("PC: %08X CPSR: %08X\n", pc, cpsr);
 
 	return 0;
 }
