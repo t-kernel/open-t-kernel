@@ -35,7 +35,8 @@
  * console display
  */
  
-IMPORT W serial_putchar(W ch);
+IMPORT int printf(const char *format, ...);
+IMPORT int printk(const char *format, ...);
 
 #define	DSP_S(s)	putString(s)
 #define	DSP_LF		putChar('\n')
