@@ -73,7 +73,7 @@
  .macro EXC_RETURN
 	.arm
 	ldmfd	sp!, {ip}
-	rfefd	sp!
+ 	rfefd	sp!
  .endm
 
 /*

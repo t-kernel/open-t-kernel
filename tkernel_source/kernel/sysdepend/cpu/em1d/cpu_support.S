@@ -93,7 +93,7 @@ Csym(dispatch_to_schedtsk):
 	str	r0, [r4]			// ctxtsk = NULL
 	str	r0, [ip]			// taskmode = 0
 
-	cpsie	aif				// enable interrupt
+@	cpsie	aif				// enable interrupt
 	b	l_dispatch0
 
 Csym(dispatch_entry):
@@ -110,7 +110,7 @@ _ret_int_dispatch:
 	ldr	lr, =1
 	str	lr, [ip]			// disable dispatch
 
-	cpsie	aif				// enable interrupt
+@	cpsie	aif				// enable interrupt
 
 	ldr	ip, =TASKMODE
 	ldr	ip, [ip]
@@ -139,7 +139,7 @@ _ret_int_dispatch:
 	ldr	r6, =Csym(lowpow_discnt)	// R6 = &lowpow_discnt
 
   l_dispatch1:
-	cpsid	IMASK				// disable interrupt
+@	cpsid	IMASK				// disable interrupt
 
 	ldr	r8, [r5]			// R8 = schedtsk
 	cmp	r8, #0				// is there schedtsk ?
@@ -150,7 +150,7 @@ _ret_int_dispatch:
 	cmp	ip, #0
 	bleq	Csym(low_pow)			// call low_pow()
 
-	cpsie	aif				// enable interrupt
+@	cpsie	aif				// enable interrupt
 	b	l_dispatch1
 
   l_dispatch2:					// dispatch to schedtsk
@@ -197,7 +197,7 @@ _ret_int_dispatch:
 	ands	ip, ip, #TMF_CPL(3)		// DCT is ineffective in protection level 0
 	bne	dct_startup			// jump to DCT processing
 
-	EXC_RETURN
+@	EXC_RETURN
 
 
 #if USE_DBGSPT
@@ -348,7 +348,7 @@ Csym(inthdr_startup):
 
   l_inthdr2:
 	mrs	r2, cpsr		// save CPSR to r2
-	cpsid	IMASK, #PSR_SVC		// enter SVC mode, interrupt is disabled
+@	cpsid	IMASK, #PSR_SVC		// enter SVC mode, interrupt is disabled
 
 	stmfd	sp!, {r2, lr}		// save CPSR and lr_svc
 
@@ -501,7 +501,7 @@ Csym(_tk_ret_int):
 	str	lr, [r2, #2*4]		// R14_xxx (return address)
 	add	sp, sp, #4*4		// pop isp
 
-	cpsid	IMASK, #PSR_SVC		// enter SVC mode, interrupt is disabled
+@	cpsid	IMASK, #PSR_SVC		// enter SVC mode, interrupt is disabled
 
 	ldmfd	sp!, {r2}		// restore r2
 	b	l_retint1
@@ -509,7 +509,7 @@ Csym(_tk_ret_int):
   l_retint_svc:
 	add	sp, sp, #3*4		// discard the value saved by svc SWI_RETINT
 
-	cpsid	IMASK, #PSR_SVC		// disable interrupt
+@	cpsid	IMASK, #PSR_SVC		// disable interrupt
 
   l_retint1:
 	ldr	ip, =TASKINDP		// is there additional  multi-interrupt(s)?
@@ -535,7 +535,7 @@ Csym(_tk_ret_int):
 
   l_nodispatch:
 	ldmfd	sp!, {lr}		// restore lr
-	EXC_RETURN
+@	EXC_RETURN
 
 
 /* ------------------------------------------------------------------------ */
@@ -685,7 +685,7 @@ Csym(call_entry):
 	ands	r3, r3, #TMF_CPL(3)	// DCT is not processed if called from
 	beq	l_nodct			// protection level 0
 
-	cpsid	IMASK			// disable interrupt
+@	cpsid	IMASK			// disable interrupt
 
 	ldr	ip, =TASKINDP		// DCT is not processed if called from
 	ldr	ip, [ip]		// task independent portion
@@ -704,7 +704,7 @@ Csym(call_entry):
 	b	dct_startup		// goto DCT processing
 
   l_nodct:
-	EXC_RETURN
+@	EXC_RETURN
 
 
   l_esvc_function:
@@ -899,9 +899,9 @@ Csym(call_dbgspt):
 	sub	sp, fp, #2*4		// restore sp
 
   b_retsvc:
-	cpsid	IMASK			// disable interrupt
+@	cpsid	IMASK			// disable interrupt
 	ldmfd	sp!, {r10, fp}		// restore work registers
-	EXC_RETURN
+@	EXC_RETURN
 
 
   b_illegal_svc:
@@ -924,7 +924,7 @@ Csym(call_dbgspt):
 	.type	Csym(timer_handler_startup), %function
 Csym(timer_handler_startup):
 	/* IRQ mode / interrupt-disabled state CPSR.I=1 A=? */
-	cpsid	IMASK, #PSR_SVC		// enter SVC mode, interrupt is disabled
+@	cpsid	IMASK, #PSR_SVC		// enter SVC mode, interrupt is disabled
 
 	stmfd	sp!, {r0-r2, r4-r5, fp, lr}	// save registers
 	mov	fp, sp
@@ -943,7 +943,7 @@ Csym(timer_handler_startup):
 	mov	sp, fp
 	ldmfd	sp!, {r0-r2, r4-r5, fp, lr}	// restore registers
 
-	TK_RET_INT_FIQ PSR_IRQ		// tk_ret_int()
+@	TK_RET_INT_FIQ PSR_IRQ		// tk_ret_int()
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -973,12 +973,12 @@ dct_startup:
 	mov	r0, fp
 	bl	Csym(setup_texhdr)	// call setup_texhdr(ssp)
 	/* return with interrupt-enabled state  */
-	cpsid	IMASK			// Inhibit interrupt
+@	cpsid	IMASK			// Inhibit interrupt
 
   l_nodct_startup:
 	sub	sp, fp, #6*4
 	ldmfd	sp!, {r0-r3, fp, lr}	// Restore registers
-	EXC_RETURN
+@	EXC_RETURN
 
 /*
  * return from task exception handler
@@ -1009,12 +1009,12 @@ Csym(rettex_entry):
 	cmpne	ip, #PSR_SYS		// is illegal
 	bne	l_illegal_rettex
 
-	cpsid	IMASK, #PSR_SYS		// interrupt-disabled state, SYS mode
+@	cpsid	IMASK, #PSR_SYS		// interrupt-disabled state, SYS mode
 	mov	ip, sp			// ip = usp
 
 	/* we access user stack, and so we must not be in
 	   task-independent portion, and interrupt-disabled state */
-	cpsie	IMASK, #PSR_SVC		// enable interrupt, SVC mode
+@	cpsie	IMASK, #PSR_SVC		// enable interrupt, SVC mode
 
 	ldr	lr, [ip, #0*4]		// copy usp to ssp
 	str	lr, [sp, #1*4]
@@ -1026,11 +1026,11 @@ Csym(rettex_entry):
 	orr	ip, ip, lr
 	str	ip, [sp, #2*4]
 
-	cpsid	IMASK, #PSR_SYS		// interrupt-disabled, SYS mode
+@	cpsid	IMASK, #PSR_SYS		// interrupt-disabled, SYS mode
 	add	sp, sp, #2*4		// pop user stack
 
-	cpsid	IMASK, #PSR_SVC		// intterupt-disabled, SVC mode
-	EXC_RETURN
+@	cpsid	IMASK, #PSR_SVC		// intterupt-disabled, SVC mode
+@	EXC_RETURN
 
   l_illegal_rettex:
 	ldr	ip, =EITVEC(SWI_RETTEX)

@@ -110,7 +110,7 @@ CFLAGS += -DCONFIG_TM_WRKBUF_SZ="(1<<10)"
 endif
 
 ifeq ($(MACH),mach-mx28) 
-CFLAGS += -mcpu=cortex-a8
+CFLAGS += -mcpu=arm926ej-s
 CFLAGS += -D__TMONITOR__
 CFLAGS += -DCONFIG_MACH_MX28
 CFLAGS += -D__TRON_ARM_ARCH=5
