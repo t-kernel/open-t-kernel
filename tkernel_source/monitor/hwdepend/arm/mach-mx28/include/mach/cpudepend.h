@@ -10,6 +10,10 @@
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
  *----------------------------------------------------------------------
+ * rewrite io access operation, because the origianl inline routines
+ * does not realy inline when compile with gcc.
+ *
+ * Copyright 2016 Du Huanpeng <u74147@gmail.com>
  */
 
 /*
@@ -48,36 +52,20 @@ IMPORT UW* const	TopPageTable;	/* location of page table */
 /*
  * I/O port access functions
  */
-Inline void out_w( INT port, UW data )
-{
-	*(_UW*)port = data;
-}
-Inline void out_h( INT port, UH data )
-{
-	*(_UH*)port = data;
-}
-Inline void out_b( INT port, UB data )
-{
-	*(_UB*)port = data;
-}
 
-Inline _UW in_w( INT port )
-{
-	return *(_UW*)port;
-}
-Inline UH in_h( INT port )
-{
-	return *(_UH*)port;
-}
-Inline UB in_b( INT port )
-{
-	return *(_UB*)port;
-}
+
+#define out_w(port, data) ((*(volatile unsigned long *)(port)) = (unsigned long)(data))
+#define out_h(port, data) ((*(volatile unsigned short *)(port)) = (unsigned short)(data))
+#define out_b(port, data) ((*(volatile unsigned char *)(port)) = (unsigned char)(data))
+
+#define in_w(port) (*(volatile unsigned long *)(port))
+#define in_h(port) (*(volatile unsigned short *)(port))
+#define in_b(port) (*(volatile unsigned char *)(port))
 
 /*
  * value of control register (r1) of system control coprocessor cp15
  */
-#if CPU_ARM1176
+#if __TRON_ARM_ARCH == 6
 #define	MASK_CACHEMMU	(0xFFFFCC78)		/* V,I,R,S,C,A,M (B = 0)   */
 #define	VALID_CACHEMMU	(0x3307)		/* B = 0		   */
 #define	DIS_CACHEMMU	(0x0000)		/* I=0,R=0,S=0,C=0,A=0,M=0 */
