@@ -11,6 +11,9 @@
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
  *----------------------------------------------------------------------
+ * it seems use printk or printf is more friendly than these DSP_* macros.
+ * remove DSP_* macros.
+ * Copyright 2014-2016 Du Huanpeng <u74147@gmail.com>
  */
 
 /*
