@@ -38,25 +38,6 @@
 IMPORT int printf(const char *format, ...);
 IMPORT int printk(const char *format, ...);
 
-#define	DSP_S(s)	putString(s)
-#define	DSP_LF		putChar('\n')
-#define	DSP_SP		putChar(' ')
-#define	DSP_CH(c)	putChar(c)
-#define	DSP_02X(x)	putHex2(x)
-#define	DSP_04X(x)	putHex4(x)
-#define	DSP_08X(x)	putHex8(x)
-#define	DSP_D(x)	putDec(x)
-#define	DSP_F1(f0, a0)	\
-	{DSP_##f0(a0);}
-#define	DSP_F2(f0, a0, f1, a1)	\
-	{DSP_##f0(a0); DSP_##f1(a1);}
-#define	DSP_F3(f0, a0, f1, a1, f2, a2)	\
-	{DSP_##f0(a0); DSP_##f1(a1); DSP_##f2(a2);}
-#define	DSP_F4(f0, a0, f1, a1, f2, a2, f3, a3)	\
-	{DSP_##f0(a0); DSP_##f1(a1); DSP_##f2(a2); DSP_##f3(a3);}
-#define	DSP_F5(f0, a0, f1, a1, f2, a2, f3, a3, f4, a4)	\
-	{DSP_##f0(a0); DSP_##f1(a1); DSP_##f2(a2); DSP_##f3(a3); DSP_##f4(a4);}
-
 /*
  * error code
  *       common error codes with T-Kernel (the following is used)
