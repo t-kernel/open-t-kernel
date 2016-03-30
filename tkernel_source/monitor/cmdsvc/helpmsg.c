@@ -49,9 +49,8 @@ LOCAL void prDumpHelp( const HELP *help )
 	p2 = ++p1;
 	for (; *p2; p2++);
 	p2++;
-	DSP_F5(S,"Dump", S,help->msg,
-	       S,"(D", S,p1, S,") [start_addr][,{end_addr|#data_cnt}] ");
-	DSP_F3(S,": Dump Memory in ", S,p2, CH,'\n');
+	printk("Dump%s(D%s)) [start_addr][,{end_addr|#data_cnt}] ", help->msg, p1);
+	printk(": Dump Memory in %s\n",p2);
 }
 
 /*
@@ -66,9 +65,8 @@ LOCAL void prModifyHelp( const HELP *help )
 	p2 = ++p1;
 	for (; *p2; p2++);
 	p2++;
-	DSP_F5(S,"Modify", S,help->msg,
-	       S,"(M", S,p1, S,") [start_addr][,data].. ");
-	DSP_F3(S,": Modify Memory in ", S,p2, CH,'\n');
+	printk("Modify%s(M%s) [start_addr][,data].. ", help->msg, p1);
+	printk(": Modify Memory in %s\n", p2);
 }
 
 /*
@@ -83,9 +81,8 @@ LOCAL void prFillHelp( const HELP *help )
 	p2 = ++p1;
 	for (; *p2; p2++);
 	p2++;
-	DSP_F5(S,"Fill", S,help->msg,
-	       S,"(F", S,p1, S,") start_addr,{end_addr|#data_cnt}[,data].. ");
-	DSP_F3(S,": Fill Memory in ", S,p2, CH,'\n');
+	printk("Fill(F%s) start_addr,{end_addr|#data_cnt}[,data].. ", help->msg, p1);
+	printk(": Fill Memory in %s\n", p2);
 }
 
 /*
@@ -100,10 +97,8 @@ LOCAL void prSearchHelp( const HELP *help )
 	p2 = ++p1;
 	for (; *p2; p2++);
 	p2++;
-	DSP_F5(S,"Search", S,help->msg,
-	       S,"(SC", S,p1,
-	       S,") start_addr,{end_addr|#data_cnt},data[,data].. ");
-	DSP_F3(S,": Search Memory in ", S,p2, CH,'\n');
+	printk("Search%s(SC%s) start_addr,{end_addr|#data_cnt},data[,data].. ", help->msg, p1);
+	printk(": Search Memory in %s\n", p2);
 }
 
 /*
@@ -115,8 +110,8 @@ LOCAL void prInputHelp( const HELP *help )
 
 	for (; *p; p++);
 	p++;
-	DSP_F5(S,"Input", S,help->msg, S,"(I", S,p, S,") port ");
-	DSP_F3(S,": Input ", S,help->msg, S," from I/O port\n");
+	printk("Input%s(I%s) port ", help->msg, p);
+	printk(": Input %s from I/O port\n", help->msg);
 }
 
 /*
@@ -128,8 +123,8 @@ LOCAL void prOutputHelp( const HELP *help )
 
 	for (; *p; p++);
 	p++;
-	DSP_F5(S,"Output", S,help->msg, S,"(O", S,p, S,") port,data ");
-	DSP_F3(S,": Output ", S,help->msg, S," to I/O port\n");
+	printk("Output%s(O%s) port,data ", help->msg, p);
+	printk(": Output %s to I/O port\n", help->msg);
 }
 
 /*
@@ -149,7 +144,7 @@ LOCAL void prDiskHelp( const HELP *help )
 
                 /* exclude devices that can not be specified */
 		if ( help == &helpWD && (attr & DA_RONLY) != 0 ) continue;
-		DSP_F2(CH,' ', S,devnm);
+		printk(" %s", devnm);
 	}
 	printk("\n");
 }
@@ -174,12 +169,9 @@ LOCAL void prWRomHelp( const HELP *help )
 	if ( sz > ram->end - ram_top ) sz = ram->end - ram_top;
 
 	printk(help->msg);
-	DSP_F5(S,"  rom_addr      : 0x", 08X,rom->top,
-	       S," - 0x", 08X,(rom->end-FROM_SECSZ), CH,'\n');
-	DSP_F5(S,"  data_ram_addr : 0x", 08X,ram_top,
-	       S," - 0x", 08X,(ram->end-FROM_SECSZ), CH,'\n');
-	DSP_F5(S,"  block_count   : 1 - ", D,(sz / FROM_SECSZ),
-	       S," (1 block = ", D,(FROM_SECSZ / 1024), S,"KB)\n");
+	printk("  rom_addr      : 0x%08X - 0x%08X\n", rom->top, rom->end-FROM_SECSZ);
+	printk("  data_ram_addr : 0x%08X - 0x%08X\n", ram_top, ram->end-FROM_SECSZ);
+	printk("  block_count   : 1 - %d (1 block = %dKB)\n", sz / FROM_SECSZ, FROM_SECSZ / 1024);
 }
 
 /* ------------------------------------------------------------------------ */
