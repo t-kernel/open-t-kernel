@@ -75,7 +75,7 @@ LOCAL	void	pmicInit(void)
 	out_w(SPn_CONTROL(SP0), 0x0000);	/* release reset */
 	out_w(SPn_CONTROL2(SP0), 0x0000);
 #else
-	putString("[driver]: pmicInit\n");
+	printk("[driver]: pmicInit\n");
 #endif
 
 	return;
@@ -93,7 +93,7 @@ LOCAL	void	pmicWait(void)
 	}
 	if (!i) pmicInit();
 #else
-	putString("[driver]: pmicWait\n");
+	printk("[driver]: pmicWait\n");
 #endif
 
 	return;
@@ -131,7 +131,7 @@ EXPORT	void	pmicWrite(W reg, W dat)
 	pmicWait();
 
 	pmicCSassert(FALSE);			/* CS de-assert */
-	putString("[driver]: pmicWrite\n");
+	printk("[driver]: pmicWrite\n");
 
 	return;
 }

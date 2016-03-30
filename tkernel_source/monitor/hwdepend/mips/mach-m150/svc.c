@@ -74,7 +74,7 @@ EXPORT	W	procSVC( W fno, W p1, W p2, W p3, W p4 )
 		break;
 
 	  case TM_PUTSTRING:	/* INT	tm_putstring( const UB *buff ) */
-		er = putString((UB*)p1);
+		er = printk((UB*)p1);
 		break;
 
 	  case TM_COMMAND:	/* INT	tm_command( const UB *buff ) */

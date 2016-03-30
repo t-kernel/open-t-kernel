@@ -36,7 +36,7 @@
 typedef	unsigned char	uchar;
 
 extern	int	putChar(int c);
-extern	int	putString(uchar *s);
+extern	int	printk(uchar *s);
 
 /* Output function */
 typedef	struct {
@@ -287,7 +287,7 @@ static	void	out_cons(uchar *str, int len,  OutPar *par)
 	if (str == NULL) {	/* Flush */
 		if (par->cnt > 0) {
 			par->bufp[par->cnt] = '\0';
-			putString(par->bufp);
+			printk(par->bufp);
 			par->cnt = 0;
 		}
 	} else {
@@ -295,7 +295,7 @@ static	void	out_cons(uchar *str, int len,  OutPar *par)
 		while (--len >= 0) {
 			if (par->cnt >= OUTBUF_SZ - 1) {
 				par->bufp[par->cnt] = '\0';
-				putString(par->bufp);
+				printk(par->bufp);
 				par->cnt = 0;
 			}
 			par->bufp[par->cnt++] = *str++;

@@ -190,7 +190,7 @@ LOCAL	W	recv_data(W attr)
 LOCAL	ER	iic_start(void)
 {
 	ER	er;
-	putString(__func__);putString("\n");
+	printk(__func__);printk("\n");
 	return er;
 }
 

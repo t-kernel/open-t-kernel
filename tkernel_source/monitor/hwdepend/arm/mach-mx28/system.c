@@ -76,7 +76,7 @@ LOCAL	void	pmicInit(void)
 	out_w(SPn_CONTROL(SP0), 0x0000);	/* release reset */
 	out_w(SPn_CONTROL2(SP0), 0x0000);
 #else
-	putString("[driver]: pmicInit\n");
+	printk("[driver]: pmicInit\n");
 #endif
 
 	return;

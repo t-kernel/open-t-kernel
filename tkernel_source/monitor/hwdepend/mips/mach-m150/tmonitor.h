@@ -151,7 +151,7 @@ IMPORT	void	procCommand( FP *entp );
  *			   -1 : CTRL-C input exists
  */
 IMPORT	W	putChar( W c );
-IMPORT	W	putString( const UB *str );
+IMPORT	W	printk( const UB *str );
 
 /*
  * Console Input (one character)

@@ -102,7 +102,7 @@ EXPORT W putDec( UW val )
 EXPORT W putHex2( UB val )
 EXPORT W putHex4( UH val )
 EXPORT W putHex8( UW val )
-EXPORT W putString( const UB *str )
+EXPORT W printk( const UB *str )
 EXPORT const UB* bootDevice( W no )
 EXPORT const UB* diskList( W no, UW *attr )
 EXPORT void ChangeMemAttr( UW top, UW end, UW attr );

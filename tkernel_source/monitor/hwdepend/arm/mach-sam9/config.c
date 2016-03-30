@@ -255,7 +255,7 @@ LOCAL	ER	iic_start(void)
         /* wait for bus to become available (since there is only one master, the bus is supposed to be unoccupied) */
 	er = wait_state(IIC_IICF(IIC2), IICF_IICBSY, 0);
 #endif
-	putString(__func__);putString("\n");
+	printk(__func__);printk("\n");
 	return er;
 }
 
@@ -265,7 +265,7 @@ LOCAL	void	iic_finish(void)
 #if 0
 	out_w(IIC_IICC(IIC2), 0);	/* stop completely */
 #endif
-		putString(__func__);putString("\n");
+		printk(__func__);printk("\n");
 	return;
 }
 
@@ -284,7 +284,7 @@ LOCAL	W	IICGPIORead(W addr)
 
 	clear_int();
 #endif
-		putString(__func__);putString("\n");
+		printk(__func__);printk("\n");
 
 	return dat;
 }
@@ -373,10 +373,10 @@ EXPORT	void	cpuLED(UW v)
 	printk("%s:%s\n", __FILE__, __func__);
 
 	if(v == LED_POWERUP) {
-		putString("[info]:\tLED power up\n");
+		printk("[info]:\tLED power up\n");
 	}
 	else if (v == LED_MEMCLR) {
-		putString("[info]:\tLED mem clear\n");
+		printk("[info]:\tLED mem clear\n");
 	}
 #if 0
 	UB	m, d, r, c;
