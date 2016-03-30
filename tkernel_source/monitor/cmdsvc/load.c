@@ -323,7 +323,7 @@ EXPORT	ER	doLoading(W proto, UW addr, UW *range)
 			s_addr -= offset;
 			e_addr -= offset;
 		}
-		DSP_F5(S,"Loaded: ", 08X,s_addr, S," -> ", 08X,e_addr, CH,'\n');
+		printk("Loaded: %08X -> %08X\n", s_addr, e_addr);
 	}
 	return er;
 }
