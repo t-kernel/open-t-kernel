@@ -259,10 +259,9 @@ EXPORT	void	dspBreak(void)
 	for (p = brkPt; p < &brkPt[MAX_BRKPT]; p++) {
 		if (p->addr == 0) continue;
                 /* THUMB(sz == 2) is displayed using odd address */
-		DSP_F3(08X,(p->addr + ((p->sz & 2) >> 1)), CH,' ',
-		       S,strBreakAtr(p->atr));
+		printk("%08X %s", (p->addr + ((p->sz & 2) >> 1)), strBreakAtr(p->atr));
 		if (p->cmd[0] != '\0') {
-			DSP_F3(S," \"", S,p->cmd, CH,'"');
+			printk("\" %s\"", p->cmd);
 		}
 		printk("\n");
 	}
@@ -517,7 +516,7 @@ EXPORT	W	procBreak(W bpflg, UB **cmd)
 
                 /* disassembly display (next instruction) */
 		disAssemble(&pc, &npc, wrkBuf);
-		DSP_F4(08X,pc, S,": ", S,wrkBuf, CH,'\n');
+		printk("%08X: %s\n", pc, wrkBuf);
 
 		if (-- traceStep > 0) return 0;		/* continue */
 		stopTrace();	/* stop tracing */
@@ -530,7 +529,7 @@ EXPORT	W	procBreak(W bpflg, UB **cmd)
 
                 /* this is not a breakpoint set by b command */
 		if ((bpflg & 0xF0) == 0) {
-			DSP_F3(S,"Unknown break at H'", 08X,pc, CH,'\n');
+			printk("Unknown break at H\'%08X\n", pc);
 			*cmd = NULL;
 			return 1;
 		}
@@ -550,10 +549,10 @@ EXPORT	W	procBreak(W bpflg, UB **cmd)
                         /* is fetched from WFAR */
 			wfar = getWFAR();
 			wfar -= (getCurCPSR() & PSR_T) ? 4 : 8;
-			DSP_F4(S,"Break (", S,mes, S,") at ", 08X,wfar);
-			DSP_F3(S,"  (R15/PC:", 08X,pc, S,")\n");
+			printk("Break (%s) at %08X", mes, wfar);
+			printk("  (R15/PC:%08X)\n", pc);
 		} else {
-			DSP_F5(S,"Break (", S,mes, S,") at ", 08X,pc, CH,'\n');
+			printk("Break (%s) at %08X\n", mes, pc);
 		}
 	}
 
