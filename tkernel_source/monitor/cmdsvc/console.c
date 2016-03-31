@@ -97,61 +97,6 @@ EXPORT W puts( const UB *str )
 }
 
 /*
- * console output (hexadecimal: 2, 4, or 8 columns)
- *       XON/XOFF flow control
- *       check for CTRL-C input
- *       return value       0 : normal
- *                         -1 : CTRL-C input exists
- */
-EXPORT W putHex2( UB val )
-{
-	if (putchar(Digit[(val >> 4) & 0x0f]) < 0) return -1;
-	if (putchar(Digit[(val >> 0) & 0x0f]) < 0) return -1;
-	return 0;
-}
-
-EXPORT W putHex4( UH val )
-{
-	if (putHex2(val >> 8) < 0) return -1;
-	if (putHex2(val >> 0) < 0) return -1;
-	return 0;
-}
-
-EXPORT W putHex8( UW val )
-{
-	if (putHex2(val >> 24) < 0) return -1;
-	if (putHex2(val >> 16) < 0) return -1;
-	if (putHex2(val >>  8) < 0) return -1;
-	if (putHex2(val >>  0) < 0) return -1;
-	return 0;
-}
-
-/*
- * console output (decimal: 10 columns/zero-suppress supported)
- *       XON/XOFF flow control
- *       check for CTRL-C input
- *       return value       0 : normal
- *                         -1 : CTRL-C input exists
- */
-EXPORT W putDec( UW val )
-{
-	W	i;
-	UB	d[11];	/* required columns for displaying 32-bit maximum cardinal(4,294,967,295) +1 */
-
-	for (i = 0; i < sizeof(d); i++) {
-		d[i] = Digit[val % 10];
-		val /= 10;
-		if (!val) break;
-	}
-
-	for (; i >= 0; i--) {
-		if (putchar(d[i]) < 0) return -1;
-	}
-
-	return 0;
-}
-
-/*
  * console input (one character)
  *       if wait = TRUE, wait for input if FALSE, do not wait.
  *       return value       >= 0 : character
