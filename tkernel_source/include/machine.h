@@ -37,7 +37,7 @@
 
 /* ===== System dependencies definitions ================================ */
 
-#include <sys/sysdepend/machine_common.h>
+#include <sys/machine_common.h>
 
 /* ===== Common definitions ============================================= */
 
