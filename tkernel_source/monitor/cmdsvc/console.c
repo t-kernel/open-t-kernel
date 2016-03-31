@@ -10,6 +10,8 @@
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
  *----------------------------------------------------------------------
+ * use printk instead of many putHex*, putDec...
+ * Copyright 2014-2016, Du Huanpeng<u74147@gmail.com>
  */
 
 /*
@@ -21,22 +23,24 @@
 #include <cmdsvc.h>
 
 /* control characters */
-#define	BS	('H'-'@')
-#define	CAN	('X'-'@')
-#define	CTLC	('C'-'@')
-#define	DEL	(0x7f)
-#define	CR	(0x0d)
-#define	LF	(0x0a)
-#define	XOFF	('S'-'@')
-#define	XON	('Q'-'@')
-#define	ERASE	('K'-'@')
-#define	CAN2	('U'-'@')
-#define	TAB	('I'-'@')
-#define	ESC	('['-'@')
-#define	CUR_UP	('P'-'@')		/* or	ESC [ A */
-#define	CUR_DWN	('N'-'@')		/* or	ESC [ B */
-#define	CUR_FWD	('F'-'@')		/* or	ESC [ C */
-#define	CUR_BWD	('B'-'@')		/* or	ESC [ D */
+#define CTRL(ch)	(ch - '@')
+
+#define	BS		CTRL('H')
+#define	CAN		CTRL('X')
+#define	CTLC		CTRL('C')
+#define	DEL		(0x7f)
+#define	CR		(0x0d)
+#define	LF		(0x0a)
+#define	XOFF		CTRL('S')
+#define	XON		CTRL('Q')
+#define	ERASE		CTRL('K')
+#define	CAN2		CTRL('U')
+#define	TAB		CTRL('I')
+#define	ESC		CTRL('[')
+#define	CUR_UP		CTRL('P')		/* or	ESC [ A */
+#define	CUR_DWN		CTRL('N')		/* or	ESC [ B */
+#define	CUR_FWD		CTRL('F')		/* or	ESC [ C */
+#define	CUR_BWD		CTRL('B')		/* or	ESC [ D */
 
 #define	HISTBUF_SZ	1024		/* history buffer size */
 
