@@ -337,7 +337,7 @@ EXPORT	ER	ataSetupPart(DrvTab *drv)
 							< E_OK) return er;
 
 	/* Check the validity of boot block */
-	if (*((UH*)&buf[OFS_SIGN]) != VALID_SIGN) {
+	if (buf[OFS_SIGN]+buf[OFS_SIGN+1]*256 != VALID_SIGN) {
 
 		/* Consider it as the unused partition table */
 		MEMSET((void*)buf, 0, SIZE_PARTTAB);
