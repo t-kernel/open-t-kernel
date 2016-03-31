@@ -38,29 +38,17 @@ EXPORT	MEMSEG	MemSeg[] = {
 	{0x00000000, 0x00020000, MSA_SRAM,	PGA_RW|PGA_NC},
 	/* DDR2 SDRAM, 64MiB */
 	{0x40000000, 0x44000000, MSA_RAM,	PGA_RW|PGA_C},
-        /* EM1 internal device (1) */
-	{0x40000000, 0x70000000, MSA_IO,	PGA_RW|PGA_D |PGA_S|PGA_XN},
-	/* Bank0 */
-	{0x70000000, 0x72000000, MSA_FROM,	PGA_RO|PGA_C |0x90000000},
-        /* EM1 internal SRAM */
-	{0xa0000000, 0xb0000000, MSA_SRAM,	PGA_RW|PGA_NC},
-        /* EM1 internal device (2) */
-	{0xb0000000, 0xd0000000, MSA_IO,	PGA_RW|PGA_D |PGA_S|PGA_XN},
-        /* EM1 internal Boot ROM */
-	{0xf0000000, 0xffffffff, MSA_ROM,	PGA_RO|PGA_NC},
-
-	{0x70000000, 0x70020000, MSA_MON,	0},
-	{0x70030000, 0x72000000, MSA_RDA,	0},
-	{0x30006000, 0x34000000, MSA_OS,	0},
+        /* APBH, APBX */
+	{0x80000000, 0x80010000, MSA_IO,	PGA_RW|PGA_D |PGA_S|PGA_XN},
+	/* AHB On-Chip ROM */
+	{0xC0000000, 0xC0020000, MSA_FROM,	PGA_RO|PGA_C |0x90000000},
 };
 
 EXPORT	W	N_MemSeg = sizeof(MemSeg) / sizeof(MEMSEG);
 
 /* unused memory region definition */
 EXPORT	MEMSEG	NoMemSeg[] = {
-	{0x00000000, 0x10000000, 0,		0},
-	{0x72000000, 0xa0000000, 0,		0},
-	{0xd0000000, 0xf0000000, 0,		0},
+	{0x00000000, 0x00000000, 0,		0},
 };
 
 EXPORT	W	N_NoMemSeg = sizeof(NoMemSeg) / sizeof(MEMSEG);
@@ -92,39 +80,12 @@ EXPORT	UB *	const PBootAddr = (UB *)0x30200000;	/* primary boot loader address *
  
 /* ------------------------------------------------------------------------ */
 
-#define	IICC_IICE	(1 << 7)
-#define	IICC_WREL	(1 << 5)
-#define	IICC_WTIM	(1 << 3)
-#define	IICC_ACKE	(1 << 2)
-#define	IICC_STT	(1 << 1)
-#define	IICC_SPT	(1 << 0)
-
-#define	IICCL_SMC	(1 << 3)
-#define	IICCL_DFC	(1 << 2)
-
-#define	IICSE_MSTS	(1 << 15)
-#define	IICSE_ALD	(1 << 14)
-#define	IICSE_ACKD	(1 << 10)
-#define	IICSE_SPD	(1 << 8)
-
-#define	IICF_IICBSY	(1 << 6)
-#define	IICF_STCEN	(1 << 1)
-#define	IICF_IICRSV	(1 << 0)
-
-#define	IIC_TOPDATA	(1 << 11)
-#define	IIC_LASTDATA	(1 << 10)
-
-#define	TIMEOUT		1000000	/* microsec */
-
-#define	IIC2_IRQ	39
-#define	IRQbit(x)	(1 << ((x) % 32))
-
 /* wait for register state information */
 LOCAL	ER	wait_state(UW addr, UW mask, UW value)
 {
-	W	i;
+	int i = 1000000;
 
-	for (i = TIMEOUT; i > 0; i--) ;
+	while(--i);
 
 	return i ? E_OK : E_TMOUT;
 }

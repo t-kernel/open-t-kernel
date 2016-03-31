@@ -27,17 +27,17 @@
 
 #include "regs-icoll.h"
 
-void __iomem *g_icoll_base;
+volatile void  *g_icoll_base;
 
 /*
  * IRQ handling
  */
 static void icoll_ack_irq(unsigned int irq)
 {
-	__raw_writel(0, g_icoll_base + HW_ICOLL_VECTOR);
+	out_w(0, g_icoll_base + HW_ICOLL_VECTOR);
 
 	/* ACK current interrupt */
-	__raw_writel(BV_ICOLL_LEVELACK_IRQLEVELACK__LEVEL0,
+	out_w(BV_ICOLL_LEVELACK_IRQLEVELACK__LEVEL0,
 		     g_icoll_base + HW_ICOLL_LEVELACK);
 
 	/* Barrier */
@@ -46,13 +46,13 @@ static void icoll_ack_irq(unsigned int irq)
 
 static void icoll_mask_irq(unsigned int irq)
 {
-	__raw_writel(BM_ICOLL_INTERRUPTn_ENABLE,
+	out_w(BM_ICOLL_INTERRUPTn_ENABLE,
 		     g_icoll_base + HW_ICOLL_INTERRUPTn_CLR(irq));
 }
 
 static void icoll_unmask_irq(unsigned int irq)
 {
-	__raw_writel(BM_ICOLL_INTERRUPTn_ENABLE,
+	out_w(BM_ICOLL_INTERRUPTn_ENABLE,
 		     g_icoll_base + HW_ICOLL_INTERRUPTn_SET(irq));
 }
 
@@ -74,7 +74,7 @@ void __init avic_init_irq(void __iomem *base, int nr_irqs)
 	g_icoll_base = base;
 
 	/* Reset icoll */
-	__raw_writel(BM_ICOLL_CTRL_SFTRST, g_icoll_base + HW_ICOLL_CTRL_CLR);
+	out_w(BM_ICOLL_CTRL_SFTRST, g_icoll_base + HW_ICOLL_CTRL_CLR);
 
 	for (i = 0; i < 100000; i++) {
 		if (!(__raw_readl(g_icoll_base + HW_ICOLL_CTRL) &
@@ -87,29 +87,29 @@ void __init avic_init_irq(void __iomem *base, int nr_irqs)
 		       __func__, __LINE__);
 		return;
 	}
-	__raw_writel(BM_ICOLL_CTRL_CLKGATE, g_icoll_base + HW_ICOLL_CTRL_CLR);
+	out_w(BM_ICOLL_CTRL_CLKGATE, g_icoll_base + HW_ICOLL_CTRL_CLR);
 
 	for (i = 0; i < nr_irqs; i++) {
-		__raw_writel(0, g_icoll_base + HW_ICOLL_INTERRUPTn(i));
+		out_w(0, g_icoll_base + HW_ICOLL_INTERRUPTn(i));
 		set_irq_chip(i, &icoll_chip);
 		set_irq_handler(i, handle_level_irq);
 		set_irq_flags(i, IRQF_VALID | IRQF_PROBE);
 	}
 
-	__raw_writel(BF_ICOLL_LEVELACK_IRQLEVELACK
+	out_w(BF_ICOLL_LEVELACK_IRQLEVELACK
 		     (BV_ICOLL_LEVELACK_IRQLEVELACK__LEVEL0),
 		     g_icoll_base + HW_ICOLL_LEVELACK);
-	__raw_writel(BF_ICOLL_LEVELACK_IRQLEVELACK
+	out_w(BF_ICOLL_LEVELACK_IRQLEVELACK
 		     (BV_ICOLL_LEVELACK_IRQLEVELACK__LEVEL1),
 		     g_icoll_base + HW_ICOLL_LEVELACK);
-	__raw_writel(BF_ICOLL_LEVELACK_IRQLEVELACK
+	out_w(BF_ICOLL_LEVELACK_IRQLEVELACK
 		     (BV_ICOLL_LEVELACK_IRQLEVELACK__LEVEL2),
 		     g_icoll_base + HW_ICOLL_LEVELACK);
-	__raw_writel(BF_ICOLL_LEVELACK_IRQLEVELACK
+	out_w(BF_ICOLL_LEVELACK_IRQLEVELACK
 		     (BV_ICOLL_LEVELACK_IRQLEVELACK__LEVEL3),
 		     g_icoll_base + HW_ICOLL_LEVELACK);
 
-	__raw_writel(0, g_icoll_base + HW_ICOLL_VECTOR);
+	out_w(0, g_icoll_base + HW_ICOLL_VECTOR);
 	/* Barrier */
 	(void)__raw_readl(g_icoll_base + HW_ICOLL_STAT);
 }
@@ -117,25 +117,23 @@ void __init avic_init_irq(void __iomem *base, int nr_irqs)
 void mxs_set_irq_fiq(unsigned int irq, unsigned int type)
 {
 	if (type == 0)
-		__raw_writel(BM_ICOLL_INTERRUPTn_ENFIQ,
+		out_w(BM_ICOLL_INTERRUPTn_ENFIQ,
 			g_icoll_base +
 			HW_ICOLL_INTERRUPTn_CLR(irq));
 	else
-		__raw_writel(BM_ICOLL_INTERRUPTn_ENFIQ,
+		out_w(BM_ICOLL_INTERRUPTn_ENFIQ,
 			g_icoll_base +
 			HW_ICOLL_INTERRUPTn_SET(irq));
 }
-EXPORT_SYMBOL(mxs_set_irq_fiq);
 
 void mxs_enable_fiq_functionality(int enable)
 {
 	if (enable)
-		__raw_writel(BM_ICOLL_CTRL_FIQ_FINAL_ENABLE,
+		out_w(BM_ICOLL_CTRL_FIQ_FINAL_ENABLE,
 			g_icoll_base + HW_ICOLL_CTRL_SET);
 	else
-		__raw_writel(BM_ICOLL_CTRL_FIQ_FINAL_ENABLE,
+		out_w(BM_ICOLL_CTRL_FIQ_FINAL_ENABLE,
 			g_icoll_base + HW_ICOLL_CTRL_CLR);
 
 }
-EXPORT_SYMBOL(mxs_enable_fiq_functionality);
 

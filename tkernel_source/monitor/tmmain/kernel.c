@@ -6,9 +6,15 @@ int start_kernel(int argc, char *argv[])
 {
 	int i;
 	int rc;
+	int reg[16];
 
-	for(i=0; i<256; i++){
-		rc = syscall(i);
+	printk("starting kernel...");
+
+	printk("CPSR: [%08X]\n", getcpsr());
+	getr(reg);
+
+	for(i=0; i<16; i++){
+		printk("register [%d]: [%X]\n", i, reg[i]);
 	}
 	printk("Hello World!\n");
 	return 0;

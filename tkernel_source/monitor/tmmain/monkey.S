@@ -17,3 +17,19 @@ syscall:
 	str	r0, __syscall
 	b	__syscall
 
+
+	.global getcpsr
+getcpsr:
+	mrs	r0, cpsr
+	bx	lr
+
+
+	.global getpc
+getpc:
+	mov	r0, lr
+	bx	lr
+
+	.global getr
+getr:
+	stmia	r0, {r0-r15}
+	bx	lr

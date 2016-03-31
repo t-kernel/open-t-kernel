@@ -19,11 +19,10 @@
 #ifndef __ASM_ARCH_MACH_MX28_H__
 #define __ASM_ARCH_MACH_MX28_H__
 
-#include <asm/sizes.h>
 
 #define MX28_SOC_IO_PHYS_BASE	0x80000000
 #define MX28_SOC_IO_VIRT_BASE	0xF0000000
-#define MX28_SOC_IO_AREA_SIZE	SZ_1M
+#define MX28_SOC_IO_AREA_SIZE	(1*1024*1024)
 
 /* Virtual address where OCRAM is mapped */
 #define MX28_OCRAM_PHBASE   0x00000000

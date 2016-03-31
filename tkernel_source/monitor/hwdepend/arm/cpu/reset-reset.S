@@ -323,10 +323,12 @@ reset_entry:
 	svc	81			@ syscall
 	svc	91			@ syscall
 	svc	101			@ syscall
-	svc	88			@ syscall
+	svc	0x88			@ syscall
 
-	ldr	r0, =0x44000003
-	ldr	r1, [r0]		@ data abort
+	bl	start_kernel
+
+@	ldr	r0, =0x44000003
+@	ldr	r1, [r0]		@ data abort
 	
 @	b	resetLoop		// return will cause another reset
 	b	.
