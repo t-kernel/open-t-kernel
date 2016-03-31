@@ -40,6 +40,7 @@ INCLUDE = \
 	-Ihwdepend/arm/include \
 	-Iinclude \
 	-Ihwdepend/arm/$(MACH) \
+	-I../sysdepend/arm/include \
 	-I../include \
 	-Icmdsvc
 
