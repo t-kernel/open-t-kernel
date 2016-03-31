@@ -45,11 +45,11 @@ TMINCLUDE = \
 
 TKINCLUDE := \
 	-Iinclude \
-	-Isysdepend/arm/include \
-	-Ikernel/sysmgr \
-	-Isysdepend/arm/mach-em1d \
 	-Ikernel/sysinit \
+	-Ikernel/sysmgr \
 	-Ikernel/tkernel \
+	-Isysdepend/arm/include \
+	-Isysdepend/arm/mach-em1d \
 	-Isysdepend/arm/kernel/cpu \
 	-Isysdepend/arm/lib/libtk \
 	-Isysdepend/arm/lib/libtm
