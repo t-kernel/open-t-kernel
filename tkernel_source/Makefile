@@ -32,7 +32,7 @@ CC := $(GNUCC)
 ifeq ($(MACH),mach-em1d)
 LDS := "hwdepend/arm/lib/monitor.lnk"
 else
-LDS := "kernel/sysmain/build/tef_em1d/kernel-ram.ld"
+LDS := "kernel/sysmain/kernel-ram.ld"
 endif
 
 TMINCLUDE = \
@@ -45,13 +45,14 @@ TMINCLUDE = \
 
 TKINCLUDE := \
 	-Iinclude \
-	-Ikernel/sysdepend/device/tef_em1d \
-	-Ikernel/tkernel/src \
-	-Ikernel/sysdepend/cpu/em1d \
-	-Ikernel/sysmgr/src \
-	-Ikernel/sysinit/src \
-	-Ilib/libtk/src/sysdepend/tef_em1d \
-	-Ilib/libtm/src/sysdepend/tef_em1d
+	-Isysdepend/arm/include \
+	-Ikernel/sysmgr \
+	-Isysdepend/arm/mach-em1d \
+	-Ikernel/sysinit \
+	-Ikernel/tkernel \
+	-Isysdepend/arm/kernel/cpu \
+	-Isysdepend/arm/lib/libtk \
+	-Isysdepend/arm/lib/libtm
 
 INCLUDE := $(TKINCLUDE)
 

@@ -25,7 +25,7 @@
 #include <tk/typedef.h>
 #include <tk/syscall.h>
 
-#include <tk/sysdepend/dbgspt_common.h>
+#include <tk/dbgspt_common.h>
 
 #ifdef __cplusplus
 extern "C" {

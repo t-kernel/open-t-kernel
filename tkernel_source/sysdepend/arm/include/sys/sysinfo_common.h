@@ -49,7 +49,7 @@
 #  include <sys/sysdepend/std_sh7760/sysinfo_depend.h>
 #endif
 #ifdef TEF_EM1D
-#  include <sys/sysdepend/tef_em1d/sysinfo_depend.h>
+#  include <sys/sysinfo_depend.h>
 #endif
 
 #endif /* __SYS_SYSINFO_COMMON_H__ */

@@ -24,7 +24,7 @@
 #include <basic.h>
 #include <tk/typedef.h>
 
-#include <tk/sysdepend/syslib_common.h>
+#include <tk/syslib_common.h>
 
 #ifdef __cplusplus
 extern "C" {

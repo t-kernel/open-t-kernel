@@ -214,7 +214,7 @@ extern "C" {
 #endif
 
 /* System dependencies */
-#include <tk/sysdepend/syscall_common.h>
+#include <tk/syscall_common.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -49,7 +49,7 @@
 #  include <sys/sysdepend/std_sh7760/str_align_depend.h>
 #endif
 #ifdef TEF_EM1D
-#  include <sys/sysdepend/tef_em1d/str_align_depend.h>
+#  include <sys/str_align_depend.h>
 #endif
 
 #endif /* __SYS_STR_ALIGN_COMMON_H__ */

@@ -50,7 +50,7 @@
 #  include <tk/sysdepend/std_sh7760/sysdef_depend.h>
 #endif
 #ifdef TEF_EM1D
-#  include <tk/sysdepend/tef_em1d/sysdef_depend.h>
+#  include <tk/sysdef_depend.h>
 #endif
 
 #endif /* __TK_SYSDEF_COMMON_H__ */

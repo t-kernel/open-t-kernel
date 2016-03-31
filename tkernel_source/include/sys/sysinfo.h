@@ -21,6 +21,6 @@
 #ifndef __SYS_SYSINFO_H__
 #define __SYS_SYSINFO_H__
 
-#include <sys/sysdepend/sysinfo_common.h>
+#include <sys/sysinfo_common.h>
 
 #endif /* __SYS_SYSINFO_H__ */

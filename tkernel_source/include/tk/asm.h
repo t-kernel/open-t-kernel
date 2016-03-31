@@ -22,6 +22,6 @@
 #define __TK_ASM_H__
 
 #include <tk/sysdef.h>
-#include <tk/sysdepend/asm_common.h>
+#include <tk/asm_common.h>
 
 #endif /* __TK_ASM_H__ */

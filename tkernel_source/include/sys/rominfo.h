@@ -21,6 +21,6 @@
 #ifndef __SYS_ROMINFO_H__
 #define __SYS_ROMINFO_H__
 
-#include <sys/sysdepend/rominfo_common.h>
+#include <sys/rominfo_common.h>
 
 #endif /* __SYS_ROMINFO_H__ */

@@ -49,7 +49,7 @@
 #  include <tk/sysdepend/std_sh7760/asm_depend.h>
 #endif
 #if TEF_EM1D
-#  include <tk/sysdepend/tef_em1d/asm_depend.h>
+#  include <tk/asm_depend.h>
 #endif
 
 #endif /* __TK_ASM_COMMON_H__ */

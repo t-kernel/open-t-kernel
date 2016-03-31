@@ -54,7 +54,7 @@
 #  include <sys/sysdepend/std_sh7760/segment_depend.h>
 #endif
 #ifdef TEF_EM1D
-#  include <sys/sysdepend/tef_em1d/segment_depend.h>
+#  include <sys/segment_depend.h>
 #endif
 
 #endif /* __SYS_SEGMENT_COMMON_H__ */

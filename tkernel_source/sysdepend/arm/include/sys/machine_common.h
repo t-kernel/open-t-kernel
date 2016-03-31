@@ -49,7 +49,7 @@
 #  include <sys/sysdepend/std_sh7760/machine_depend.h>
 #endif
 #ifdef _TEF_EM1D_
-#  include <sys/sysdepend/tef_em1d/machine_depend.h>
+#  include <sys/machine_depend.h>
 #endif
 
 #endif /* __SYS_MACHINE_COMMON_H__ */

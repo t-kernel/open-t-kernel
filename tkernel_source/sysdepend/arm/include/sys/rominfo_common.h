@@ -49,7 +49,7 @@
 #  include <sys/sysdepend/std_sh7760/rominfo_depend.h>
 #endif
 #ifdef TEF_EM1D
-#  include <sys/sysdepend/tef_em1d/rominfo_depend.h>
+#  include <sys/rominfo_depend.h>
 #endif
 
 #endif /* __SYS_ROMINFO_COMMON_H__ */

@@ -24,7 +24,7 @@
 #include <basic.h>
 #include "typedef.h"
 
-#include <sys/sysdepend/segment_common.h>
+#include <sys/segment_common.h>
 
 #ifdef __cplusplus
 extern "C" {

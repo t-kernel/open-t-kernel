@@ -52,7 +52,7 @@
 #  include <tk/sysdepend/std_sh7760/dbgspt_depend.h>
 #endif
 #ifdef TEF_EM1D
-#  include <tk/sysdepend/tef_em1d/dbgspt_depend.h>
+#  include <tk/dbgspt_depend.h>
 #endif
 
 #endif /* __TK_DBGSPT_COMMON_H__ */

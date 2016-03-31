@@ -52,7 +52,7 @@
 #  include <tk/sysdepend/std_sh7760/syslib_depend.h>
 #endif
 #ifdef TEF_EM1D
-#  include <tk/sysdepend/tef_em1d/syslib_depend.h>
+#  include <tk/syslib_depend.h>
 #endif
 
 #endif /* __TK_SYSLIB_COMMON_H__ */

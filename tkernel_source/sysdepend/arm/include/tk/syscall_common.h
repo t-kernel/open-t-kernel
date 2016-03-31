@@ -58,8 +58,8 @@
 #  include <tk/sysdepend/std_sh7760/cpudef.h>
 #endif
 #ifdef TEF_EM1D
-#  include <tk/sysdepend/tef_em1d/cpuattr.h>
-#  include <tk/sysdepend/tef_em1d/cpudef.h>
+#  include <tk/cpuattr.h>
+#  include <tk/cpudef.h>
 #endif
 
 #endif /* __TK_SYSCALL_COMMON_H__ */
