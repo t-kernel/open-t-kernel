@@ -146,11 +146,6 @@ SRC += sysdepend/arm/kernel/cpu/chkplv.c
 SRC += sysdepend/arm/kernel/cpu/cpu_calls.c
 SRC += sysdepend/arm/kernel/cpu/cpu_init.c
 SRC += sysdepend/arm/kernel/cpu/cpu_support.S
-SRC += sysdepend/arm/lib/crt/crt0/crt0.S
-SRC += sysdepend/arm/lib/crt/crt0/crt1f.S
-SRC += sysdepend/arm/lib/crt/crt0/crt1s.S
-SRC += sysdepend/arm/lib/crt/crt0/crti.S
-SRC += sysdepend/arm/lib/crt/crt0/crtir.S
 SRC += sysdepend/arm/lib/crt/crt0/crtn.S
 SRC += sysdepend/arm/lib/crt/crttk/asmstartup.S
 SRC += sysdepend/arm/lib/libsvc/_getkernelcommonarea.S
@@ -400,8 +395,16 @@ SRC += sysdepend/arm/lib/libtk/waitnsec.c
 SRC += sysdepend/arm/lib/libtk/waitusec.c
 SRC += sysdepend/arm/mach-em1d/cntwus.c
 SRC += sysdepend/arm/mach-em1d/devinit.c
+ifeq ($(CONFIG_XIP),y)
+SRC += sysdepend/arm/lib/crt/crt0/crt0.S
 SRC += sysdepend/arm/mach-em1d/icrt0.S
+SRC += sysdepend/arm/lib/crt/crt0/crt1s.S
+SRC += sysdepend/arm/lib/crt/crt0/crti.S
+else
+SRC += sysdepend/arm/lib/crt/crt0/crtir.S
+SRC += sysdepend/arm/lib/crt/crt0/crt1f.S
 SRC += sysdepend/arm/mach-em1d/icrt0_ram.S
+endif
 SRC += sysdepend/arm/mach-em1d/patch.c
 SRC += sysdepend/arm/mach-em1d/power.c
 SRC += sysdepend/arm/mach-em1d/tkdev_init.c
