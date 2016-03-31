@@ -55,7 +55,41 @@ TKINCLUDE := \
 
 INCLUDE := $(TKINCLUDE)
 
+
+TKDEFINE := \
+	-DBKERNEL \
+	-DDEBUG_SAMPLE \
+	-DDRV_CLOCK \
+	-DDRV_CONSOLE \
+	-DDRV_KBPD \
+	-DDRV_LOWKBPD \
+	-DDRV_SCREEN \
+	-DDRV_SYSDISK \
+	-DTKERNEL_CHECK_CONST \
+	-DTKERNEL_ONLY \
+	-DUSE_MEMDRV \
+	-DUSE_MMCDRV \
+	-DUSE_MMC_MULTI \
+	-DUSE_MMC_SD4BIT \
+	-D_TEF_EM1D_
+
+TKCFLAGS := $(TKINCLUDE) $(TKCFLAGS) \
+	-O2 \
+	-Wall -Wno-pointer-sign -ffreestanding -fomit-frame-pointer \
+	-mfpu=vfp \
+	-msoft-float \
+	-mstructure-size-boundary=8 \
+	-mthumb-interwork \
+	-nostdlib \
+	-static
+
+
+
+
+
 CFLAGS := -msoft-float -mthumb-interwork -mstructure-size-boundary=8 -ffreestanding -Wno-pointer-sign -D_TEF_EM1D_ -nostdlib
+
+CFLAGS := $(TKCFLAGS) $(TKDEFINE) $(TKINCLUDE)
 
 -include hwdepend/$(ARCH)/Makefile
 
