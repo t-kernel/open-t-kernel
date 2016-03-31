@@ -306,6 +306,7 @@ SYSCALL void _tk_ext_tsk( void )
 	/* To avoid destroying stack used in 'make_dormant',
 	   allocate the dummy area on the stack. */
 	volatile VB _dummy[DORMANT_STACK_SIZE];
+	MEMSET((void *)_dummy, 0xCC, DORMANT_STACK_SIZE);
 #endif
 
 	/* Check context error */
