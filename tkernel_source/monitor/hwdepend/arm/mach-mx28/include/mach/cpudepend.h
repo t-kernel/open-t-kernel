@@ -22,6 +22,7 @@
 #define __MONITOR_ARM_CPUDEPEND_H__
 
 #include <machine.h>
+#include <typedef.h>
 
 /*
  * monitor stack area

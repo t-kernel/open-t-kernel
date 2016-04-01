@@ -191,9 +191,10 @@ tkernel: $(OBJ)
 	@echo	"     LD\t"	$@
 	@$(CROSS_COMPILE)objdump -DS $@ >tm.S
 	@echo	"    DIS\t"	tm.S
-	@$(CROSS_COMPILE)objcopy -O binary $@ tm.bin
-	@echo	"OBJDUMP\t"	tm.bin
-	@$(COPY) tm.bin $(TFTPBOOT)
+	@$(CROSS_COMPILE)objcopy -O binary $@ Image
+	@xz -zf9k Image
+	@echo	"OBJDUMP\t" "Image"
+	@$(COPY) Image $(TFTPBOOT)
 	@$(CROSS_COMPILE)nm $@ >tm.map
 	@echo   " SYSMAP\t"	tm.map
 

@@ -27,7 +27,6 @@
 #include <tk/sysdef.h>
 #include <sys/sysinfo.h>
 
-#include <mach/asm9260.h>
 #include <setup_em1d512.h>
 
 /*----------------------------------------------------------------------

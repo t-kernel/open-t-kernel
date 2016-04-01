@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+ * Copyright (C) 2016 Du Huanpeng<u74147@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,16 +17,18 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <linux/kernel.h>
-#include <linux/init.h>
-#include <linux/irq.h>
-#include <linux/delay.h>
-
-#include <mach/hardware.h>
-#include <mach/device.h>
-#include <mach/irqs.h>
+/*
+ * based on linux/arch/arm/plat-mxs/icoll.c
+ */
+  
 
 #include "regs-icoll.h"
+#include <mach/mx28.h>
+#include <mach/cpudepend.h>
+#include <tmonitor.h>
+#include <typedef.h>
+
+
 
 volatile void  *g_icoll_base;
 
@@ -61,14 +64,7 @@ static int icoll_set_wake_irq(unsigned int irq, unsigned int enabled)
 	return 0;
 }
 
-static struct irq_chip icoll_chip = {
-	.ack = icoll_ack_irq,
-	.mask = icoll_mask_irq,
-	.unmask = icoll_unmask_irq,
-	.set_wake = icoll_set_wake_irq,
-};
-
-void __init avic_init_irq(void __iomem *base, int nr_irqs)
+void  avic_init_irq(void *base, int nr_irqs)
 {
 	int i;
 	g_icoll_base = base;
@@ -80,10 +76,10 @@ void __init avic_init_irq(void __iomem *base, int nr_irqs)
 		if (!(in_w(g_icoll_base + HW_ICOLL_CTRL) &
 		      BM_ICOLL_CTRL_SFTRST))
 			break;
-		udelay(2);
+		waitUsec(2);
 	}
 	if (i >= 100000) {
-		printk(KERN_ERR "%s:%d timeout when enableing\n",
+		printk("%s:%d timeout when enableing\n",
 		       __func__, __LINE__);
 		return;
 	}
@@ -91,9 +87,6 @@ void __init avic_init_irq(void __iomem *base, int nr_irqs)
 
 	for (i = 0; i < nr_irqs; i++) {
 		out_w(0, g_icoll_base + HW_ICOLL_INTERRUPTn(i));
-		set_irq_chip(i, &icoll_chip);
-		set_irq_handler(i, handle_level_irq);
-		set_irq_flags(i, IRQF_VALID | IRQF_PROBE);
 	}
 
 	out_w(BF_ICOLL_LEVELACK_IRQLEVELACK

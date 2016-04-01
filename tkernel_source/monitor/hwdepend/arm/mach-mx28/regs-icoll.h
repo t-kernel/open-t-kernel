@@ -23,8 +23,8 @@
  * Template revision: 26195
  */
 
-#ifndef __ARCH_ARM___ICOLL_H
-#define __ARCH_ARM___ICOLL_H
+#ifndef __ICOLL_H__
+#define __ICOLL_H__
 
 #define HW_ICOLL_VECTOR	(0x00000000)
 #define HW_ICOLL_VECTOR_SET	(0x00000004)
