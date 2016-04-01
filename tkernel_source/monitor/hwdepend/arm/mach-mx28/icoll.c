@@ -41,7 +41,7 @@ static void icoll_ack_irq(unsigned int irq)
 		     g_icoll_base + HW_ICOLL_LEVELACK);
 
 	/* Barrier */
-	(void)__raw_readl(g_icoll_base + HW_ICOLL_STAT);
+	(void)in_w(g_icoll_base + HW_ICOLL_STAT);
 }
 
 static void icoll_mask_irq(unsigned int irq)
@@ -77,7 +77,7 @@ void __init avic_init_irq(void __iomem *base, int nr_irqs)
 	out_w(BM_ICOLL_CTRL_SFTRST, g_icoll_base + HW_ICOLL_CTRL_CLR);
 
 	for (i = 0; i < 100000; i++) {
-		if (!(__raw_readl(g_icoll_base + HW_ICOLL_CTRL) &
+		if (!(in_w(g_icoll_base + HW_ICOLL_CTRL) &
 		      BM_ICOLL_CTRL_SFTRST))
 			break;
 		udelay(2);
@@ -111,7 +111,7 @@ void __init avic_init_irq(void __iomem *base, int nr_irqs)
 
 	out_w(0, g_icoll_base + HW_ICOLL_VECTOR);
 	/* Barrier */
-	(void)__raw_readl(g_icoll_base + HW_ICOLL_STAT);
+	(void)in_w(g_icoll_base + HW_ICOLL_STAT);
 }
 
 void mxs_set_irq_fiq(unsigned int irq, unsigned int type)
