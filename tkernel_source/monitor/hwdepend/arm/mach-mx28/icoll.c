@@ -28,7 +28,7 @@
 #include <tmonitor.h>
 #include <typedef.h>
 
-
+#define w_out(data, port) out_w((INT)(port), (UW)(data))
 
 volatile void  *g_icoll_base;
 
@@ -37,10 +37,10 @@ volatile void  *g_icoll_base;
  */
 static void icoll_ack_irq(unsigned int irq)
 {
-	out_w(0, g_icoll_base + HW_ICOLL_VECTOR);
+	w_out(0, g_icoll_base + HW_ICOLL_VECTOR);
 
 	/* ACK current interrupt */
-	out_w(BV_ICOLL_LEVELACK_IRQLEVELACK__LEVEL0,
+	w_out(BV_ICOLL_LEVELACK_IRQLEVELACK__LEVEL0,
 		     g_icoll_base + HW_ICOLL_LEVELACK);
 
 	/* Barrier */
@@ -49,13 +49,13 @@ static void icoll_ack_irq(unsigned int irq)
 
 static void icoll_mask_irq(unsigned int irq)
 {
-	out_w(BM_ICOLL_INTERRUPTn_ENABLE,
+	w_out(BM_ICOLL_INTERRUPTn_ENABLE,
 		     g_icoll_base + HW_ICOLL_INTERRUPTn_CLR(irq));
 }
 
 static void icoll_unmask_irq(unsigned int irq)
 {
-	out_w(BM_ICOLL_INTERRUPTn_ENABLE,
+	w_out(BM_ICOLL_INTERRUPTn_ENABLE,
 		     g_icoll_base + HW_ICOLL_INTERRUPTn_SET(irq));
 }
 
@@ -70,7 +70,7 @@ void  avic_init_irq(void *base, int nr_irqs)
 	g_icoll_base = base;
 
 	/* Reset icoll */
-	out_w(BM_ICOLL_CTRL_SFTRST, g_icoll_base + HW_ICOLL_CTRL_CLR);
+	w_out(BM_ICOLL_CTRL_SFTRST, g_icoll_base + HW_ICOLL_CTRL_CLR);
 
 	for (i = 0; i < 100000; i++) {
 		if (!(in_w(g_icoll_base + HW_ICOLL_CTRL) &
@@ -83,26 +83,26 @@ void  avic_init_irq(void *base, int nr_irqs)
 		       __func__, __LINE__);
 		return;
 	}
-	out_w(BM_ICOLL_CTRL_CLKGATE, g_icoll_base + HW_ICOLL_CTRL_CLR);
+	w_out(BM_ICOLL_CTRL_CLKGATE, g_icoll_base + HW_ICOLL_CTRL_CLR);
 
 	for (i = 0; i < nr_irqs; i++) {
-		out_w(0, g_icoll_base + HW_ICOLL_INTERRUPTn(i));
+		w_out(0, g_icoll_base + HW_ICOLL_INTERRUPTn(i));
 	}
 
-	out_w(BF_ICOLL_LEVELACK_IRQLEVELACK
+	w_out(BF_ICOLL_LEVELACK_IRQLEVELACK
 		     (BV_ICOLL_LEVELACK_IRQLEVELACK__LEVEL0),
 		     g_icoll_base + HW_ICOLL_LEVELACK);
-	out_w(BF_ICOLL_LEVELACK_IRQLEVELACK
+	w_out(BF_ICOLL_LEVELACK_IRQLEVELACK
 		     (BV_ICOLL_LEVELACK_IRQLEVELACK__LEVEL1),
 		     g_icoll_base + HW_ICOLL_LEVELACK);
-	out_w(BF_ICOLL_LEVELACK_IRQLEVELACK
+	w_out(BF_ICOLL_LEVELACK_IRQLEVELACK
 		     (BV_ICOLL_LEVELACK_IRQLEVELACK__LEVEL2),
 		     g_icoll_base + HW_ICOLL_LEVELACK);
-	out_w(BF_ICOLL_LEVELACK_IRQLEVELACK
+	w_out(BF_ICOLL_LEVELACK_IRQLEVELACK
 		     (BV_ICOLL_LEVELACK_IRQLEVELACK__LEVEL3),
 		     g_icoll_base + HW_ICOLL_LEVELACK);
 
-	out_w(0, g_icoll_base + HW_ICOLL_VECTOR);
+	w_out(0, g_icoll_base + HW_ICOLL_VECTOR);
 	/* Barrier */
 	(void)in_w(g_icoll_base + HW_ICOLL_STAT);
 }
@@ -110,11 +110,11 @@ void  avic_init_irq(void *base, int nr_irqs)
 void mxs_set_irq_fiq(unsigned int irq, unsigned int type)
 {
 	if (type == 0)
-		out_w(BM_ICOLL_INTERRUPTn_ENFIQ,
+		w_out(BM_ICOLL_INTERRUPTn_ENFIQ,
 			g_icoll_base +
 			HW_ICOLL_INTERRUPTn_CLR(irq));
 	else
-		out_w(BM_ICOLL_INTERRUPTn_ENFIQ,
+		w_out(BM_ICOLL_INTERRUPTn_ENFIQ,
 			g_icoll_base +
 			HW_ICOLL_INTERRUPTn_SET(irq));
 }
@@ -122,10 +122,10 @@ void mxs_set_irq_fiq(unsigned int irq, unsigned int type)
 void mxs_enable_fiq_functionality(int enable)
 {
 	if (enable)
-		out_w(BM_ICOLL_CTRL_FIQ_FINAL_ENABLE,
+		w_out(BM_ICOLL_CTRL_FIQ_FINAL_ENABLE,
 			g_icoll_base + HW_ICOLL_CTRL_SET);
 	else
-		out_w(BM_ICOLL_CTRL_FIQ_FINAL_ENABLE,
+		w_out(BM_ICOLL_CTRL_FIQ_FINAL_ENABLE,
 			g_icoll_base + HW_ICOLL_CTRL_CLR);
 
 }
