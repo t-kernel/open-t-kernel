@@ -72,6 +72,13 @@ IMPORT UW* const	TopPageTable;	/* location of page table */
 #define	DIS_CACHEONLY	(0x0001)		/* I=0,R=0,S=0,C=0,A=0,M=1 */
 #define	ENB_CACHEMMU	(0x1007)		/* I=1,R=0,S=0,C=1,A=1,M=1 */
 #define	ENB_MMUONLY	(0x0003)		/* I=0,R=0,S=0,C=0,A=1,M=1 */
+#else
+#define	MASK_CACHEMMU	(0)		/* V,I,R,S,C,A,M (B = 0)   */
+#define	VALID_CACHEMMU	(0)		/* B = 0		   */
+#define	DIS_CACHEMMU	(0)		/* I=0,R=0,S=0,C=0,A=0,M=0 */
+#define	DIS_CACHEONLY	(0)		/* I=0,R=0,S=0,C=0,A=0,M=1 */
+#define	ENB_CACHEMMU	(0)		/* I=1,R=0,S=0,C=1,A=1,M=1 */
+#define	ENB_MMUONLY	(0)		/* I=0,R=0,S=0,C=0,A=1,M=1 */
 #endif
 
 /*
