@@ -89,11 +89,6 @@ int vprintks(const char *fmt, va_list args)
 	char printbuf[32 + 1];
 	#define printbufend (printbuf + sizeof(printbuf) - 1)
 
-	int flag, pad;
-	#define PAD_RIGHT	1
-	#define PAD_LEFT	2
-
-
 	j = 0;
 	i = 0;
 	pi = 0;
