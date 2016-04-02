@@ -53,7 +53,8 @@ static void icoll_mask_irq(unsigned int irq)
 		     g_icoll_base + HW_ICOLL_INTERRUPTn_CLR(irq));
 }
 
-static void icoll_unmask_irq(unsigned int irq)
+//static 
+	void icoll_unmask_irq(unsigned int irq)
 {
 	w_out(BM_ICOLL_INTERRUPTn_ENABLE,
 		     g_icoll_base + HW_ICOLL_INTERRUPTn_SET(irq));

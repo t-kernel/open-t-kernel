@@ -96,8 +96,13 @@ fiq_entry:				@ 1C : FIQ
  *       no saving of registers to stack is performed.
  *       the content of R12_fiq(ip) register is overwritten.
  */
+ 	ldr	r0, =fiqmsg
+	bl	printk
+
 	ldr	ip, =EIT_ENTRY(EIT_FIQ)
 	ldr	pc, [ip]
+fiqmsg:
+.asciz "FIQ"
 
 __startup_entry:
 	mov	r0, #0
@@ -165,7 +170,12 @@ syscall:
  *       lr = indeterminate
  */
 irq_entry:
+	ldr	r0, =irqmsg
+	bl	printk
+	b	irq_entry
 	bx	lr
+irqmsg:
+.asciz "IRQ" 
 
 #ifdef CONFIG_MACH_EM1D
 #endif

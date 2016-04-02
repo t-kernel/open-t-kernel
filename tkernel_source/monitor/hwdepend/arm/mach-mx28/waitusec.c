@@ -60,7 +60,7 @@ EXPORT	void	waitMsec(UW msec)
  */
 EXPORT	void	setupWaitUsec(void)
 {
-	delay64us = 64*2;
+	delay64us = 256;
 	printk("%s:%s\n", __FILE__, __func__);
 	return ;
 }
