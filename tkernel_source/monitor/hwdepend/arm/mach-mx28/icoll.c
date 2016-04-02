@@ -24,7 +24,7 @@
 
 #include "regs-icoll.h"
 #include <mach/mx28.h>
-#include <mach/cpudepend.h>
+#include <asm/cpudepend.h>
 #include <tmonitor.h>
 #include <typedef.h>
 

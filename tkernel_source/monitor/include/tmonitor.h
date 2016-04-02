@@ -31,7 +31,7 @@
 
 /* CPU-dependent definitions */
 #if CPU_ARM
-#  include <mach/cpudepend.h>
+#  include <asm/cpudepend.h>
 #endif
 
 /*
