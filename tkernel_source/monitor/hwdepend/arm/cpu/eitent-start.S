@@ -96,11 +96,27 @@ fiq_entry:				@ 1C : FIQ
  *       no saving of registers to stack is performed.
  *       the content of R12_fiq(ip) register is overwritten.
  */
+	push	{r0-r7, lr}
+@	mrs	r0, cpsr
+@	orr	r0, #0xC0
+@	msr	cpsr, r0
+
  	ldr	r0, =fiqmsg
 	bl	printk
 
-	ldr	ip, =EIT_ENTRY(EIT_FIQ)
-	ldr	pc, [ip]
+	ldr	lr, =EIT_ENTRY(EIT_FIQ)
+	ldr	lr, [lr]
+	blx	lr
+
+	@mov	lr, pc
+	@ldr	r7, =EIT_ENTRY(EIT_FIQ)
+	@ldr	pc, [r7]
+
+ 	ldr	r0, =fiqmsg
+	bl	printk
+
+	pop	{r0-r7, lr}
+	movs	pc, lr
 fiqmsg:
 .asciz "FIQ"
 
@@ -170,10 +186,11 @@ syscall:
  *       lr = indeterminate
  */
 irq_entry:
+	push	{r0-r12, lr}
 	ldr	r0, =irqmsg
 	bl	printk
 	b	irq_entry
-	bx	lr
+	pop	{r0-r12, pc}
 irqmsg:
 .asciz "IRQ" 
 
@@ -298,6 +315,23 @@ iabort_entry:
  *       lr = indeterminate
  */
 dabort_entry:
+	push	{r0-r12}
+	mrs	r7, spsr
+	tst	r7, #(1<<5)
+	subeq	lr, #4
+	subne	lr, #6
+	push	{lr}
+
+	ldr	r7, =EIT_ENTRY(EIT_DABORT)
+	ldr	r7, [r7]
+	blx	r7
+
+	pop	{lr}
+	pop	{r0-r12}
+	movs	pc, lr
+	
+	
+#if 0
 	push	{r7}
 	mrs	r7, spsr
 	tst	r7, #(1<<5)
@@ -314,7 +348,7 @@ dabort_entry:
 	pop	{r7}
 
 	movs	pc, lr
-
+#endif
 /*
  * default handler
  *       stack contains the details of the generated exception.
