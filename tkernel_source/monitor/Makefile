@@ -11,7 +11,7 @@ GPL := -gpl
 
 include Makefile.src
 
-CROSS_COMPILE ?= arm-none-eabi-
+CROSS_COMPILE ?= arm-none-linux-gnueabi-
 
 HOST ?= windows
 
@@ -44,7 +44,7 @@ INCLUDE = \
 	-I../include \
 	-Icmdsvc
 
-CFLAGS := -msoft-float -mthumb-interwork -mstructure-size-boundary=8 -ffreestanding -Wno-pointer-sign -D_TEF_EM1D_ -nostdlib
+CFLAGS := -msoft-float -mthumb-interwork -mstructure-size-boundary=8 -ffreestanding -Wno-pointer-sign -D_TEF_EM1D_ -nostdlib -g
 
 -include hwdepend/$(ARCH)/Makefile
 

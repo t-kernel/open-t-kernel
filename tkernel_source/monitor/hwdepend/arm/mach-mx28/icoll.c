@@ -35,7 +35,8 @@ volatile void  *g_icoll_base;
 /*
  * IRQ handling
  */
-static void icoll_ack_irq(unsigned int irq)
+//static 
+void icoll_ack_irq(unsigned int irq)
 {
 	w_out(0, g_icoll_base + HW_ICOLL_VECTOR);
 

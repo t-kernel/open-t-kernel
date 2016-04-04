@@ -61,4 +61,3 @@ set_cpsr:
 mask_cpsr:
 	bl	printk
 	bx	lr
-

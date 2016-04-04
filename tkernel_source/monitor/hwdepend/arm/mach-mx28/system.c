@@ -1,4 +1,9 @@
 /*
+ * i.MX280 board
+ * orignal: monitor/hwdepend/tef_em1d/src/system.c
+ * Copyright (C) 2016 Du Huanpeng<u74147@gmail.com>
+ */
+/*
  *----------------------------------------------------------------------
  *    T-Kernel 2.0 Software Package
  *
@@ -51,6 +56,39 @@ IMPORT	void	_defaultHdr(void);
 #define	EnbCacheMMU(x)	setCacheMMU(ENB_CACHEMMU)
 #define	DisCacheMMU(x)	setCacheMMU(ENB_MMUONLY) /* MMU can't be turned off */
 
+
+#define HW_ICOLL_LEVELACK 0x80000010
+
+int do_fiq(int r0, int r1, int r2, int r3)
+{
+	static int rand = 0;
+	int vec;
+
+	rand++;
+
+	void (*isr)();
+
+
+	isr = (void *)in_w(0x80000000);
+	printk("isr:%d\n", isr);
+
+	printk("lr:[%x]\n", r0);
+
+	vec = in_w(0x80000070);
+	printk("irq line: [%d]\n", vec);
+	
+
+	
+	out_w(0x80000010, 0x1);
+	printk("levelack!\n");
+	
+	return 0;
+}
+
+void do_abort(void)
+{
+	printk("DATA ABORT\n");
+}
 /* ------------------------------------------------------------------------ */
 
 IMPORT	char	__loadaddr;	/* monitor load address */
@@ -196,7 +234,9 @@ setup_vec:
 	}
 	SCArea->intvec[EIT_DEFAULT]	= helloworld;	/* default handler */
 	SCArea->intvec[EIT_UNDEF]	= helloworld;	/* undefined instruction */
+	SCArea->intvec[EIT_FIQ]		= do_fiq;
 	SCArea->intvec[SWI_MONITOR]	= _defaultHdr;	/* SWI - monitor SVC */
+	SCArea->intvec[EIT_DABORT] = do_abort;
 
 //	for (i=0; i<256; i++) {
 //		syscall(i);

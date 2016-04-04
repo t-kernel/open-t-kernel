@@ -179,12 +179,23 @@ syscall:
 irq_entry:
 	push	{r0-r12, lr}
 
-	mrs	lr, spsr
+	mrs	lr, cpsr
 	orr	lr, #(1<<7)
-	msr	spsr, lr
+	msr	cpsr, lr
+
+	ldr	lr, =flag
+	str	lr, [lr]
 
 	ldr	r0, =irqmsg
 	bl	printk
+
+
+	mrs	r0, cpsr
+	ldr	lr, =1f
+	blx	lr
+1:	mrs	r1, cpsr
+	ldr	lr, =do_irq
+	blx	lr
 
 	pop	{r0-r12, lr}
 	subs	pc, lr, #4
