@@ -97,28 +97,19 @@ fiq_entry:				@ 1C : FIQ
  *       the content of R12_fiq(ip) register is overwritten.
  */
 	push	{r0-r7, lr}
-@	mrs	r0, cpsr
-@	orr	r0, #0xC0
-@	msr	cpsr, r0
 
- 	ldr	r0, =fiqmsg
-	bl	printk
+	mrs	lr, cpsr
+	orr	lr, #(1<<6)	@ disable fiq
+ 	msr	cpsr, lr
+
 
 	ldr	lr, =EIT_ENTRY(EIT_FIQ)
 	ldr	lr, [lr]
 	blx	lr
 
-	@mov	lr, pc
-	@ldr	r7, =EIT_ENTRY(EIT_FIQ)
-	@ldr	pc, [r7]
-
- 	ldr	r0, =fiqmsg
-	bl	printk
-
 	pop	{r0-r7, lr}
-	movs	pc, lr
-fiqmsg:
-.asciz "FIQ"
+	subs	pc, lr, #4
+@ end of fiq
 
 __startup_entry:
 	mov	r0, #0
@@ -187,10 +178,16 @@ syscall:
  */
 irq_entry:
 	push	{r0-r12, lr}
+
+	mrs	lr, spsr
+	orr	lr, #(1<<7)
+	msr	spsr, lr
+
 	ldr	r0, =irqmsg
 	bl	printk
-	b	irq_entry
-	pop	{r0-r12, pc}
+
+	pop	{r0-r12, lr}
+	subs	pc, lr, #4
 irqmsg:
 .asciz "IRQ" 
 
