@@ -336,23 +336,23 @@ reset_entry:
 	
 @ vectors for relocate to 0x00000000 or 0xFFFF0000
 __vectors_start:
-20:     ldr     pc, 10f
-21:     ldr     pc, 11f
-22:     ldr     pc, 12f
-23:     ldr     pc, 13f
-24:     ldr     pc, 14f
-25:     ldr     pc, 15f
-26:     ldr     pc, 16f
- 7:	.word	0
+10:	ldr	pc, 20f
+11:	ldr	pc, 21f
+12:	ldr	pc, 22f
+13:	ldr	pc, 23f
+14:	ldr	pc, 24f
+15:	ldr	pc, 25f
+16:	ldr	pc, 26f
+17:	ldr	pc, 27f
 
-10:     .word   startup_entry
-11:     .word   undef_entry
-12:     .word   svc_entry
-13:     .word   iabort_entry
-14:     .word   dabort_entry
-15:     .word   0
-16:     .word   fiq_entry
- 7:	.word	0
+20:	.word	startup_entry
+21:	.word	undef_entry
+22:	.word	svc_entry
+23:	.word	iabort_entry
+24:	.word	dabort_entry
+25:	.word	0
+26:	.word	irq_entry
+27:	.word	fiq_entry
 __vectors_end:
 
 
