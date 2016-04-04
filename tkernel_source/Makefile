@@ -189,14 +189,14 @@ all: tkernel
 tkernel: $(OBJ)
 	@$(CROSS_COMPILE)gcc $^ -o $@ $(INCLUDE) -T$(LDS) -nostdlib -lgcc
 	@echo	"     LD\t"	$@
-	@$(CROSS_COMPILE)objdump -DS $@ >tm.S
-	@echo	"    DIS\t"	tm.S
+	@$(CROSS_COMPILE)objdump -DS $@ >$@.S
+	@echo	"    DIS\t"	$@.S
 	@$(CROSS_COMPILE)objcopy -O binary $@ Image
 	@xz -zf9k Image
 	@echo	"OBJDUMP\t" "Image"
 	@$(COPY) Image $(TFTPBOOT)
-	@$(CROSS_COMPILE)nm $@ >tm.map
-	@echo   " SYSMAP\t"	tm.map
+	@$(CROSS_COMPILE)nm $@ >$@.map
+	@echo   " SYSMAP\t"	$@.map
 
 clean:
 ifeq ($(HOST),windows)
@@ -209,3 +209,4 @@ endif
 prepare:
 	@sed 's/^SRC/OBJ/g' Makefile.src | sed 's/[cS]$$/o/g' >Makefile.obj
 	@echo	"   GEN\tMakefile: " $(MACH)
+
