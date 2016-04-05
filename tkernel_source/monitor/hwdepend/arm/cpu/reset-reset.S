@@ -311,26 +311,14 @@ reset_entry:
 	bl	puts_ll
 
 // enter monitor by means of SVC #0 instruction (SVC mode)
-  resetLoop:
-	.word	0xFFFFFFFF		@ undefined
-	svc	1			@ syscall
-	svc	2			@ syscall
-	svc	3			@ syscall
-	svc	51			@ syscall
-	svc	61			@ syscall
-	svc	71			@ syscall
-	svc	81			@ syscall
-	svc	91			@ syscall
-	svc	101			@ syscall
-	svc	0x88			@ syscall
-
-	bl	start_kernel
-
-@	ldr	r0, =0x44000003
-@	ldr	r1, [r0]		@ data abort
-	
-@	b	resetLoop		// return will cause another reset
+resetLoop:
+#ifdef CONFIG_TM_MONKEY
+	bl	monkey
 	b	.
+#else
+	svc	0
+	b	resetLoop		// return will cause another reset
+#endif
 
 	
 @ vectors for relocate to 0x00000000 or 0xFFFF0000

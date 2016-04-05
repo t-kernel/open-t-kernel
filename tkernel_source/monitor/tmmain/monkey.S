@@ -1,16 +1,22 @@
 /*
- * ARM SVC call 
+ * for debug purpose
  * 2016/03/17 by Du Huanpeng<u74147@gmail.com>
  */
 
 
-	.global	syscall
+
+
+	.global	monkey
+monkey:
+	b	start_kernel
+
 	.code 32
 
 __syscall:
 	svc	0
 	bx	lr
 
+	.global syscall
 syscall:
 	bic	r0, #0xFF000000
 	orr	r0, #0xEF000000
