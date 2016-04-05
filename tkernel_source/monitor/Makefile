@@ -134,7 +134,7 @@ all: tmonitor
 
 %.o: %.S
 	@echo	"     AS\t"	$@
-	@$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
+	@$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@ -D_in_asm_source_
 
 %.o: %.c
 	@echo	"     CC\t"	$@
