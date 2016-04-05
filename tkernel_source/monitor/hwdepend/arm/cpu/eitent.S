@@ -18,7 +18,6 @@
  *       EM1D512 (ARM1176JZF-S) exception branch handling
  */
 
-#define	_in_asm_source_
 
 #include <machine.h>
 #include <tk/sysdef.h>

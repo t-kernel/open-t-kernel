@@ -21,7 +21,6 @@
  *	Board initial, should place to arch/arm/mach-acd2/.
  */
 
-#define	_in_asm_source_
 
 #include <machine.h>
 #include <tk/sysdef.h>

@@ -18,7 +18,6 @@
  *       Monitor handler (after ARMv6)
  */
 
-#define	_in_asm_source_
 
 #include <machine.h>
 #include <sys/sysinfo.h>

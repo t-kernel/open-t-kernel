@@ -18,7 +18,6 @@
  *       EM1-D512: initial setting after a reset.
  */
 
-#define	_in_asm_source_
 
 #include <machine.h>
 #include <tk/sysdef.h>

@@ -20,7 +20,6 @@
  *	 Setup C environment.
  */
 
-#define	_in_asm_source_
 
 #include <machine.h>
 #include <tk/sysdef.h>

@@ -23,7 +23,6 @@
  *	 Remove machine/board related things.
  */
 
-#define	_in_asm_source_
 #define puts_ll printk
 
 #include <machine.h>
