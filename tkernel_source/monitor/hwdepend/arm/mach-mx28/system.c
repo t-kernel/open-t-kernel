@@ -236,14 +236,7 @@ setup_vec:
 	SCArea->intvec[EIT_UNDEF]	= helloworld;	/* undefined instruction */
 	SCArea->intvec[EIT_FIQ]		= do_fiq;
 	SCArea->intvec[SWI_MONITOR]	= _defaultHdr;	/* SWI - monitor SVC */
-	SCArea->intvec[EIT_DABORT] = do_abort;
-
-//	for (i=0; i<256; i++) {
-//		syscall(i);
-//	}
-
-
-	
+	SCArea->intvec[EIT_DABORT]	= do_abort;
 	return ;
 
         /* set up initial page table */
