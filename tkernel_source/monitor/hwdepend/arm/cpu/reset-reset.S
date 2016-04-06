@@ -313,7 +313,7 @@ reset_entry:
 // enter monitor by means of SVC #0 instruction (SVC mode)
 resetLoop:
 #ifdef CONFIG_TM_MONKEY
-	bl	monkey
+	bl	monkey			@ T-Monitor Hacking
 	b	.
 #else
 	svc	0
