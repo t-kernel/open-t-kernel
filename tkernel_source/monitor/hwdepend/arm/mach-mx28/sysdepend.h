@@ -39,5 +39,11 @@ IMPORT void setCacheMMU( UW cp15r1 );
  *               2 : the object is the target of processing (exiting interrupt handler).
  */
 IMPORT W procHwInt( UW info );
+IMPORT int do_irq(unsigned r0, unsigned r1, unsigned r2, unsigned r3);
+IMPORT void do_abort(void);
+IMPORT int do_fiq(int r0, int r1, int r2, int r3);
+
+
+
 
 #endif /* __MONITOR_CMDSVC_SYSDEPEND_H__ */

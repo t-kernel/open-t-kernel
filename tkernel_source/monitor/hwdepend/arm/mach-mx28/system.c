@@ -56,39 +56,6 @@ IMPORT	void	_defaultHdr(void);
 #define	EnbCacheMMU(x)	setCacheMMU(ENB_CACHEMMU)
 #define	DisCacheMMU(x)	setCacheMMU(ENB_MMUONLY) /* MMU can't be turned off */
 
-
-#define HW_ICOLL_LEVELACK 0x80000010
-
-int do_fiq(int r0, int r1, int r2, int r3)
-{
-	static int rand = 0;
-	int vec;
-
-	rand++;
-
-	void (*isr)();
-
-
-	isr = (void *)in_w(0x80000000);
-	printk("isr:%d\n", isr);
-
-	printk("lr:[%x]\n", r0);
-
-	vec = in_w(0x80000070);
-	printk("irq line: [%d]\n", vec);
-	
-
-	
-	out_w(0x80000010, 0x1);
-	printk("levelack!\n");
-	
-	return 0;
-}
-
-void do_abort(void)
-{
-	printk("DATA ABORT\n");
-}
 /* ------------------------------------------------------------------------ */
 
 IMPORT	char	__loadaddr;	/* monitor load address */

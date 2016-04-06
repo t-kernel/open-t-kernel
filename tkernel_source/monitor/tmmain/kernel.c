@@ -28,6 +28,40 @@ void icoll_unmask_irq(unsigned int irq);
 
 #define HW_TIMROT_TIMCTRL1       0x80068060
 #define HW_TIMROT_TIMCTRL1_CLR   0x80068068
+#define HW_TIMROT_RUNNING_COUNT1 0x80068070
+#define HW_TIMROT_VERSION        0x80068120
+
+int do_fiq(int r0, int r1, int r2, int r3)
+{
+	static int rand = 0;
+	int vec;
+
+	rand++;
+
+	void (*isr)();
+
+
+	isr = (void *)in_w(0x80000000);
+	printk("isr:%d\n", isr);
+
+	printk("lr:[%x]\n", r0);
+
+	vec = in_w(0x80000070);
+	printk("irq line: [%d]\n", vec);
+	
+
+	
+	out_w(0x80000010, 0x1);
+	printk("levelack!\n");
+	
+	return 0;
+}
+
+void do_abort(void)
+{
+	printk("DATA ABORT\n");
+}
+
 
 int do_irq(unsigned r0, unsigned r1, unsigned r2, unsigned r3)
 {
@@ -38,8 +72,6 @@ int do_irq(unsigned r0, unsigned r1, unsigned r2, unsigned r3)
 	vec = in_w(HW_ICOLL_VECTOR);
 	out_w(HW_ICOLL_VECTOR, 0);
 	intno = in_w(HW_ICOLL_STAT);
-
-	
 
 	putchar('\n');
 	printk("CPSR(irq): %X\n", r0);
@@ -154,10 +186,6 @@ int hw_icoll_raw(int irq)
 	
 }
 
-void do_irq_timer(unsigned r0, unsigned r1, unsigned r2, unsigned r3)
-{
-}
-
 void start_timer(unsigned r0, unsigned r1, unsigned r2, unsigned r3)
 {
 	int val;
@@ -165,6 +193,7 @@ void start_timer(unsigned r0, unsigned r1, unsigned r2, unsigned r3)
 
 #define BIT(n) (1<<n)
 #define BITTST(val, n) ((val) & BIT(n))
+#define TST(val, b) ((val) & (b))
 
 	hw_timer_rotary[0] = (void *)(0x80068000); /* have ROTCTRL */
 	hw_timer_rotary[1] = (void *)(0x80068050);
@@ -203,46 +232,19 @@ void start_timer(unsigned r0, unsigned r1, unsigned r2, unsigned r3)
 
 		random++;
 		printk("[%04d]wait timer1 irq\n", random);
-		waitMsec(300);
+		waitMsec(100);
 		val = hw_timer_rotary[1]->HW_TIMROT_TIMCTRL[0];
 		printk("%016b\n", val);
-	}
+		val = in_w(HW_TIMROT_RUNNING_COUNT1);
+		printk("timer running @[0x%x]\n", val);
+		val = in_w(HW_TIMROT_VERSION);
+		printk("timer version @[%X]\n", val);
 
-	for(i=0; i<300; i++) {
-		val = (unsigned long)(hw_timer_rotary[1]->HW_TIMROT_RUNNING_COUNT[0]);
-		printk("Reading register [%016x]:\n", val);
-		printk("Reading register [% 16x]:\n", val);
-		printk("Reading register [%-16x]:\n", val);
-		printk("Reading register [%116x]:\n", val);
-
-		val = (hw_timer_rotary[1]->HW_TIMROT_RUNNING_COUNT[0]);
-
-		printk("%08X\n", val);
-
-		printk("ICOLL RAW:\n"
-			"%033b %033b\n"
-			"%033b %033b\n",
-			in_w(HW_ICOLL_RAW0),
-			in_w(HW_ICOLL_RAW1),
-			in_w(HW_ICOLL_RAW2),
-			in_w(HW_ICOLL_RAW3));
-
-		printk("hw_icoll_raw[%d][%d]\n", 49, !!hw_icoll_raw(49));
-		if(hw_icoll_raw(49)) {
-			icoll_ack_irq(49);
-			//hw_timer_rotary[1]->HW_TIMROT_ROTCTRL[CLR] = 1<<15;
-			out_w((0x80068060+CLR), (1<<15));
-		}
-
-		waitMsec(300);
-
-
-
+		if(random>300) break;
 	}
 
 	printk("Goodbye TIMER!\n");
 		
 	
 }
-
 
