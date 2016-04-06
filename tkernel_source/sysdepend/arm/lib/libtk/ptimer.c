@@ -26,26 +26,28 @@
 /*
  * List of timers
  */
-LOCAL struct timerlist {
+struct timerlist {
 	INT	base;		/* base address of timer registers  */
 	INTVEC	irq;		/* interrupt number */
 	UINT	mode;		/* operation mode */
 	FP	hdr;		/* user-defined interrupt handler */
 	void*	exinf;		/* user-defined exntended information */
-} TimerList[] = {
-	{ 0xc0000100,	IV_IRQ(55) },	/* TI1 */
-	{ 0xc0000200,	IV_IRQ(56) },	/* TI2 */
-	{ 0xc0000300,	IV_IRQ(57) },	/* TI3 */
-	{ 0xc0002000,	IV_IRQ(34) },	/* TG0 */
-	{ 0xc0002100,	IV_IRQ(35) },	/* TG1 */
-	{ 0xc0002200,	IV_IRQ(36) },	/* TG2 */
-	{ 0xc0002300,	IV_IRQ(44) },	/* TG3 */
-	{ 0xc0002400,	IV_IRQ(45) },	/* TG4 */
-	{ 0xc0002500,	IV_IRQ(46) },	/* TG5 */
-	{ 0xc0001000,	IV_IRQ(58) },	/* TW0 */
-	{ 0xc0001100,	IV_IRQ(59) },	/* TW1 */
-	{ 0xc0001200,	IV_IRQ(60) },	/* TW2 */
-	{ 0xc0001300,	IV_IRQ(61) }	/* TW3 */
+};
+
+LOCAL struct timerlist TimerList[] = {
+	{ 0xc0000100,	IV_IRQ(55), 0, NULL, NULL },	/* TI1 */
+	{ 0xc0000200,	IV_IRQ(56), 0, NULL, NULL },	/* TI2 */
+	{ 0xc0000300,	IV_IRQ(57), 0, NULL, NULL },	/* TI3 */
+	{ 0xc0002000,	IV_IRQ(34), 0, NULL, NULL },	/* TG0 */
+	{ 0xc0002100,	IV_IRQ(35), 0, NULL, NULL },	/* TG1 */
+	{ 0xc0002200,	IV_IRQ(36), 0, NULL, NULL },	/* TG2 */
+	{ 0xc0002300,	IV_IRQ(44), 0, NULL, NULL },	/* TG3 */
+	{ 0xc0002400,	IV_IRQ(45), 0, NULL, NULL },	/* TG4 */
+	{ 0xc0002500,	IV_IRQ(46), 0, NULL, NULL },	/* TG5 */
+	{ 0xc0001000,	IV_IRQ(58), 0, NULL, NULL },	/* TW0 */
+	{ 0xc0001100,	IV_IRQ(59), 0, NULL, NULL },	/* TW1 */
+	{ 0xc0001200,	IV_IRQ(60), 0, NULL, NULL },	/* TW2 */
+	{ 0xc0001300,	IV_IRQ(61), 0, NULL, NULL }	/* TW3 */
 };
 
 #define	N_TIMER		( sizeof(TimerList) / sizeof(TimerList[0]) )
