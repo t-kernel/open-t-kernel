@@ -1,5 +1,5 @@
 int raise(int sig)
 {
-	return !!sig;
+	return 0;
 }
 
