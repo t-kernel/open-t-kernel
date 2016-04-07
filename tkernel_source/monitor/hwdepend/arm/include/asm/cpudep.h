@@ -19,6 +19,7 @@
  */
 
 #include <tk/sysdef.h>
+#include "cpudepend.h"
 
 #ifndef	_in_asm_source_
 
@@ -28,31 +29,14 @@ IMPORT W	bootFlag;	/* boot flag */
  * Memory access through physical address
  *       In the case of ARM, actually it is an access by logical address.
  */
-Inline UW rd_w( UW *pa )
-{
-	return *pa;
-}
-Inline UH rd_h( UH *pa )
-{
-	return *pa;
-}
-Inline UB rd_b( UB *pa )
-{
-	return *pa;
-}
 
-Inline void wr_w( UW *pa, UW data )
-{
-	*pa = data;
-}
-Inline void wr_h( UH *pa, UH data )
-{
-	*pa = data;
-}
-Inline void wr_b( UB *pa, UB data )
-{
-	*pa = data;
-}
+#define rd_w(pa) in_w(pa)
+#define rd_h(pa) in_h(pa)
+#define rd_b(pa) in_b(pa)
+
+#define wr_w(pa, data) out_w(pa, data)
+#define wr_h(pa, data) out_h(pa, data)
+#define wr_b(pa, data) out_b(pa, data)
 
 /*
  * read/write the ARM-specific registered under monitor management
