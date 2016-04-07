@@ -71,19 +71,19 @@ _defaultHdr:
  	@ check mode, r4, 5, 6, 7
 	push	{r4, r5, r6, r7, lr} 
 	mrs	r7, cpsr
-	push	{r7}
 
 	and	r6, r7, #0x1F
 	cmp	r6, #0x10		@ usr: Normal program execution mode
 	beq	100f
 
-	bic	r7, #0x1F
-	orr	r7, #0x13		@ svc: A protected mode for the operating system
-	msr	cpsr, r7
+	cmp	r6, #0x13
+	bicne	r7, #0x1F
+	orrne	r7, #0x13		@ svc: A protected mode for the operating system
+	msrne	cpsr, r7
 
-	bl	entMonitor
+	bl	entMonitor		@ don't switch modes in 'entMonitor'
 
-	pop	{r7}
+	mrs	r7, spsr
 	msr	cpsr, r7
 100:
 	pop	{r4, r5, r6, r7, pc}
