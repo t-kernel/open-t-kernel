@@ -176,7 +176,8 @@ reset_entry:
 #define __STACK_TOP		(CONFIG_TM_STACK_TOP)
 #define __STACK_SIZE		(CONFIG_TM_STACK_SIZE)
 #define __STACK_LIMIT		(__STACK_TOP - __STACK_SIZE)
-#define __STACK_FIQ		(__STACK_TOP        - 0x010)	/* fiq top   */
+#define __STACK_REGS		(__STACK_TOP        - 0x020)	/* regs top  */
+#define __STACK_FIQ		(__STACK_REGS       - 0x200)	/* regs      */
 #define __STACK_IRQ		(__STACK_FIQ        - 0x200)	/* fiq	     */
 #define __STACK_SVC		(__STACK_IRQ        - 0x200)	/* irq	     */
 #define __STACK_ABORT		(__STACK_SVC        - 0x200)	/* svc	     */
@@ -184,8 +185,12 @@ reset_entry:
 #define __STACK_SYSTEM		(__STACK_UNDEFINED  - 0x200)	/* undefined */
 	ldr	sp, =__stack_system
 	mrs	r7, cpsr
+@
+@
 @ +--------------------------
 @ + not used     16B
+@ +--------------------------
+@ + regs	512B
 @ +--------------------------
 @ + fiq		512B
 @ +--------------------------
@@ -366,6 +371,9 @@ __magic:
 	.global	__stack_size
 	.global	__stack_limit
 	.global	__stack_bottom
+	.global __stack_regs
+__stack_regs:
+	.word	__STACK_REGS
 __stack_top:
 	.word	__STACK_TOP
 __stack_size:
