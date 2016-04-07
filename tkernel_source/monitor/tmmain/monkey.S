@@ -8,6 +8,8 @@
 
 	.global	monkey
 monkey:
+	svc	3
+	svc	4
 	b	start_kernel
 
 	.code 32
