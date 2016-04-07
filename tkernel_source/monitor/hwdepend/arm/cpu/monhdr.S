@@ -42,6 +42,21 @@
 	.globl	Csym(_defaultHdr)
 	.type	Csym(_defaultHdr), %function
 Csym(_defaultHdr):
+
+	b	Csym(entMonitor)	// call entMonitor(vec)
+__stack_regs
+/*
+ * save registers
+ * __stack_regs_limit[0x00-0x0F] usr,     r0-r14, cpsr
+ * __stack_regs_limit[0x18-0x1F] fiq,     r0-r14, cpsr
+ * __stack_regs_limit[0x2C-0x2F] irq,    r13-r14, spsr
+ * __stack_regs_limit[0x3C-0x3F] abortt, r13-r14, spsr
+ * __stack_regs_limit[0x4C-0x4F] svc,    r13-r14, spsr
+ * __stack_regs_limit[0x5C-0x5F] undef,  r13-r14, spsr
+ * TODO: cp15
+ */
+
+
         // save register
 	//	regStack[0-7]		r0 .. r7
 	//		[8,9]		Entry cspr, ip
