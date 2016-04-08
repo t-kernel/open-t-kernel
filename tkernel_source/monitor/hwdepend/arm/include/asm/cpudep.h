@@ -19,9 +19,9 @@
  */
 
 #include <tk/sysdef.h>
-#include "cpudepend.h"
 
 #ifndef	_in_asm_source_
+#include "cpudepend.h"
 
 IMPORT W	bootFlag;	/* boot flag */
 
