@@ -30,15 +30,9 @@
 #include "device.h"
 
 /* CPU-dependent definitions */
-#if CPU_ARM
+#ifdef __ARM__
 #  include <asm/cpudepend.h>
 #endif
-
-/*
- * console display
- */
-IMPORT int printf(const char *format, ...);
-IMPORT int printk(const char *format, ...);
 
 /*
  * error code
@@ -206,24 +200,23 @@ typedef struct {
  * attribute attr
  *       if MSA_WRK is defined, make it so that it is found before MSA_OS.
  */
-#define	MSA_ROM		0x0001	/* ROM       (read-only) */
-#define	MSA_FROM	0x0002	/* Flash ROM (write_enabled) */
-#define	MSA_RAM		0x0004	/* RAM */
-#define	MSA_ERAM	0x0008	/* extended RAM */
-#define	MSA_IO		0x0010	/* I/O */
-#define	MSA_SRAM	0x0020	/* SRAM */
-#define	MSA_HW		0x0fff	/* attribute related to hardware */
+#define	MSA_ROM		(1<<0)	/* ROM       (read-only) */
+#define	MSA_FROM	(1<<1)	/* Flash ROM (write_enabled) */
+#define	MSA_RAM		(1<<2) 	/* RAM */
+#define	MSA_ERAM	(1<<3) 	/* extended RAM */
+#define	MSA_IO		(1<<4) 	/* I/O */
+#define	MSA_SRAM	(1<<5) 	/* SRAM */
+#define	MSA_HW		(0xFFF)	/* attribute related to hardware */
 
-#define	MSA_MON		0x1000	/* monitor area        (area inside MSA_ROM/FROM ) */
-#define	MSA_OS		0x2000	/* OS area        (area in MSA_RAM ) */
-#define	MSA_WRK		0x4000	/* special work area (used by LH7A400) */
+#define	MSA_MON		(1<<12) /* monitor area        (area inside MSA_ROM/FROM ) */
+#define	MSA_OS		(1<<13) /* OS area        (area in MSA_RAM ) */
+#define	MSA_WRK		(1<<14) /* special work area (used by LH7A400) */
 
-#define	MSA_RDA		0x10000	/* ROM disk area (area in MSA_FROM ) */
-#define	MSA_RDB		0x20000	/* RAM disk area */
+#define	MSA_RDA		(1<<16)	/* ROM disk area (area in MSA_FROM ) */
+#define	MSA_RDB		(1<<17)	/* RAM disk area */
 
 /* page attribute (ARM) 1st level page table */
-#define __ARCH_ARM__
-#ifdef __ARCH_ARM__
+#ifdef __ARM__
 
 #define	PGA_RW		0x00402	/* Kernel/RW (effective section, AP0='1') */
 #define	PGA_RO		0x08402	/* Kernel/RO (effective section) AP0='1') */
@@ -292,10 +285,6 @@ IMPORT W puts( const UB *str );
  *       return value       0 : normal
  *                         -1 : CTRL-C input exists
  */
-IMPORT W putHex2( UB val );
-IMPORT W putHex4( UH val );
-IMPORT W putHex8( UW val );
-
 /*
  * console output (decimal: 10 columns/zero-suppress supported)
  *       XON/XOFF flow control
@@ -303,7 +292,15 @@ IMPORT W putHex8( UW val );
  *       return value       0 : normal
  *                         -1 : CTRL-C input exists
  */
-IMPORT W putDec( UW val );
+ /*
+ * console display
+ */
+/*
+ * use printk instead most of console output routines.
+ */
+IMPORT int printf(const char *format, ...);
+IMPORT int printk(const char *format, ...);
+
 
 /*
  * console input (one character)
