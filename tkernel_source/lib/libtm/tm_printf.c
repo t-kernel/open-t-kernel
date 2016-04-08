@@ -34,23 +34,23 @@
 #define	OUTBUF_SZ	0
 
 extern	int	tm_putchar(int c);
-extern	int	tm_putstring(uchar *s);
+extern	int	tm_putstring(unsigned char *s);
 
 /* Output function */
 typedef	struct {
 	short	len;		/* Total output length */
 	short	cnt;		/* Buffer counts */
-	uchar	*bufp;		/* Buffer pointer for tm_sprintf */
+	unsigned char	*bufp;		/* Buffer pointer for tm_sprintf */
 } OutPar;
-typedef	void	(*OutFn)(uchar *str, int len, OutPar *par);
+typedef	void	(*OutFn)(unsigned char *str, int len, OutPar *par);
 
 /*
  *	Output integer value
  */
-static	uchar	*outint(uchar *ep, unsigned long val, uchar base)
+static	unsigned char	*outint(unsigned char *ep, unsigned long val, unsigned char base)
 {
-static const uchar  digits[] = "0123456789abcdef0123456789ABCDEF";
-	uchar	caps;
+static const unsigned char  digits[] = "0123456789abcdef0123456789ABCDEF";
+	unsigned char	caps;
 
 	caps = (base & 0x40) >> 2;		/* 'a' or 'A' */
 	for (base &= 0x3F; val >= base; val /= base) {
@@ -64,13 +64,13 @@ static const uchar  digits[] = "0123456789abcdef0123456789ABCDEF";
  *	Output with format (limitted version)
  */
 static	void	_vsprintf(OutFn ostr, OutPar *par,
-					const uchar *fmt, va_list ap)
+					const unsigned char *fmt, va_list ap)
 {
 #define	MAX_DIGITS	14
 	unsigned long	v;
 	short	wid, prec, n;
-	uchar	*fms, *cbs, *cbe, cbuf[MAX_DIGITS];
-	uchar	c, base, flg, sign, qual;
+	unsigned char	*fms, *cbs, *cbe, cbuf[MAX_DIGITS];
+	unsigned char	c, base, flg, sign, qual;
 
 /* flg */
 #define	F_LEFT		0x01
@@ -82,7 +82,7 @@ static	void	_vsprintf(OutFn ostr, OutPar *par,
 	for (fms = NULL; (c = *fmt++) != '\0'; ) {
 
 		if (c != '%') {	/* Fixed string */
-			if (fms == NULL) fms = (uchar*)fmt - 1;
+			if (fms == NULL) fms = (unsigned char*)fmt - 1;
 			continue;
 		}
 
@@ -201,7 +201,7 @@ static	void	_vsprintf(OutFn ostr, OutPar *par,
 			cbs = outint(cbe, v, base);
 			break;
 		case 's':
-			cbe = cbs = va_arg(ap, uchar *);
+			cbe = cbs = va_arg(ap, unsigned char *);
 			if (prec < 0) {
 				while (*cbe != '\0') cbe++;
 			} else {
@@ -210,7 +210,7 @@ static	void	_vsprintf(OutFn ostr, OutPar *par,
 			break;
 		case 'c':
 			cbs = cbe;
-			*--cbs = (uchar)va_arg(ap, int);
+			*--cbs = (unsigned char)va_arg(ap, int);
 			prec = 0;
 			break;
 		case '\0':
@@ -218,7 +218,7 @@ static	void	_vsprintf(OutFn ostr, OutPar *par,
 			continue;
 		default:
 			/* Output as fixed string */
-			fms = (uchar*)fmt - 1;
+			fms = (unsigned char*)fmt - 1;
 			continue;
 		}
 
@@ -228,7 +228,7 @@ static	void	_vsprintf(OutFn ostr, OutPar *par,
 
 		/* Output preceding spaces */
 		if ((flg & (F_LEFT | F_ZERO)) == 0 ) {
-			while (--wid >= 0) (*ostr)((uchar*)" ", 1, par);
+			while (--wid >= 0) (*ostr)((unsigned char*)" ", 1, par);
 		}
 
 		/* Output sign */
@@ -238,10 +238,10 @@ static	void	_vsprintf(OutFn ostr, OutPar *par,
 
 		/* Output prefix "0x", "0X" or "0" */
 		if ((base & 0x80) != 0) {
-			(*ostr)((uchar*)"0", 1, par);
+			(*ostr)((unsigned char*)"0", 1, par);
 			if ((base & 0x10) != 0) {
 				(*ostr)((base & 0x40) ?
-					(uchar*)"X" : (uchar*)"x", 1, par);
+					(unsigned char*)"X" : (unsigned char*)"x", 1, par);
 			}
 		}
 
@@ -252,13 +252,13 @@ static	void	_vsprintf(OutFn ostr, OutPar *par,
 				wid = 0;
 			}
 		}
-		while (--n >= 0) (*ostr)((uchar*)"0", 1, par);
+		while (--n >= 0) (*ostr)((unsigned char*)"0", 1, par);
 
 		/* Output item string */
 		(*ostr)(cbs, cbe - cbs, par);
 
 		/* Output tailing spaces */
-		while (--wid >= 0) (*ostr)((uchar*)" ", 1, par);
+		while (--wid >= 0) (*ostr)((unsigned char*)" ", 1, par);
 	}
 
 	/* Output last fix string */
@@ -274,7 +274,7 @@ static	void	_vsprintf(OutFn ostr, OutPar *par,
 /*
  *	Output to console
  */
-static	void	out_cons(uchar *str, int len,  OutPar *par)
+static	void	out_cons(unsigned char *str, int len,  OutPar *par)
 {
 #if	OUTBUF_SZ == 0
 	/* Direct output to console */
@@ -306,7 +306,7 @@ int	tm_vprintf(const char *format, va_list ap)
 {
 #if	OUTBUF_SZ == 0
 	short	len = 0;
-	_vsprintf(out_cons, (OutPar*)&len, (const uchar *)format, ap);
+	_vsprintf(out_cons, (OutPar*)&len, (const unsigned char *)format, ap);
 	return len;
 #else
 	char	obuf[OUTBUF_SZ];
@@ -314,7 +314,7 @@ int	tm_vprintf(const char *format, va_list ap)
 
 	par.len = par.cnt = 0;
 	par.bufp = obuf;
-	_vsprintf(out_cons, (OutPar*)&par, (const uchar *)format, ap);
+	_vsprintf(out_cons, (OutPar*)&par, (const unsigned char *)format, ap);
 	va_end(ap);
 	return par.len;
 #endif	
@@ -335,7 +335,7 @@ int	tm_printf(const char *format, ...)
 /*
  *	Output to buffer
  */
-static	void	out_buf(uchar *str, int len, OutPar *par)
+static	void	out_buf(unsigned char *str, int len, OutPar *par)
 {
 	par->len += len;
 	while (--len >= 0) *(par->bufp)++ = *str++;
@@ -346,8 +346,8 @@ int	tm_vsprintf(char *str, const char *format, va_list ap)
 	OutPar	par;
 
 	par.len = 0;
-	par.bufp = (uchar*)str;
-	_vsprintf(out_buf, &par, (const uchar *)format, ap);
+	par.bufp = (unsigned char*)str;
+	_vsprintf(out_buf, &par, (const unsigned char *)format, ap);
 	str[par.len] = '\0';
 	return par.len;
 }
