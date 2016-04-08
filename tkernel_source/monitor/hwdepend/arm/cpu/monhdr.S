@@ -74,18 +74,26 @@ _defaultHdr:
 
 	and	r6, r7, #0x1F
 	cmp	r6, #0x10		@ usr: Normal program execution mode
-	beq	100f
+	popeq	{r4, r5, r6, r7, pc}
+
 
 	cmp	r6, #0x13
-	bicne	r7, #0x1F
-	orrne	r7, #0x13		@ svc: A protected mode for the operating system
-	msrne	cpsr, r7
+	bne	100f
+	beq	200f
+
+100:
+	bic	r7, #0x1F
+	orr	r7, #0x13		@ svc: A protected mode for the operating system
+	msr	cpsr, r7
 
 	bl	entMonitor		@ don't switch modes in 'entMonitor'
 
 	mrs	r7, spsr
 	msr	cpsr, r7
-100:
+	pop	{r4, r5, r6, r7, pc}
+
+200:
+	bl	entMonitor
 	pop	{r4, r5, r6, r7, pc}
 
 
