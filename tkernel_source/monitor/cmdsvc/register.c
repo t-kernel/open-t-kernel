@@ -23,7 +23,7 @@
 #include <sys/sysinfo.h>
 
 EXPORT	UW	regStack[39 + 10 + 2];
-
+IMPORT UW __stack_regs[16][32];
 /*
         register definition table
 
