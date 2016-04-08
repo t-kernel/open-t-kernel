@@ -50,8 +50,6 @@ IMPORT BOOL pciSVC( W fno, W p1, W p2, W p3, W *er )		WEAK;
 IMPORT BOOL usbSVC( W fno, W p1, W p2, W p3, W *er )		WEAK;
 IMPORT BOOL sysExtSVC( W fno, W p1, W p2, W p3, W *er )		WEAK;
 
-char version[]="ot-kernel";
-
 /*
  * calling submodule extended SVC function
  */
@@ -96,7 +94,6 @@ LOCAL W procExtSVC( W fno, W p1, W p2, W p3 )
 }
 
 /* ------------------------------------------------------------------------ */
-
 /*
  * service call
  */
