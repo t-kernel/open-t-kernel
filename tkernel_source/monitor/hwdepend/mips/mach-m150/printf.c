@@ -33,8 +33,6 @@
 /* Output Buffer size in stack */
 #define	OUTBUF_SZ	0
 
-typedef	unsigned char	uchar;
-
 extern	int	putChar(int c);
 extern	int	printk(uchar *s);
 
