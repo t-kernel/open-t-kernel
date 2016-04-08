@@ -84,15 +84,15 @@ IMPORT char const * const Title[];	 /* boot message */
  * service call function code
  */
 #define	TM_MONITOR	0
-#define	TM_GETCHAR	1
-#define	TM_PUTCHAR	2
-#define	TM_GETLINE	3
-#define	TM_PUTSTRING	4
-#define	TM_COMMAND	5
-#define	TM_READDISK	6
-#define	TM_WRITEDISK	7
-#define	TM_INFODISK	8
-#define	TM_EXIT		9
+#define	TM_GETCHAR	(TM_MONITOR + 1)
+#define	TM_PUTCHAR	(TM_MONITOR + 2)
+#define	TM_GETLINE	(TM_MONITOR + 3)
+#define	TM_PUTSTRING	(TM_MONITOR + 4)
+#define	TM_COMMAND	(TM_MONITOR + 5)
+#define	TM_READDISK	(TM_MONITOR + 6)
+#define	TM_WRITEDISK	(TM_MONITOR + 7)
+#define	TM_INFODISK	(TM_MONITOR + 8)
+#define	TM_EXIT		(TM_MONITOR + 9)
 
 #define	TM_EXTSVC	255
 
@@ -222,8 +222,9 @@ typedef struct {
 #define	MSA_RDB		0x20000	/* RAM disk area */
 
 /* page attribute (ARM) 1st level page table */
-#if CPU_ARM
-#if CPU_ARMv6
+#define __ARCH_ARM__
+#ifdef __ARCH_ARM__
+
 #define	PGA_RW		0x00402	/* Kernel/RW (effective section, AP0='1') */
 #define	PGA_RO		0x08402	/* Kernel/RO (effective section) AP0='1') */
 #define	PGA_XN		0x00010	/* code execution prohibited */
@@ -231,8 +232,8 @@ typedef struct {
 #define	PGA_NC		0x01000	/* TEX0:C:B='100', Normal, CacheOff */
 #define	PGA_D		0x00004	/* TEX0:C:B='001', Device, CacheOff */
 #define	PGA_S		0x10000	/* shareable */
-#endif	/*CPU_ARMv6*/
-#endif	/*CPU_ARM*/
+
+#endif
 
 /*
  * obtaining memory region information
