@@ -378,7 +378,7 @@ CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
 
 # Use USERINCLUDE when you must reference the UAPI directories only.
-USERINCLUDE    := \
+__USERINCLUDE    := \
 		-I$(srctree)/sysdepend/$(hdr-arch)/include/uapi \
 		-Isysdepend/$(hdr-arch)/include/generated/uapi \
 		-I$(srctree)/include/uapi \
@@ -387,7 +387,7 @@ USERINCLUDE    := \
 
 # Use LINUXINCLUDE when you must reference the include/ directory.
 # Needed to be compatible with the O= option
-LINUXINCLUDE    := \
+__LINUXINCLUDE    := \
 		-I$(srctree)/sysdepend/$(hdr-arch)/include \
 		-Isysdepend/$(hdr-arch)/include/generated/uapi \
 		-Isysdepend/$(hdr-arch)/include/generated \
@@ -550,7 +550,8 @@ ifeq ($(KBUILD_EXTMOD),)
 # Carefully list dependencies so we do not try to build scripts twice
 # in parallel
 PHONY += scripts
-scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
+scripts: ;
+__scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
 	 asm-generic
 	$(Q)$(MAKE) $(build)=$(@)
 
@@ -990,7 +991,8 @@ prepare0: archprepare FORCE
 	$(Q)$(MAKE) $(build)=.
 
 # All the preparing..
-prepare: prepare0
+__prepare: prepare0
+prepare: ;
 
 # Generate some files
 # ---------------------------------------------------------------------------
