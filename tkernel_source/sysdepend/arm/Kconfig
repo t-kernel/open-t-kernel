@@ -292,9 +292,9 @@ config PGTABLE_LEVELS
 	default 3 if ARM_LPAE
 	default 2
 
-source "init/Kconfig"
+#source "init/Kconfig"
 
-source "kernel/Kconfig.freezer"
+#source "kernel/Kconfig.freezer"
 
 menu "System Type"
 
@@ -824,132 +824,21 @@ config ARCH_VIRT
 # Kconfigs may be included either alphabetically (according to the
 # plat- suffix) or along side the corresponding mach-* source.
 #
-source "arch/arm/mach-mvebu/Kconfig"
+#source "sysdepend/arm/mach-at91/Kconfig"
 
-source "arch/arm/mach-alpine/Kconfig"
+#source "sysdepend/arm/mach-imx/Kconfig"
 
-source "arch/arm/mach-asm9260/Kconfig"
+#source "sysdepend/arm/mach-realview/Kconfig"
 
-source "arch/arm/mach-at91/Kconfig"
+#source "sysdepend/arm/mach-s3c24xx/Kconfig"
 
-source "arch/arm/mach-axxia/Kconfig"
+#source "sysdepend/arm/mach-s5pv210/Kconfig"
 
-source "arch/arm/mach-bcm/Kconfig"
+#source "sysdepend/arm/plat-samsung/Kconfig"
 
-source "arch/arm/mach-berlin/Kconfig"
 
-source "arch/arm/mach-clps711x/Kconfig"
 
-source "arch/arm/mach-cns3xxx/Kconfig"
 
-source "arch/arm/mach-davinci/Kconfig"
-
-source "arch/arm/mach-digicolor/Kconfig"
-
-source "arch/arm/mach-dove/Kconfig"
-
-source "arch/arm/mach-ep93xx/Kconfig"
-
-source "arch/arm/mach-footbridge/Kconfig"
-
-source "arch/arm/mach-gemini/Kconfig"
-
-source "arch/arm/mach-highbank/Kconfig"
-
-source "arch/arm/mach-hisi/Kconfig"
-
-source "arch/arm/mach-integrator/Kconfig"
-
-source "arch/arm/mach-iop32x/Kconfig"
-
-source "arch/arm/mach-iop33x/Kconfig"
-
-source "arch/arm/mach-iop13xx/Kconfig"
-
-source "arch/arm/mach-ixp4xx/Kconfig"
-
-source "arch/arm/mach-keystone/Kconfig"
-
-source "arch/arm/mach-ks8695/Kconfig"
-
-source "arch/arm/mach-meson/Kconfig"
-
-source "arch/arm/mach-moxart/Kconfig"
-
-source "arch/arm/mach-mv78xx0/Kconfig"
-
-source "arch/arm/mach-imx/Kconfig"
-
-source "arch/arm/mach-mediatek/Kconfig"
-
-source "arch/arm/mach-mxs/Kconfig"
-
-source "arch/arm/mach-netx/Kconfig"
-
-source "arch/arm/mach-nomadik/Kconfig"
-
-source "arch/arm/mach-nspire/Kconfig"
-
-source "arch/arm/plat-omap/Kconfig"
-
-source "arch/arm/mach-omap1/Kconfig"
-
-source "arch/arm/mach-omap2/Kconfig"
-
-source "arch/arm/mach-orion5x/Kconfig"
-
-source "arch/arm/mach-picoxcell/Kconfig"
-
-source "arch/arm/mach-pxa/Kconfig"
-source "arch/arm/plat-pxa/Kconfig"
-
-source "arch/arm/mach-mmp/Kconfig"
-
-source "arch/arm/mach-qcom/Kconfig"
-
-source "arch/arm/mach-realview/Kconfig"
-
-source "arch/arm/mach-rockchip/Kconfig"
-
-source "arch/arm/mach-sa1100/Kconfig"
-
-source "arch/arm/mach-socfpga/Kconfig"
-
-source "arch/arm/mach-spear/Kconfig"
-
-source "arch/arm/mach-sti/Kconfig"
-
-source "arch/arm/mach-s3c24xx/Kconfig"
-
-source "arch/arm/mach-s3c64xx/Kconfig"
-
-source "arch/arm/mach-s5pv210/Kconfig"
-
-source "arch/arm/mach-exynos/Kconfig"
-source "arch/arm/plat-samsung/Kconfig"
-
-source "arch/arm/mach-shmobile/Kconfig"
-
-source "arch/arm/mach-sunxi/Kconfig"
-
-source "arch/arm/mach-prima2/Kconfig"
-
-source "arch/arm/mach-tegra/Kconfig"
-
-source "arch/arm/mach-u300/Kconfig"
-
-source "arch/arm/mach-ux500/Kconfig"
-
-source "arch/arm/mach-versatile/Kconfig"
-
-source "arch/arm/mach-vexpress/Kconfig"
-source "arch/arm/plat-versatile/Kconfig"
-
-source "arch/arm/mach-vt8500/Kconfig"
-
-source "arch/arm/mach-w90x900/Kconfig"
-
-source "arch/arm/mach-zynq/Kconfig"
 
 # Definitions to make life easier
 config ARCH_ACORN
@@ -981,9 +870,9 @@ config ARM_TIMER_SP804
 	select CLKSRC_MMIO
 	select CLKSRC_OF if OF
 
-source "arch/arm/firmware/Kconfig"
+#source "arch/arm/firmware/Kconfig"
 
-source arch/arm/mm/Kconfig
+#source arch/arm/mm/Kconfig
 
 config IWMMXT
 	bool "Enable iWMMXt support"
@@ -999,7 +888,7 @@ config MULTI_IRQ_HANDLER
 	  Allow each machine to specify it's own IRQ handler at run time.
 
 if !MMU
-source "arch/arm/Kconfig-nommu"
+#source "arch/arm/Kconfig-nommu"
 endif
 
 config PJ4B_ERRATA_4742
@@ -1232,7 +1121,7 @@ config ARM_ERRATA_773022
 
 endmenu
 
-source "arch/arm/common/Kconfig"
+#source "arch/arm/common/Kconfig"
 
 menu "Bus support"
 
@@ -1284,10 +1173,10 @@ config PCI_HOST_ITE8152
 	default y
 	select DMABOUNCE
 
-source "drivers/pci/Kconfig"
-source "drivers/pci/pcie/Kconfig"
+#source "drivers/pci/Kconfig"
+#source "drivers/pci/pcie/Kconfig"
 
-source "drivers/pcmcia/Kconfig"
+#source "drivers/pcmcia/Kconfig"
 
 endmenu
 
@@ -1492,7 +1381,7 @@ config ARCH_NR_GPIO
 
 	  If unsure, leave the default value.
 
-source kernel/Kconfig.preempt
+#source kernel/Kconfig.preempt
 
 config HZ_FIXED
 	int
@@ -1682,7 +1571,7 @@ config HAVE_ARCH_TRANSPARENT_HUGEPAGE
 config ARCH_WANT_GENERAL_HUGETLB
 	def_bool y
 
-source "mm/Kconfig"
+#source "mm/Kconfig"
 
 config FORCE_MAX_ZONEORDER
 	int "Maximum zone order" if ARCH_SHMOBILE_LEGACY
@@ -1995,9 +1884,9 @@ endmenu
 
 menu "CPU Power Management"
 
-source "drivers/cpufreq/Kconfig"
+#source "drivers/cpufreq/Kconfig"
 
-source "drivers/cpuidle/Kconfig"
+#source "drivers/cpuidle/Kconfig"
 
 endmenu
 
@@ -2077,13 +1966,13 @@ endmenu
 
 menu "Userspace binary formats"
 
-source "fs/Kconfig.binfmt"
+#source "fs/Kconfig.binfmt"
 
 endmenu
 
 menu "Power management options"
 
-source "kernel/power/Kconfig"
+#source "kernel/power/Kconfig"
 
 config ARCH_SUSPEND_POSSIBLE
 	depends on CPU_ARM920T || CPU_ARM926T || CPU_FEROCEON || CPU_SA1100 || \
@@ -2100,23 +1989,23 @@ config ARCH_HIBERNATION_POSSIBLE
 
 endmenu
 
-source "net/Kconfig"
+#source "net/Kconfig"
 
-source "drivers/Kconfig"
+#source "drivers/Kconfig"
 
-source "drivers/firmware/Kconfig"
+#source "drivers/firmware/Kconfig"
 
-source "fs/Kconfig"
+#source "fs/Kconfig"
 
-source "arch/arm/Kconfig.debug"
+#source "arch/arm/Kconfig.debug"
 
-source "security/Kconfig"
+#source "security/Kconfig"
 
-source "crypto/Kconfig"
+#source "crypto/Kconfig"
 if CRYPTO
-source "arch/arm/crypto/Kconfig"
+#source "arch/arm/crypto/Kconfig"
 endif
 
-source "lib/Kconfig"
+#source "lib/Kconfig"
 
-source "arch/arm/kvm/Kconfig"
+#source "arch/arm/kvm/Kconfig"
