@@ -379,8 +379,8 @@ CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
 # Use USERINCLUDE when you must reference the UAPI directories only.
 USERINCLUDE    := \
-		-I$(srctree)/sysdepend$(hdr-arch)/include/uapi \
-		-Isysdepend$(hdr-arch)/include/generated/uapi \
+		-I$(srctree)/sysdepend/$(hdr-arch)/include/uapi \
+		-Isysdepend/$(hdr-arch)/include/generated/uapi \
 		-I$(srctree)/include/uapi \
 		-Iinclude/generated/uapi \
                 -include $(srctree)/include/linux/kconfig.h
@@ -388,9 +388,9 @@ USERINCLUDE    := \
 # Use LINUXINCLUDE when you must reference the include/ directory.
 # Needed to be compatible with the O= option
 LINUXINCLUDE    := \
-		-I$(srctree)/sysdepend$(hdr-arch)/include \
-		-Isysdepend$(hdr-arch)/include/generated/uapi \
-		-Isysdepend$(hdr-arch)/include/generated \
+		-I$(srctree)/sysdepend/$(hdr-arch)/include \
+		-Isysdepend/$(hdr-arch)/include/generated/uapi \
+		-Isysdepend/$(hdr-arch)/include/generated \
 		$(if $(KBUILD_SRC), -I$(srctree)/include) \
 		-Iinclude \
 		$(USERINCLUDE)
@@ -467,9 +467,9 @@ endif
 PHONY += asm-generic
 asm-generic:
 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic \
-	            src=asm obj=sysdepend$(SRCARCH)/include/generated/asm
+	            src=asm obj=sysdepend/$(SRCARCH)/include/generated/asm
 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic \
-	            src=uapi/asm obj=sysdepend$(SRCARCH)/include/generated/uapi/asm
+	            src=uapi/asm obj=sysdepend/$(SRCARCH)/include/generated/uapi/asm
 
 # To make sure we do not include .config for any of the *config targets
 # catch them early, and hand them over to scripts/kconfig/Makefile
@@ -531,7 +531,7 @@ ifeq ($(config-targets),1)
 # Read arch specific Makefile to set KBUILD_DEFCONFIG as needed.
 # KBUILD_DEFCONFIG may point out an alternative default configuration
 # used for 'make defconfig'
-include sysdepend/$(SRCARCH)/Makefile
+include sysdepend//$(SRCARCH)/Makefile
 export KBUILD_DEFCONFIG KBUILD_KCONFIG
 
 config: scripts_basic outputmakefile FORCE
@@ -607,7 +607,7 @@ endif # $(dot-config)
 # Defaults to vmlinux, but the arch makefile usually adds further targets
 all: vmlinux
 
-include sysdepend$(SRCARCH)/Makefile
+include sysdepend/$(SRCARCH)/Makefile
 
 KBUILD_CFLAGS	+= $(call cc-option,-fno-delete-null-pointer-checks,)
 
@@ -802,7 +802,7 @@ endif
 # Default kernel image to build when no specific target is given.
 # KBUILD_IMAGE may be overruled on the command line or
 # set in the environment
-# Also any assignments in sysdepend$(ARCH)/Makefile take precedence over
+# Also any assignments in sysdepend/$(ARCH)/Makefile take precedence over
 # this default value
 export KBUILD_IMAGE ?= vmlinux
 
@@ -904,7 +904,7 @@ libs-y		:= $(libs-y1) $(libs-y2)
 # Externally visible symbols (used by link-vmlinux.sh)
 export KBUILD_VMLINUX_INIT := $(head-y) $(init-y)
 export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y)
-export KBUILD_LDS          := sysdepend$(SRCARCH)/kernel/vmlinux.lds
+export KBUILD_LDS          := sysdepend/$(SRCARCH)/kernel/vmlinux.lds
 export LDFLAGS_vmlinux
 # used by scripts/pacmage/Makefile
 export KBUILD_ALLDIRS := $(sort $(filter-out arch/%,$(vmlinux-alldirs)) arch Documentation include samples scripts tools virt)
@@ -1060,10 +1060,10 @@ headers_install_all:
 
 PHONY += headers_install
 headers_install: __headers
-	$(if $(wildcard $(srctree)/sysdepend$(hdr-arch)/include/uapi/asm/Kbuild),, \
+	$(if $(wildcard $(srctree)/sysdepend/$(hdr-arch)/include/uapi/asm/Kbuild),, \
 	  $(error Headers not exportable for the $(SRCARCH) architecture))
 	$(Q)$(MAKE) $(hdr-inst)=include/uapi
-	$(Q)$(MAKE) $(hdr-inst)=sysdepend$(hdr-arch)/include/uapi/asm $(hdr-dst)
+	$(Q)$(MAKE) $(hdr-inst)=sysdepend/$(hdr-arch)/include/uapi/asm $(hdr-dst)
 
 PHONY += headers_check_all
 headers_check_all: headers_install_all
@@ -1072,7 +1072,7 @@ headers_check_all: headers_install_all
 PHONY += headers_check
 headers_check: headers_install
 	$(Q)$(MAKE) $(hdr-inst)=include/uapi HDRCHECK=1
-	$(Q)$(MAKE) $(hdr-inst)=sysdepend$(hdr-arch)/include/uapi/asm $(hdr-dst) HDRCHECK=1
+	$(Q)$(MAKE) $(hdr-inst)=sysdepend/$(hdr-arch)/include/uapi/asm $(hdr-dst) HDRCHECK=1
 
 # ---------------------------------------------------------------------------
 # Kernel selftest
@@ -1237,9 +1237,9 @@ rpm: include/config/kernel.release FORCE
 # Brief documentation of the typical targets used
 # ---------------------------------------------------------------------------
 
-boards := $(wildcard $(srctree)/sysdepend$(SRCARCH)/configs/*_defconfig)
+boards := $(wildcard $(srctree)/sysdepend/$(SRCARCH)/configs/*_defconfig)
 boards := $(sort $(notdir $(boards)))
-board-dirs := $(dir $(wildcard $(srctree)/sysdepend$(SRCARCH)/configs/*/*_defconfig))
+board-dirs := $(dir $(wildcard $(srctree)/sysdepend/$(SRCARCH)/configs/*/*_defconfig))
 board-dirs := $(sort $(notdir $(board-dirs:/=)))
 
 help:
@@ -1329,7 +1329,7 @@ help-board-dirs := $(addprefix help-,$(board-dirs))
 
 help-boards: $(help-board-dirs)
 
-boards-per-dir = $(sort $(notdir $(wildcard $(srctree)/sysdepend$(SRCARCH)/configs/$*/*_defconfig)))
+boards-per-dir = $(sort $(notdir $(wildcard $(srctree)/sysdepend/$(SRCARCH)/configs/$*/*_defconfig)))
 
 $(help-board-dirs): help-%:
 	@echo  'Architecture specific targets ($(SRCARCH) $*):'
