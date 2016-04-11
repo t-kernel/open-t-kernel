@@ -1,6 +1,6 @@
 /*
  * original: tkernel_source/monitor/cmdsvc/src/armv6/monhdr.S
- * 
+ *
  * store registers to __stack_regs and branch to monitor.
  * initial for arm926ej-s core
  */
@@ -50,7 +50,6 @@
 	.type	_defaultHdr, %function
 _defaultHdr:
 
-	b	Csym(entMonitor)	// call entMonitor(vec)
 /*
  * save registers
  * __stack_regs_limit[0x00-0x0F] usr,     r0-r14, cpsr
@@ -65,40 +64,23 @@ _defaultHdr:
  */
 
 /*
- * usr mode -> return
  * svc mode -> go
+ * usr & other mode -> return
  * the caller must have it's own stack and the registers saved to it's own stack.
  */
 
  	@ check mode, r4, 5, 6, 7
-	push	{r4, r5, r6, r7, lr} 
-	mrs	r7, cpsr
+	push	{lr}
+	mrs	lr, cpsr
 
-	and	r6, r7, #0x1F
-	cmp	r6, #0x10		@ usr: Normal program execution mode
-	popeq	{r4, r5, r6, r7, pc}
-
-
-	cmp	r6, #0x13
-	bne	100f
-	beq	200f
-
-100:
-	bic	r7, #0x1F
-	orr	r7, #0x13		@ svc: A protected mode for the operating system
-	msr	cpsr, r7
+	and	lr, lr, #0x1F
+	cmp	lr, #0x13		@ svc mode only.
+	popne	{lr}
+	bxne	lr
 
 	bl	entMonitor		@ don't switch modes in 'entMonitor'
-
-	mrs	r7, spsr
-	msr	cpsr, r7
-	pop	{r4, r5, r6, r7, pc}
-
-200:
-	bl	entMonitor
-	pop	{r4, r5, r6, r7, pc}
-
-
+	pop	{lr}
+	bx	lr
 
 /* ------------------------------------------------------------------------ */
 
@@ -111,6 +93,7 @@ _defaultHdr:
 	.globl	Csym(callExtProg)
 	.type	Csym(callExtProg), %function
 Csym(callExtProg):
-	stmfd	sp!, {r4-r10, fp, lr}	// save registers
+	push	{r4-r10, fp, lr}	// save registers
 	blx	r0			// call entry(void)
-	ldmfd	sp!, {r4-r10, fp, pc}	// restore registers
+	pop	{r4-r10, fp, lr}	// restore registers
+	mov	pc, lr
