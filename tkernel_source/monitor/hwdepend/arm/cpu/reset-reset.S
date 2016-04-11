@@ -38,6 +38,7 @@
 ----------------------------------------------------------------------*/
 	.section .startup
 	.globl	startup_entry
+	.globl	reset_entry
 	.global __vectors_start
 	.arm
 startup_entry:
@@ -50,12 +51,14 @@ startup_entry:
 	cmp	r6, #0x10
 	bxeq	lr		@ error, user mode
 	bic	r7, #0x1F
-	orr	r7, #0xD3	@ disable FIQ IRQ Supervisor Mode
+	orr	r7, #0xD3	@ disable FIQ IRQ and enter Supervisor Mode
 	msr	cpsr, r7
 
 // use On-Chip SRAM as stack area
 #ifdef CONFIG_TM_INIT_SP
 	ldr	sp, =CONFIG_TM_INIT_SP
+#else
+#error "I don't want to work without a stack"
 #endif
 
 // not in effect: MMU, cache (D/I), program-flow prediction, High-Vector, VIC
@@ -114,25 +117,14 @@ tc_loop:
 #if CONFIG_MMU
 	b	.
 #endif
-
-// perform reset processing
-@ no return jump?
-	b	reset_entry
-@ End of startup_entry
-	.pool
-
-
 /*----------------------------------------------------------------------
         Reset processing
 ----------------------------------------------------------------------*/
-	.text
-	.align	2
-	.globl	reset_entry
 reset_entry:
 // SVC mode, FIQ/IRQ interrupt disabled
 	mrs	r0, cpsr
-	bic	r0, #0x1f
-	orr	r0, #0xd3
+	bic	r0, #0x1F
+	orr	r0, #0xD3
 	msr	cpsr, r0
 
 
@@ -180,16 +172,13 @@ reset_entry:
 #define __STACK_SIZE		(CONFIG_TM_STACK_SIZE)
 #define __STACK_LIMIT		(__STACK_TOP - __STACK_SIZE)
 #define __STACK_REGS		(__STACK_TOP        - 0x020)	/* regs top  */
-#define __STACK_FIQ		(__STACK_REGS       - 0x200)	/* regs      */
-#define __STACK_IRQ		(__STACK_FIQ        - 0x200)	/* fiq	     */
-#define __STACK_SVC		(__STACK_IRQ        - 0x200)	/* irq	     */
-#define __STACK_ABORT		(__STACK_SVC        - 0x200)	/* svc	     */
-#define __STACK_UNDEFINED	(__STACK_ABORT      - 0x200)	/* abort     */
-#define __STACK_SYSTEM		(__STACK_UNDEFINED  - 0x200)	/* undefined */
-	ldr	sp, =__stack_system
-	mrs	r7, cpsr
-@
-@
+#define __STACK_FIQ		(__STACK_REGS       - 0x800)	/* regs      */
+#define __STACK_IRQ		(__STACK_FIQ        - 0x800)	/* fiq	     */
+#define __STACK_SVC		(__STACK_IRQ        - 0x800)	/* irq	     */
+#define __STACK_ABORT		(__STACK_SVC        - 0x800)	/* svc	     */
+#define __STACK_UNDEFINED	(__STACK_ABORT      - 0x800)	/* abort     */
+#define __STACK_SYSTEM		(__STACK_UNDEFINED  - 0x800)	/* undefined */
+
 @ +--------------------------
 @ + not used     16B
 @ +--------------------------
@@ -215,21 +204,21 @@ reset_entry:
 @ r7: cpsr
 @ r6: scatch
 @ r0: zero
+	mov	r0, #0
+
 	mrs	r7, cpsr
-	bic	r7, #0x1F
-	orr	r7, #(0<<5)		@ Thumb state bit
+	bic	r7, #(1<<5)		@ Thumb state bit
 	orr	r7, #(1<<6)		@ FIQ disable
 	orr	r7, #(1<<7)		@ IRQ disable
 #if __TRON_ARM_ARCH__ >= 7
-	orr	r7, #(0<<8)		@ Imprecise abort disable bit
+	bic	r7, #(1<<8)		@ Imprecise abort disable bit
 #endif
-	orr	r7, #(0<<9)		@ Data endianness bit
+	bic	r7, #(1<<9)		@ Data endianness bit
 
 @ FIQ: 10001
 	bic	r7, #0x1F
 	orr	r7, #0x13
 	msr	cpsr, r7		@ switch to fiq mode
-	msr	spsr, r0
 	mov	r8,  r0
 	mov	r9,  r0
 	mov	r10, r0
@@ -243,7 +232,6 @@ reset_entry:
 	bic	r7, #0x1F
 	orr	r7, #0x12
 	msr	cpsr, r7		@ switch to irq mode
-	msr	spsr, r0
 
 	ldr	r13, __stack_irq
 	ldr	r14, =__unknow
@@ -252,7 +240,6 @@ reset_entry:
 	bic	r7, #0x1F
 	orr	r7, #0x13
 	msr	cpsr, r7
-	msr	spsr, r0
 
 	ldr	r13, __stack_svc
 	ldr	r14, =__unknow
@@ -261,7 +248,6 @@ reset_entry:
 	bic	r7, #0x1F
 	orr	r7, #0x17
 	msr	cpsr, r7
-	msr	spsr, r0
 
 	ldr	r13, __stack_abort
 	ldr	r14, =__unknow
@@ -270,7 +256,6 @@ reset_entry:
 	bic	r7, #0x1F
 	orr	r7, #0x1B
 	msr	cpsr, r7
-	msr	spsr, r0
 
 	ldr	r13, __stack_undefined
 	ldr	r14, =__unknow
@@ -281,12 +266,8 @@ reset_entry:
 	orr	r7, #0x1F
 	msr	cpsr, r7
 
-	ldr	r13, __stack_system
+	ldr	r13, __stack_system	@ Open T-Monitor does not use this mode
 	ldr	r14, =__unknow
-
-#ifdef CONFIG_ARM_VFP
-	b	.			@ TODO
-#endif
 
 @ back to SVC mode
 	bic	r7, #0x1F
@@ -350,13 +331,12 @@ __vectors_start:
 27:	.word	fiq_entry
 __vectors_end:
 
-
-
 	.global	__unknow
 __unknow:
-	mov	r10, lr
+	push	{lr}
 	ldr	r0, =__unknow_msg
 	bl	puts_ll
+	pop	{lr}
 	b	.
 __unknow_msg:
 .asciz	"You should not return here."
