@@ -1,0 +1,11 @@
+obj-y += accept.o
+obj-y += ata.o
+obj-y += atacmd.o
+obj-y += ataio.o
+obj-y += common.o
+obj-y += inthdr.o
+obj-y += main.o
+obj-y += mem.o
+obj-y += mmc-common.o
+obj-y += mmc-em1d512.o
+obj-y += pccard.o

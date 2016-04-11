@@ -1,0 +1,10 @@
+obj-y += accept.o
+obj-y += devcmd.o
+obj-y += etc.o
+obj-y += innevt.o
+obj-y += key.o
+obj-y += main.o
+obj-y += pdbut.o
+obj-y += pdsim.o
+obj-y += receive.o
+obj-y += statmach.o
