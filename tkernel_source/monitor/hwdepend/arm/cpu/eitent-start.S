@@ -144,17 +144,8 @@ irq_entry:
 	orr	lr, #(1<<7)
 	msr	cpsr, lr
 
-	ldr	lr, =flag
 	str	lr, [lr]
 
-	ldr	r0, =irqmsg
-	bl	printk
-
-
-	mrs	r0, cpsr
-	ldr	lr, =1f
-	blx	lr
-1:	mrs	r1, cpsr
 	ldr	lr, =do_irq
 	blx	lr
 
@@ -176,22 +167,13 @@ irqmsg:
  */
  	
 undef_entry:
-	push	{r0}
-	mrs	r0, spsr
-@ TODO: check if sp < __stack_system
 	push	{r0-r12, r14}
 
 	ldr	lr, =EIT_ENTRY(EIT_UNDEF)
 	ldr	lr, [lr]
 	blx	lr
 
-	mov	r0, lr
-	bl	printh
-
 	pop	{r0-r12, r14}
-	msr	spsr, r0
-	pop	{r0}
-
 	movs	pc, lr
 
 /*
@@ -220,8 +202,6 @@ undef_entry:
  */
 
 svc_entry:
-	push	{r0}
-	mrs	r0, spsr
 	push	{r0-r12, lr}
 
 	ldrb	r0, [lr]
@@ -231,9 +211,6 @@ svc_entry:
 	blx	lr
 
 	pop	{r0-r12, lr}
-	msr	spsr, r0
-	pop	{r0}
-
 	movs	pc, lr
 
 /*
@@ -250,22 +227,13 @@ svc_entry:
  *       lr = indeterminate
  */
 iabort_entry:
-	push	{r0}
-	mrs	r0, spsr
-	push	{r0-r12, r14}
-
-	mov	r1, #'I'
-	bl	putSIO_mx28
+	push	{r0-r12, lr}
 
 	mov	r0, lr
 	bl	printh
 
-	pop	{r0-r12, r14}
-	msr	spsr, r0
-	pop	{r0}
-
-	bx	lr
-
+	pop	{r0-r12, lr}
+	movs	pc, lr
 
 /*
  * data abort
@@ -288,33 +256,15 @@ dabort_entry:
 	subne	lr, #6
 	push	{lr}
 
-	ldr	r7, =EIT_ENTRY(EIT_DABORT)
-	ldr	r7, [r7]
-	blx	r7
+	ldr	lr, =EIT_ENTRY(EIT_DABORT)
+	ldr	lr, [lr]
+	blx	lr
 
 	pop	{lr}
 	pop	{r0-r12}
 	movs	pc, lr
 	
 	
-#if 0
-	push	{r7}
-	mrs	r7, spsr
-	tst	r7, #(1<<5)
-	subeq	lr, #4		@ arm
-	subne	lr, #6		@ thumb
-	push	{r0-r12, r14}
-
-	ldr	r7, =EIT_ENTRY(EIT_DABORT)
-	ldr	r7, [r7]
-	blx	r7
-
-	pop	{r0-r12, r14}
-	msr	spsr, r7
-	pop	{r7}
-
-	movs	pc, lr
-#endif
 /*
  * default handler
  *       stack contains the details of the generated exception.
@@ -326,6 +276,5 @@ dabort_entry:
  */
 default_entry:
 	bx	lr
-
-
 	.pool
+
