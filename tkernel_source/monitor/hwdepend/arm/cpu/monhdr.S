@@ -63,13 +63,19 @@ _defaultHdr:
  * TODO: cp15
  */
 
+#define stack_regs_usr 0
+#define stack_regs_fiq 0
+#define stack_regs_irq 0
+#define stack_regs_svc 0
+#define stack_regs_abt 0
+#define stack_regs_und 0
+#define stack_regs_sys 0
+
 /*
  * svc mode -> go
  * usr & other mode -> return
- * the caller must have it's own stack and the registers saved to it's own stack.
  */
 
- 	@ check mode, r4, 5, 6, 7
 	push	{lr}
 	mrs	lr, cpsr
 
@@ -77,8 +83,58 @@ _defaultHdr:
 	cmp	lr, #0x13		@ svc mode only.
 	popne	{lr}
 	bxne	lr
+/* else we are in svc mode */
+/* save sys and usr in svc mode, r0-r7 */
+	ldr	lr, =stack_regs_usr
+	ldr	lr, [lr]
+
+	stmia	lr, {r0-r7}		@ Now, we can work with r0-r7
+/* svc mode */
+	ldr	lr, =stack_regs_svc
+	ldr	r7, [sp, #4]
+	stmia	lr, {r13, r7}
+/* fiq mode */
+	mrs	r7, cpsr		@ r7 = cpsr
+	bic	r7, #0x1F
+	orr	r7, #0x11
+	msr	cpsr, r7
+
+	ldr	r6, =stack_regs_fiq
+	stmia	r6, {r8-r14}
+/* irq mode */
+	bic	r7, #0x1F
+	orr	r7, #0x12
+	msr	cpsr, r7
+
+	ldr	r6, =stack_regs_irq
+	stmia	r6, {r13, r14}
+/* abt mode */
+	bic	r7, #0x1F
+	orr	r7, #0x17
+	msr	cpsr, r7
+
+	ldr	r6, =stack_regs_abt
+	stmia	r6, {r13, r14}
+/* und mode */
+	bic	r7, #0x1F
+	orr	r7, #0x1C
+	msr	cpsr, r7
+
+	ldr	r6, =stack_regs_und
+	stmia	r6, {r13, r14}
+/* sys mode */
+	orr	r7, #0x1F
+	msr	cpsr, r7
+	ldr	r6, =stack_regs_usr
+	add	r6, #32
+	stmia	r6, {r7-r14}
+/* back to svc */
+	bic	r7, #0x1F
+	orr	r7, #0x13
+	msr	cpsr, r7
 
 	bl	entMonitor		@ don't switch modes in 'entMonitor'
+
 	pop	{lr}
 	bx	lr
 
