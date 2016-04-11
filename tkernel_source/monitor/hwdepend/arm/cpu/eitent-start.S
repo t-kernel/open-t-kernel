@@ -109,53 +109,16 @@ fiq_entry:				@ 1C : FIQ
 	subs	pc, lr, #4
 @ end of fiq
 
-__startup_entry:
-	mov	r0, #0
-	mov	r1, #'A'
-	bl	putSIO_mx28
-
-#if 0
-
-@	mov	r8-r12
-@ if we called from u-boot or...
-@	mov	r11, sp
-@	mov	r12, lr
-
-@ calc run-time offset
-	mov	r2, pc
-	ldr	r1, =1f
-	sub	r0, r2, r1
-1:	ldr	r2, =__vectors_start
-	add	r2, r2, r0		@ run-time address of 1
-	mov	r1, #0			@ assume V bit is zero
-
-	mov	r8, r0			@ ok, r0 = offset
-
-copy:	ldr	r0, [r2]
-	str	r0, [r1]		@ abort?
-verify:
-	ldr	r3, [r1]
-	cmp	r0, r3
-	movne	r0, #0xE1		@ Error #1, dest is not writeable?
-	bne	.			@ Error #1, hang
-
-	add	r1, #4
-	add	r2, #4
-	ldr	r0, =__vectors_end
-	cmp	r0, r2
-	bne	copy
-#endif
-	b	startup_entry
-
 	.weak syscall
-svc_r0: .word	0xEFEFEFEF
+__syscall:
+	.word	0xEFEFEFEF
 	bx	lr
 syscall:
 	bic	r0, #0xFF000000
 	orr	r0, #0xEF000000
-	str	r0, svc_r0
-	b	svc_r0
-	bx	lr
+	str	r0, __syscall
+	b	__syscall
+
 /*
  * interrupt
  *       ACPU interrupt mask status register of Interrupt controller (AINT)
@@ -199,9 +162,6 @@ irq_entry:
 	subs	pc, lr, #4
 irqmsg:
 .asciz "IRQ" 
-
-#ifdef CONFIG_MACH_EM1D
-#endif
 
 /*
  * undefined instruction
