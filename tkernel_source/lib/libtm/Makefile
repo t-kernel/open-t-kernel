@@ -1,0 +1,16 @@
+obj-y += _getchar.o
+obj-y += _getstring.o
+obj-y += _putchar.o
+obj-y += _putstring.o
+obj-y += tm_command.o
+obj-y += tm_exit.o
+obj-y += tm_extsvc.o
+obj-y += tm_getchar.o
+obj-y += tm_getline.o
+obj-y += tm_infodisk.o
+obj-y += tm_monitor.o
+obj-y += tm_printf.o
+obj-y += tm_putchar.o
+obj-y += tm_putstring.o
+obj-y += tm_readdisk.o
+obj-y += tm_writedisk.o
