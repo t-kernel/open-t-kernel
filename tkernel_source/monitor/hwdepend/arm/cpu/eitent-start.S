@@ -189,14 +189,12 @@ undef_entry:
  *       ip = vector table address
  *       lr = indeterminate
  *
- *	just care about the lowest byte of svc instruction, other bytes are ignored.
+ *	only the lowest byte of svc instruction handled, other bytes are ignored.
  *	hope it works with thumb mode.
  *	simply save all registers.
  *	  r0 = the vector number.
  *	+---------------+
- *	| r0		|
- *	| spsr		|
- *	| r1-r12	|
+ *	| r0-r12	|
  *	| lr		|
  *	+---------------+
  */
