@@ -45,7 +45,6 @@
 
 #include <machine.h>
 #include <tk/sysdef.h>
-#include <mach/em1d512.h>
 #include <sys/sysinfo.h>
 
 // see <sys/sysdepend/tef_em1d/sysinfo_depend.h>
