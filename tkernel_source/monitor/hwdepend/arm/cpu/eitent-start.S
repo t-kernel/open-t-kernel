@@ -81,7 +81,7 @@
 	.global undef_entry
 	.global irq_entry
 _start:
-	b	__startup_entry		@ 00 : reset
+	b	startup_entry		@ 00 : reset
 	b	undef_entry		@ 04 : undefined instruction
 	b	svc_entry		@ 08 : software interrupt
 	b	iabort_entry		@ 0C : prefetch abort
