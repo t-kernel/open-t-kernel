@@ -45,10 +45,13 @@ startup_entry:
 @ CORTEX-R4  NZCVQ[IT 1:0] J [DNM][GE 3:0][IT 7:2]EAIFTMMMMM page 3-9
 @ ARM lowlevel initial
 // SVC mode, FIQ/IRQ interrupt disabled
-	mrs	r0, cpsr
-	bic	r0, #0x1F
-	orr	r0, #0xD3	@ disable FIQ IRQ Supervisor Mode
-	msr	cpsr, r0
+	mrs	r7, cpsr
+	and	r6, #0x1F
+	cmp	r6, #0x10
+	bxeq	lr		@ error, user mode
+	bic	r7, #0x1F
+	orr	r7, #0xD3	@ disable FIQ IRQ Supervisor Mode
+	msr	cpsr, r7
 
 // use On-Chip SRAM as stack area
 #ifdef CONFIG_TM_INIT_SP
