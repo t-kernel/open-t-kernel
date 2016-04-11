@@ -21,10 +21,7 @@
 
 #include <tmonitor.h>
 #include <tm/tmonitor.h>
-
-#if CPU_ARMv6
-#  include <asm/cpudep.h>
-#endif
+#include <asm/cpudep.h>
 
 /* ======================================================================== */
 /*
