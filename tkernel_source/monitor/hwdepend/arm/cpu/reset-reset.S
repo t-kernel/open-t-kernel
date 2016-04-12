@@ -217,7 +217,7 @@ reset_entry:
 
 @ FIQ: 10001
 	bic	r7, #0x1F
-	orr	r7, #0x13
+	orr	r7, #0x11
 	msr	cpsr, r7		@ switch to fiq mode
 	mov	r8,  r0
 	mov	r9,  r0
