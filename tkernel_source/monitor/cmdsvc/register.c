@@ -23,7 +23,6 @@
 #include <sys/sysinfo.h>
 
 EXPORT	UW	regStack[39 + 10 + 2];
-IMPORT UW __stack_regs[16][32];
 /*
         register definition table
 
@@ -82,6 +81,32 @@ typedef	struct {
 
 #define	N_ACTREGS	(16 + 7 + 7 + 8 + 7 + 10)
 #define	N_REGS		(N_ACTREGS + 3)
+
+const char format[] = {
+	"r0     :[%08X]\n"
+	"r1     :[%08X]\n"
+	"r2     :[%08X]\n"
+	"r3     :[%08X]\n"
+	"r4     :[%08X]\n"
+	"r5     :[%08X]\n"
+	"r6     :[%08X]\n"
+	"r7     :[%08X]\n"
+	"r8     :[%08X]  "   "[%08X]\n"
+	"r9     :[%08X]  "   "[%08X]\n"
+	"r10/sl :[%08X]  "   "[%08X]\n"
+	"r11/fp :[%08X]  "   "[%08X]\n"
+	"r12/ip :[%08X]  "   "[%08X]\n"
+	"r13/sp :[%08X]  "   "[%08X]  "   "[%08X]  "   "[%08X]  "   "[%08X]  "   "[%08X]\n"
+	"r14/lr :[%08X]  "   "[%08X]  "   "[%08X]  "   "[%08X]  "   "[%08X]  "   "[%08X]\n"
+	"        "
+	"< USER   >  "
+	"< FIQ    >  "
+	"< IRQ    >  "
+	"< ABORT  >  "
+	"< SVC    >  "
+	"< undef  >\n"
+};
+
 
 LOCAL	const	REGTAB	regTab[N_REGS] = {
 	{"R0      ",	R_GEN + 0x00			},	/* 0 */
@@ -284,8 +309,28 @@ EXPORT	ER	setRegister(W regno, UW val)
 EXPORT	void	dispRegister(W regno)
 {
 	W	i, j, n, id, rid;
+	unsigned int *regs = (void *)0x200;
+
+	printk(format,
+		regs[0x00],
+		regs[0x01],
+		regs[0x02],
+		regs[0x03],
+		regs[0x04],
+		regs[0x05],
+		regs[0x06],
+		regs[0x07],
+		regs[0x08], regs[0x18],
+		regs[0x09], regs[0x19],
+		regs[0x0A], regs[0x1A],
+		regs[0x0B], regs[0x1B],
+		regs[0x0C], regs[0x1C],
+		regs[0x0D], regs[0x1D], regs[0x2D], regs[0x3D], regs[0x4D], regs[0x5D],
+		regs[0x0E], regs[0x1E], regs[0x2E], regs[0x3E], regs[0x4E], regs[0x5E]);
 
 	if (regno >= N_REGS) return;
+
+
 
 	id = (regno < 0) ? (R_GRP | R_GEN) : regTab[regno].id;
 

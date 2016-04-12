@@ -64,18 +64,17 @@ _defaultHdr:
  */
 
 #define stack_regs_usr 0x200
-#define stack_regs_fiq 0x400
-#define stack_regs_irq 0x600
-#define stack_regs_svc 0x800
-#define stack_regs_abt 0xA00
-#define stack_regs_und 0xC00
 #define stack_regs_sys 0x200
+#define stack_regs_fiq (stack_regs_usr+0x18*4)
+#define stack_regs_irq (stack_regs_usr+0x2D*4)
+#define stack_regs_abt (stack_regs_usr+0x3D*4)
+#define stack_regs_svc (stack_regs_usr+0x4D*4)
+#define stack_regs_und (stack_regs_usr+0x5D*4)
 
 /*
  * svc mode -> go
  * usr & other mode -> return
  */
-
 	push	{lr}
 	mrs	lr, cpsr
 
@@ -86,8 +85,6 @@ _defaultHdr:
 /* else we are in svc mode */
 /* save sys and usr in svc mode, r0-r7 */
 	ldr	lr, =stack_regs_usr
-	ldr	lr, [lr]
-
 	stmia	lr, {r0-r7}		@ Now, we can work with r0-r7
 /* svc mode */
 	ldr	r7, =stack_regs_svc
