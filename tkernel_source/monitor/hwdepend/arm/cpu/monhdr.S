@@ -63,13 +63,13 @@ _defaultHdr:
  * TODO: cp15
  */
 
-#define stack_regs_usr 0
-#define stack_regs_fiq 0
-#define stack_regs_irq 0
-#define stack_regs_svc 0
-#define stack_regs_abt 0
-#define stack_regs_und 0
-#define stack_regs_sys 0
+#define stack_regs_usr 0x200
+#define stack_regs_fiq 0x400
+#define stack_regs_irq 0x600
+#define stack_regs_svc 0x800
+#define stack_regs_abt 0xA00
+#define stack_regs_und 0xC00
+#define stack_regs_sys 0x200
 
 /*
  * svc mode -> go
@@ -90,9 +90,9 @@ _defaultHdr:
 
 	stmia	lr, {r0-r7}		@ Now, we can work with r0-r7
 /* svc mode */
-	ldr	lr, =stack_regs_svc
-	ldr	r7, [sp, #4]
-	stmia	lr, {r13, r7}
+	ldr	r7, =stack_regs_svc
+	ldr	lr, [sp, #4]
+	stmia	r7, {sp, lr}
 /* fiq mode */
 	mrs	r7, cpsr		@ r7 = cpsr
 	bic	r7, #0x1F
@@ -127,7 +127,7 @@ _defaultHdr:
 	msr	cpsr, r7
 	ldr	r6, =stack_regs_usr
 	add	r6, #32
-	stmia	r6, {r7-r14}
+	stmia	r6, {r8-r14}
 /* back to svc */
 	bic	r7, #0x1F
 	orr	r7, #0x13
@@ -145,11 +145,11 @@ _defaultHdr:
  * W callExtProg( FP entry )
  */
 	.text
-	.balign	4
-	.globl	Csym(callExtProg)
-	.type	Csym(callExtProg), %function
-Csym(callExtProg):
+	.align	2
+	.globl	callExtProg
+	.type	callExtProg, %function
+callExtProg:
 	push	{r4-r10, fp, lr}	// save registers
 	blx	r0			// call entry(void)
 	pop	{r4-r10, fp, lr}	// restore registers
-	mov	pc, lr
+	bx	lr
