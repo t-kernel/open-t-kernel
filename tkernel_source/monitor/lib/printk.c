@@ -58,6 +58,15 @@ int printi(char buf[], unsigned int i, int base, int cap)
 {
 	int j;
 	unsigned int mod;
+	unsigned int sign;
+
+	if(base == 10) {
+		sign = i & (1<<(sizeof(i)*8-1));
+		if(sign) i = ~i + 1;
+	}
+	else {
+		sign = 0;
+	}
 
 	if(cap) cap = 'A' - 10;
 	else cap = 'a' - 10;
@@ -74,6 +83,10 @@ int printi(char buf[], unsigned int i, int base, int cap)
 			buf[--j] = cap + mod;
 		}
 	} while(i);
+
+	if(sign) {
+		buf[--j] = '-';
+	}
 
 	return j;
 }
@@ -199,6 +212,7 @@ int main(int argc, char *argv[])
 	printks("hex: [%x]\n", 0xABCD1234);
 	printks("hex: [%X]\n", 0xABCDEF);
 	printks("dec: [%d]\n", 1234567890);
+	printks("dec: [%d]\n", -987654321);
 	printks("bin: [%b]\n", 0x8421);
 	printks("string: [%s]\n", "Hello World");
 	printks("100: [%%]\n", 100);
