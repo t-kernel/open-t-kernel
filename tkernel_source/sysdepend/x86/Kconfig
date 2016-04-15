@@ -1,0 +1,3 @@
+config XXX
+bool "x86 is not support."
+default n
