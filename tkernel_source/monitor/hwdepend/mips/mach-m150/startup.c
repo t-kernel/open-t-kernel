@@ -83,7 +83,7 @@ EXPORT	void	procReset( void )
 
 	/* Command */
 	if ( (dipSW() & 0x10) != 0 || fp == NULL ) {
-		DSP(("\n** T-Monitor for APP-M150 **\n"));
+		printk(("\n** T-Monitor for APP-M150 **\n"));
 		procCommand(&fp);
 	}
 
@@ -110,7 +110,7 @@ EXPORT	void	entMonitor( UW vec )
 		break;
 
 	case 42:	// Break Point (SYSCALL 42)
-		DSP(("\nBreak pc:%08X psr:%08X\n", adjCurPC(-4), getCurPSR()));
+		printk(("\nBreak pc:%08X psr:%08X\n", adjCurPC(-4), getCurPSR()));
 		procCommand(NULL);
 		break;
 
@@ -134,23 +134,23 @@ EXPORT	void	entMonitor( UW vec )
 			case 18: bp = "Trap Exception";	break;
 			case 20: bp = "FP Exception";		break;
 			default:
-				DSP(("\nUndefined Exception VEC-%d", vec));
+				printk(("\nUndefined Exception VEC-%d", vec));
 			}
 			if ( vec >= 6 && vec <= 10 )
-				DSP(("\n%s ADDR:%08X", bp, getBadAddr()));
-			else if ( bp != NULL) DSP(("\n%s", bp));
+				printk(("\n%s ADDR:%08X", bp, getBadAddr()));
+			else if ( bp != NULL) printk(("\n%s", bp));
 
 		} else if ( vec < 56 ) {	// SYSCALL
-			DSP(("\nUndefined SYSCALL %d", vec));
+			printk(("\nUndefined SYSCALL %d", vec));
 			pc -= 4 - ((pc & 1) << 1);
 
 		} else if ( vec < 64 ) {	// Interrupt IP0-7
-			DSP(("\nUndefined Interrupt IP%d", 63 - vec));
+			printk(("\nUndefined Interrupt IP%d", 63 - vec));
 
 		} else {			// Interrupt IRQ#0-63
-			DSP(("\nUndefined Interrupt IRQ#%d", 127 - vec));
+			printk(("\nUndefined Interrupt IRQ#%d", 127 - vec));
 		}
-		DSP(("\nPC: %08X  PSR: %08X\n", pc, getCurPSR()));
+		printk(("\nPC: %08X  PSR: %08X\n", pc, getCurPSR()));
 		procCommand(NULL);
 	}
 }

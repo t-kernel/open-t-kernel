@@ -225,8 +225,6 @@ IMPORT	unsigned long strtoul( const char *nptr, char **endptr, int base );
 IMPORT	int	printf(const char *format, ...);
 IMPORT	int	sprintf(char *str, const char *format, ...);
 
-#define	DSP(exp)	printf exp
-
 /* ======================================================================== */
 #endif	/* _in_asm_source_ */
 

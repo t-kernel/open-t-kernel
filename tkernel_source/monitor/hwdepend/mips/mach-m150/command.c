@@ -30,12 +30,12 @@ LOCAL	void	dump_mem( UW *adr, INT len )
 	INT	i;
 
 	for ( i = 0; i < len; ) {
-		if ( i % 16 == 0 ) DSP(("%08x:", (UW)adr));
-		DSP((" %08x", *adr));
+		if ( i % 16 == 0 ) printk(("%08x:", (UW)adr));
+		printk((" %08x", *adr));
 		adr += 1;
-		if ( (i += 4) % 16 == 0 ) DSP(("\n"));
+		if ( (i += 4) % 16 == 0 ) printk(("\n"));
 	}
-	if ( i % 16 != 0 ) DSP(("\n"));
+	if ( i % 16 != 0 ) printk(("\n"));
 }
 
 /*
@@ -52,7 +52,7 @@ static	UW	brk_ad = 0, brk_dt = 0;
 #define	BRK_CMD	(0x0000000C | (42 << 6))	// instruction "SYSCALL 42"
 
 	for (;;) {
-		DSP(("TM> "));
+		printk(("TM> "));
 		getString((UB*)(cp = (char*)buf));
 
 		c1 = *cp++;
@@ -87,7 +87,7 @@ static	UW	brk_ad = 0, brk_dt = 0;
 			if ( p1 != 0 ) {
 				if ( entp != NULL ) *entp = (FP)p1;
 				setBoot(p1);
-				DSP(("go %08x\n", p1));
+				printk(("go %08x\n", p1));
 			}
 			FlushCacheAll();
 			goto cmd_exit;
@@ -97,7 +97,7 @@ static	UW	brk_ad = 0, brk_dt = 0;
 			if ( c2 != 'c' && p1 == 0 ) {
 				// Show break point
 				if ( brk_ad != 0 ) {
-					DSP(("BP: %08x\n", brk_ad));
+					printk(("BP: %08x\n", brk_ad));
 				}
 				break;
 			}
@@ -118,24 +118,24 @@ static	UW	brk_ad = 0, brk_dt = 0;
 
 		case 'r':
 			for ( i = 0; i < 32; ) {
-				if ( (i % 4) == 0 ) DSP(("R%02d:", i));
-				DSP((" %08x", getRegister(i)));
-				if ( (++i % 4) == 0 ) DSP(("\n"));
+				if ( (i % 4) == 0 ) printk(("R%02d:", i));
+				printk((" %08x", getRegister(i)));
+				if ( (++i % 4) == 0 ) printk(("\n"));
 			}
-			DSP(("PC: %08x PSR: %08x\n", getCurPC(), getCurPSR()));
+			printk(("PC: %08x PSR: %08x\n", getCurPC(), getCurPSR()));
 			break;
 
 		case 'h':
 		case '?':
-			DSP(("d addr len      dump memory (word)\n"));
-			DSP(("m addr data     modify memory (byte)\n"));
-			DSP(("mw addr data    modify memory (word)\n"));
-			DSP(("f addr len data fill memory (byte)\n"));
-			DSP(("g [addr]        goto program addr\n"));
-			DSP(("b               show break point\n"));
-			DSP(("b addr          set break point\n"));
-			DSP(("bc              clear break point\n"));
-			DSP(("r               show registers\n"));
+			printk(("d addr len      dump memory (word)\n"));
+			printk(("m addr data     modify memory (byte)\n"));
+			printk(("mw addr data    modify memory (word)\n"));
+			printk(("f addr len data fill memory (byte)\n"));
+			printk(("g [addr]        goto program addr\n"));
+			printk(("b               show break point\n"));
+			printk(("b addr          set break point\n"));
+			printk(("bc              clear break point\n"));
+			printk(("r               show registers\n"));
 			break;
 		}
 	}
