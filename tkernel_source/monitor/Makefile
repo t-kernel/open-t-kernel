@@ -11,7 +11,7 @@ GPL := -gpl
 
 include Makefile.src
 
-CROSS_COMPILE ?= arm-none-linux-gnueabi-
+CROSS_COMPILE ?= arm-rtems4.12-
 
 HOST ?= windows
 
