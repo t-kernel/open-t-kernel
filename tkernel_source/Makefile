@@ -201,9 +201,10 @@ tkernel: $(OBJ)
 clean:
 ifeq ($(HOST),windows)
 	del /s *.o
-	del tmonitor tm.S tm.bin tm.map
+	del tmonitor tm.S tm.bin tm.map Image Image.xz tkernel tkernel.S tkernel.map
 else
-	@$(RM) $(OBJ) tmonitor tm.S tm.bin tm.map
+	@$(RM) $(OBJ) tmonitor tm.S tm.bin tm.map Image Image.xz tkernel tkernel.S tkernel.map
+
 	@echo	"  CLEAN"
 endif
 prepare:
