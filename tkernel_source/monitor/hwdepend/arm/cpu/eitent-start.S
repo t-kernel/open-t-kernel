@@ -57,7 +57,7 @@
 #define EIT_DDEBUG	30		/* debug abort data */
 #define EIT_FIQ		31		/* fast interrupt FIQ */
 #define EIT_IRQ(n)	(  32 + (n) )	/* interrupt		IRQ  0-95 */
-#define EIT_GPIO(n)	( 128 + (n) )	/* GPIO interrupt	port 0-127 */
+#define EIT_IRQ(n)	( 128 + (n) )	/* GPIO interrupt	port 0-127 */
 
 #define EIT_ENTRY(n)	(EIT_VECTBL+4*(n))
 

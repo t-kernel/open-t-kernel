@@ -58,7 +58,7 @@ Inline void PurgeTLB( void )
 #define VECNO_IDEBUG	EIT_IDEBUG	/* debug abort instruction */
 #define VECNO_DDEBUG	EIT_DDEBUG	/* debug abort data */
 #define VECNO_MONITOR	SWI_MONITOR	/* monitor service call */
-#define VECNO_ABORTSW	EIT_GPIO(8)	/* abort switch */
+#define VECNO_ABORTSW	EIT_IRQ(8)	/* abort switch */
 
 #define VECNO_GIO0	EIT_IRQ(50)	/* Generic handler for GPIO interrupt */
 #define VECNO_GIO1	EIT_IRQ(51)

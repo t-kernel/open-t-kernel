@@ -399,7 +399,7 @@ EXPORT	void	cpuLED(UW v)
 EXPORT	W	procHwInt(UW vec)
 {
         /* only abort switch (GPIO(P8)) is supported */
-	if (vec != EIT_GPIO(8)) return 0;
+	if (vec != EIT_IRQ(8)) return 0;
 
         /* clear interrupt */
 	//out_w(GIO_IIR(GIO_L), 0x00000100);

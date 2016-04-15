@@ -221,7 +221,7 @@ EXPORT	void	resetSystem(W boot)
 	SCArea->intvec[EIT_IRQ(53)]	= _gio3Hdr;
 	SCArea->intvec[EIT_IRQ(79)]	= _gio4Hdr;
 	SCArea->intvec[EIT_IRQ(80)]	= _gio5Hdr;
-	SCArea->intvec[EIT_GPIO(8)]	= _defaultHdr;	/* abort switch */
+	SCArea->intvec[EIT_IRQ(8)]	= _defaultHdr;	/* abort switch */
 
         /* set up initial page table */
 	for (i = 0; i < N_MemSeg; ++i) {

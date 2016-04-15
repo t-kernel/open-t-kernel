@@ -168,14 +168,14 @@ irq_entry:
 	.type	Csym(_gio6Hdr), %function
 	.globl	Csym(_gio7Hdr)
 	.type	Csym(_gio7Hdr), %function
-Csym(_gio0Hdr):	gio_e	GIO_MST(GIO_L),   EITVEC(EIT_GPIO( 15))
-Csym(_gio1Hdr):	gio_o	GIO_MST(GIO_L),   EITVEC(EIT_GPIO( 31))
-Csym(_gio2Hdr):	gio_e	GIO_MST(GIO_H),   EITVEC(EIT_GPIO( 47))
-Csym(_gio3Hdr):	gio_o	GIO_MST(GIO_H),   EITVEC(EIT_GPIO( 63))
-Csym(_gio4Hdr):	gio_e	GIO_MST(GIO_HH),  EITVEC(EIT_GPIO( 79))
-Csym(_gio5Hdr):	gio_o	GIO_MST(GIO_HH),  EITVEC(EIT_GPIO( 95))
-Csym(_gio6Hdr):	gio_e	GIO_MST(GIO_HHH), EITVEC(EIT_GPIO(111))
-Csym(_gio7Hdr):	gio_o	GIO_MST(GIO_HHH), EITVEC(EIT_GPIO(127))
+Csym(_gio0Hdr):	gio_e	GIO_MST(GIO_L),   EITVEC(EIT_IRQ( 15))
+Csym(_gio1Hdr):	gio_o	GIO_MST(GIO_L),   EITVEC(EIT_IRQ( 31))
+Csym(_gio2Hdr):	gio_e	GIO_MST(GIO_H),   EITVEC(EIT_IRQ( 47))
+Csym(_gio3Hdr):	gio_o	GIO_MST(GIO_H),   EITVEC(EIT_IRQ( 63))
+Csym(_gio4Hdr):	gio_e	GIO_MST(GIO_HH),  EITVEC(EIT_IRQ( 79))
+Csym(_gio5Hdr):	gio_o	GIO_MST(GIO_HH),  EITVEC(EIT_IRQ( 95))
+Csym(_gio6Hdr):	gio_e	GIO_MST(GIO_HHH), EITVEC(EIT_IRQ(111))
+Csym(_gio7Hdr):	gio_o	GIO_MST(GIO_HHH), EITVEC(EIT_IRQ(127))
 
   l_gio_spurious:
 	ldr	ip, =base(EITVEC(EIT_IRQ(95)))
