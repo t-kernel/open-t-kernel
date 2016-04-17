@@ -133,6 +133,8 @@ endif
 all: tmonitor
 
 
+hwdepend/arm/cpu/monhdr.o: hwdepend/arm/cpu/monhdr.S
+	@$(CC) $(INCLUDE) -mcpu=arm1176jzf-s $(CFLAGS) -c $< -o $@ -D_in_asm_source_
 
 %.o: %.S
 	@echo	"     AS\t"	$@
