@@ -9,30 +9,28 @@
  *    Released by T-Engine Forum(http://www.t-engine.org/) at 2011/05/17.
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
- *---------------------------------------------------------------------- 
+ *----------------------------------------------------------------------
  */
 
 /*
- *	crt1s.S
+ *	crtn.S
  *
  *	C startup
- *
- *	Dynamic link version
- *	link in shared lybrary loader
  */
 
-#if (defined __GNUC__) && !(defined __SES_ARM) && !(defined __CROSSWORKS_ARM)
+#ifdef __CC_ARM
 
-#include <machine.h>
+.macro FUNC_END
+	.arm
+	ldmdb	fp, {r4-r9, sl, fp, ip, lr}
+	mov	sp, ip
+	bx	lr
+.endm
 
-	.data
-	.globl	Csym(__initloading)
-	.globl	Csym(__callinit)
-	.globl	Csym(__callfini)
+	.section	.init
+	FUNC_END
 
-			.balign	4
-Csym(__initloading):	.int	Csym(__so_initloading)
-Csym(__callinit):	.int	Csym(__so_init)
-Csym(__callfini):	.int	Csym(__so_fini)
+	.section	.fini
+	FUNC_END
 
 #endif

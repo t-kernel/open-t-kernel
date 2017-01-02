@@ -18,6 +18,8 @@
  *	C startup
  */
 
+#if (defined __GNUC__) && !(defined __SES_ARM) && !(defined __CROSSWORKS_ARM)
+
 .macro FUNC_END
 	.arm
 	ldmdb	fp, {r4-r9, sl, fp, ip, lr}
@@ -30,3 +32,5 @@
 
 	.section	.fini
 	FUNC_END
+
+#endif

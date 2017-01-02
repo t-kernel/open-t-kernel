@@ -13,33 +13,43 @@
  */
 
 /*
- *	crt1f.S
+ *	crti.S
  *
  *	C startup
- *
- *	Static link version
- *	Shared library loader is not linked.
  */
 
-#if (defined __GNUC__) && !(defined __SES_ARM) && !(defined __CROSSWORKS_ARM)
+#ifdef __CC_ARM
 
-#include <machine.h>
+.macro FUNC_START
+	.arm
+	mov	ip, sp			// r3 is used to align stack
+					// module 8 bytes
+	stmdb	sp!, {r3-r9, sl, fp, ip, lr, pc}
+	sub	fp, ip, #4
+.endm
 
-	.data
-	.globl	Csym(__initloading)
-	.globl	Csym(__callinit)
-	.globl	Csym(__callfini)
+	.section	.init
+	.balign		4
+	.global		_init
+_init:
+	FUNC_START
+	ldr	sl, I_GOT
+.L4:
+	add	sl, pc, sl
+	b	I_TOP
+I_GOT:	.word	_GLOBAL_OFFSET_TABLE_-(.L4+8)
+I_TOP:
 
-	.balign	4
-Csym(__initloading):	.int	initloading
-Csym(__callinit):	.int	Csym(_init)
-Csym(__callfini):	.int	Csym(_fini)
-
-	.text
-	.balign	4
-initloading:
-	/* do nothing */
-	bx lr
+	.section	.fini
+	.balign		4
+	.global		_fini
+_fini:
+	FUNC_START
+	ldr	sl, F_GOT
+.L5:
+	add	sl, pc ,sl
+	b	F_TOP
+F_GOT:	.word	_GLOBAL_OFFSET_TABLE_-(.L5+8)
+F_TOP:
 
 #endif
-

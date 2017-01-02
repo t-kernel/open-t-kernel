@@ -9,7 +9,7 @@
  *    Released by T-Engine Forum(http://www.t-engine.org/) at 2011/05/17.
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
- *---------------------------------------------------------------------- 
+ *----------------------------------------------------------------------
  */
 
 /*
@@ -21,7 +21,7 @@
  *	link in shared lybrary loader
  */
 
-#if (defined __GNUC__) && !(defined __SES_ARM) && !(defined __CROSSWORKS_ARM)
+#ifdef __CC_ARM
 
 #include <machine.h>
 

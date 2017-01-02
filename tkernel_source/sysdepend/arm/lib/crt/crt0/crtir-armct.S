@@ -9,30 +9,39 @@
  *    Released by T-Engine Forum(http://www.t-engine.org/) at 2011/05/17.
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
- *---------------------------------------------------------------------- 
+ *----------------------------------------------------------------------
  */
 
 /*
- *	crt1s.S
+ *	crtir.S
  *
  *	C startup
  *
- *	Dynamic link version
- *	link in shared lybrary loader
+ *	Relocatable module version
+ *	_GLOBAL_OFFSET_TABLE_ is not used
+ *	this means it is not Position Independent
  */
 
-#if (defined __GNUC__) && !(defined __SES_ARM) && !(defined __CROSSWORKS_ARM)
+#ifdef __CC_ARM
 
-#include <machine.h>
+.macro FUNC_START
+	.arm
+	mov	ip, sp			// r3 is used to align stack
+					// modulo 8 bytes
+	stmdb	sp!, {r3-r9, sl, fp, ip, lr, pc}
+	sub	fp, ip, #4
+.endm
 
-	.data
-	.globl	Csym(__initloading)
-	.globl	Csym(__callinit)
-	.globl	Csym(__callfini)
+	.section	.init
+	.balign		4
+	.global		_init
+_init:
+	FUNC_START
 
-			.balign	4
-Csym(__initloading):	.int	Csym(__so_initloading)
-Csym(__callinit):	.int	Csym(__so_init)
-Csym(__callfini):	.int	Csym(__so_fini)
+	.section	.fini
+	.balign		4
+	.global		_fini
+_fini:
+	FUNC_START
 
 #endif

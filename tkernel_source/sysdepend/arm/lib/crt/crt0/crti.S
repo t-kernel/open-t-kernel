@@ -18,6 +18,8 @@
  *	C startup
  */
 
+#if (defined __GNUC__) && !(defined __SES_ARM) && !(defined __CROSSWORKS_ARM)
+
 .macro FUNC_START
 	.arm
 	mov	ip, sp			// r3 is used to align stack
@@ -49,3 +51,5 @@ _fini:
 	b	F_TOP
 F_GOT:	.word	_GLOBAL_OFFSET_TABLE_-(.L5+8)
 F_TOP:
+
+#endif

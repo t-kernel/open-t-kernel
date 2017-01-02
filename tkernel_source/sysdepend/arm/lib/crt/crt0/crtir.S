@@ -22,6 +22,8 @@
  *	this means it is not Position Independent
  */
 
+#if (defined __GNUC__) && !(defined __SES_ARM) && !(defined __CROSSWORKS_ARM)
+
 .macro FUNC_START
 	.arm
 	mov	ip, sp			// r3 is used to align stack
@@ -41,3 +43,5 @@ _init:
 	.global		_fini
 _fini:
 	FUNC_START
+
+#endif
