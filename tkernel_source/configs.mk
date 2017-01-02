@@ -1,12 +1,20 @@
 #!/bin/bash
 
-# Copyright (c) 2014-2016 Du Huanpeng<u74147@gmail.com>
-# place this file to tkernel_source/
+# Copyright (c) 2014-2017 Du Huanpeng<u74147@gmail.com>
+# 1. place this file to tkernel_source/
+# 2. . configs.mk /path/to/gcc
+
+if [ -n "$1" ]
+then
+GCC_DIR="$1"
+else
+GCC_DIR="/home/opt/gcc-arm/"
+fi
 
 
 export BD=${PWD}
-export GNU_BD="/opt/gcc-arm"
-export GNUarm_2="/opt/gcc-arm/."
+export GNU_BD=${GCC_DIR}
+export GNUarm_2=${GCC_DIR}
 export BUILD_TARGET="tef_em1d"
 
 alias bd='cd ${BD}'
