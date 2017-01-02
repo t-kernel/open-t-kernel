@@ -114,8 +114,8 @@ all.config
 *.kdev4
 
 # t-monitor
-tm.S
-tm.map
-tmonitor
-tkernel
+# tm.S
+# tm.map
+# tmonitor
+# tkernel
 
