@@ -31,7 +31,7 @@ unexport GREP_OPTIONS
 # their own directory. If in some directory we have a dependency on
 # a file in another dir (which doesn't happen often, but it's often
 # unavoidable when linking the built-in.o targets which finally
-# turn into vmlinux), we will call a sub make in that other dir, and
+# turn into vmtronx), we will call a sub make in that other dir, and
 # after that we are sure that everything which is in that other dir
 # is now up to date.
 #
@@ -582,7 +582,7 @@ config: scripts_basic outputmakefile FORCE
 
 else
 # ===========================================================================
-# Build targets only - this includes vmlinux, arch specific targets, clean
+# Build targets only - this includes vmtronx, arch specific targets, clean
 # targets and others. In general all targets except *config targets.
 
 ifeq ($(KBUILD_EXTMOD),)
@@ -595,7 +595,7 @@ __scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
 	 asm-generic
 	$(Q)$(MAKE) $(build)=$(@)
 
-# Objects we will link into vmlinux / subdirs we need to visit
+# Objects we will link into vmtronx / subdirs we need to visit
 init-y		:= init/
 drivers-y	:= drivers/ sound/ firmware/ driver/
 net-y		:= net/
@@ -645,8 +645,8 @@ endif # $(dot-config)
 # The all: target is the default when no target is given on the
 # command line.
 # This allow a user to issue only 'make' to build a kernel including modules
-# Defaults to vmlinux, but the arch makefile usually adds further targets
-all: vmlinux
+# Defaults to vmtronx, but the arch makefile usually adds further targets
+all: vmtronx
 
 include sysdepend/$(SRCARCH)/Makefile
 
@@ -834,10 +834,10 @@ KBUILD_CFLAGS   += $(ARCH_CFLAGS)   $(KCFLAGS)
 LDFLAGS_BUILD_ID = $(patsubst -Wl$(comma)%,%,\
 			      $(call cc-ldoption, -Wl$(comma)--build-id,))
 KBUILD_LDFLAGS_MODULE += $(LDFLAGS_BUILD_ID)
-LDFLAGS_vmlinux += $(LDFLAGS_BUILD_ID)
+LDFLAGS_vmtronx += $(LDFLAGS_BUILD_ID)
 
 ifeq ($(CONFIG_STRIP_ASM_SYMS),y)
-LDFLAGS_vmlinux	+= $(call ld-option, -X,)
+LDFLAGS_vmtronx	+= $(call ld-option, -X,)
 endif
 
 # Default kernel image to build when no specific target is given.
@@ -845,7 +845,7 @@ endif
 # set in the environment
 # Also any assignments in sysdepend/$(ARCH)/Makefile take precedence over
 # this default value
-export KBUILD_IMAGE ?= vmlinux
+export KBUILD_IMAGE ?= vmtronx
 
 #
 # INSTALL_PATH specifies where to place the updated kernel and system map
@@ -927,11 +927,11 @@ export mod_sign_cmd
 ifeq ($(KBUILD_EXTMOD),)
 core-y		+= kernel/ mm/ fs/ ipc/ security/ crypto/ block/
 
-vmlinux-dirs	:= $(patsubst %/,%,$(filter %/, $(init-y) $(init-m) \
+vmtronx-dirs	:= $(patsubst %/,%,$(filter %/, $(init-y) $(init-m) \
 		     $(core-y) $(core-m) $(drivers-y) $(drivers-m) \
 		     $(net-y) $(net-m) $(libs-y) $(libs-m)))
 
-vmlinux-alldirs	:= $(sort $(vmlinux-dirs) $(patsubst %/,%,$(filter %/, \
+vmtronx-alldirs	:= $(sort $(vmtronx-dirs) $(patsubst %/,%,$(filter %/, \
 		     $(init-) $(core-) $(drivers-) $(net-) $(libs-))))
 
 init-y		:= $(patsubst %/, %/built-in.o, $(init-y))
@@ -942,23 +942,23 @@ libs-y1		:= $(patsubst %/, %/lib.a, $(libs-y))
 libs-y2		:= $(patsubst %/, %/built-in.o, $(libs-y))
 libs-y		:= $(libs-y1) $(libs-y2)
 
-# Externally visible symbols (used by link-vmlinux.sh)
+# Externally visible symbols (used by link-vmtronx.sh)
 export KBUILD_VMLINUX_INIT := $(head-y) $(init-y)
 export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y) $(drivers-y) $(net-y)
-export KBUILD_LDS          := sysdepend/$(SRCARCH)/kernel/vmlinux.lds
-export LDFLAGS_vmlinux
+export KBUILD_LDS          := sysdepend/$(SRCARCH)/kernel/vmtronx.lds
+export LDFLAGS_vmtronx
 # used by scripts/pacmage/Makefile
-export KBUILD_ALLDIRS := $(sort $(filter-out sysdepend/%,$(vmlinux-alldirs)) sysdepend Documentation include samples scripts tools virt)
+export KBUILD_ALLDIRS := $(sort $(filter-out sysdepend/%,$(vmtronx-alldirs)) sysdepend Documentation include samples scripts tools virt)
 
-vmlinux-deps := $(KBUILD_LDS) $(KBUILD_VMLINUX_INIT) $(KBUILD_VMLINUX_MAIN)
+vmtronx-deps := $(KBUILD_LDS) $(KBUILD_VMLINUX_INIT) $(KBUILD_VMLINUX_MAIN)
 
-# Final link of vmlinux
-      cmd_link-vmlinux = $(CONFIG_SHELL) $< $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux)
-quiet_cmd_link-vmlinux = LINK    $@
+# Final link of vmtronx
+      cmd_link-vmtronx = $(CONFIG_SHELL) $< $(LD) $(LDFLAGS) $(LDFLAGS_vmtronx)
+quiet_cmd_link-vmtronx = LINK    $@
 
 # Include targets which we want to
 # execute if the rest of the kernel build went well.
-vmlinux: scripts/link-vmlinux.sh $(vmlinux-deps) FORCE
+vmtronx: scripts/link-vmtronx.sh $(vmtronx-deps) FORCE
 ifdef CONFIG_HEADERS_CHECK
 	$(Q)$(MAKE) -f $(srctree)/Makefile headers_check
 endif
@@ -969,22 +969,22 @@ ifdef CONFIG_BUILD_DOCSRC
 	$(Q)$(MAKE) $(build)=Documentation
 endif
 ifdef CONFIG_GDB_SCRIPTS
-	$(Q)ln -fsn `cd $(srctree) && /bin/pwd`/scripts/gdb/vmlinux-gdb.py
+	$(Q)ln -fsn `cd $(srctree) && /bin/pwd`/scripts/gdb/vmtronx-gdb.py
 endif
-	+$(call if_changed,link-vmlinux)
+	+$(call if_changed,link-vmtronx)
 
 # The actual objects are generated when descending,
 # make sure no implicit rule kicks in
-$(sort $(vmlinux-deps)): $(vmlinux-dirs) ;
+$(sort $(vmtronx-deps)): $(vmtronx-dirs) ;
 
-# Handle descending into subdirectories listed in $(vmlinux-dirs)
+# Handle descending into subdirectories listed in $(vmtronx-dirs)
 # Preset locale variables to speed up the build process. Limit locale
 # tweaks to this spot to avoid wrong language settings when running
 # make menuconfig etc.
 # Error messages still appears in the original language
 
-PHONY += $(vmlinux-dirs)
-$(vmlinux-dirs): prepare scripts
+PHONY += $(vmtronx-dirs)
+$(vmtronx-dirs): prepare scripts
 	$(Q)$(MAKE) $(build)=$@
 
 define filechk_kernel.release
@@ -1139,13 +1139,13 @@ all: modules
 # using awk while concatenating to the final file.
 
 PHONY += modules
-modules: $(vmlinux-dirs) $(if $(KBUILD_BUILTIN),vmlinux) modules.builtin
-	$(Q)$(AWK) '!x[$$0]++' $(vmlinux-dirs:%=$(objtree)/%/modules.order) > $(objtree)/modules.order
+modules: $(vmtronx-dirs) $(if $(KBUILD_BUILTIN),vmtronx) modules.builtin
+	$(Q)$(AWK) '!x[$$0]++' $(vmtronx-dirs:%=$(objtree)/%/modules.order) > $(objtree)/modules.order
 	@$(kecho) '  Building modules, stage 2.';
 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost
 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.fwinst obj=firmware __fw_modbuild
 
-modules.builtin: $(vmlinux-dirs:%=%/modules.builtin)
+modules.builtin: $(vmtronx-dirs:%=%/modules.builtin)
 	$(Q)$(AWK) '!x[$$0]++' $^ > $(objtree)/modules.builtin
 
 %/modules.builtin: include/config/auto.conf
@@ -1220,22 +1220,22 @@ MRPROPER_FILES += .config .config.old .version .old_version \
 		  Module.symvers tags TAGS cscope* GPATH GTAGS GRTAGS GSYMS \
 		  signing_key.priv signing_key.x509 x509.genkey		\
 		  extra_certificates signing_key.x509.keyid		\
-		  signing_key.x509.signer vmlinux-gdb.py
+		  signing_key.x509.signer vmtronx-gdb.py
 
 # clean - Delete most, but leave enough to build external modules
 #
 clean: rm-dirs  := $(CLEAN_DIRS)
 clean: rm-files := $(CLEAN_FILES)
-clean-dirs      := $(addprefix _clean_, . $(vmlinux-alldirs) Documentation samples)
+clean-dirs      := $(addprefix _clean_, . $(vmtronx-alldirs) Documentation samples)
 
-PHONY += $(clean-dirs) clean archclean vmlinuxclean
+PHONY += $(clean-dirs) clean archclean vmtronxclean
 $(clean-dirs):
 	$(Q)$(MAKE) $(clean)=$(patsubst _clean_%,%,$@)
 
-vmlinuxclean:
-	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/link-vmlinux.sh clean
+vmtronxclean:
+	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/link-vmtronx.sh clean
 
-clean: archclean vmlinuxclean
+clean: archclean vmtronxclean
 
 # mrproper - Delete all generated files, including .config
 #
@@ -1296,7 +1296,7 @@ help:
 	@echo  ''
 	@echo  'Other generic targets:'
 	@echo  '  all		  - Build all targets marked with [*]'
-	@echo  '* vmlinux	  - Build the bare kernel'
+	@echo  '* vmtronx	  - Build the bare kernel'
 	@echo  '* modules	  - Build all modules'
 	@echo  '  modules_install - Install all modules to INSTALL_MOD_PATH (default: /)'
 	@echo  '  firmware_install- Install all firmware to INSTALL_FW_PATH'
@@ -1525,7 +1525,7 @@ else
 CHECKSTACK_ARCH := $(ARCH)
 endif
 checkstack:
-	$(OBJDUMP) -d vmlinux $$(find . -name '*.ko') | \
+	$(OBJDUMP) -d vmtronx $$(find . -name '*.ko') | \
 	$(PERL) $(src)/scripts/checkstack.pl $(CHECKSTACK_ARCH)
 
 kernelrelease:
