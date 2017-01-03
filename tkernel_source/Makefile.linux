@@ -395,9 +395,49 @@ __TRONXINCLUDE    := \
 		-Iinclude \
 		$(USERINCLUDE)
 
+TRONXINCLUDE := \
+		-Iinclude \
+		-Ikernel/sysinit \
+		-Ikernel/sysmgr \
+		-Ikernel/tkernel \
+		-Isysdepend/arm/include \
+		-Isysdepend/arm/mach-em1d \
+		-Isysdepend/arm/kernel/cpu \
+		-Isysdepend/arm/lib/libtk \
+		-Isysdepend/arm/lib/libtm
+
+TRONXINCLUDE	:= \
+		-Iinclude \
+		-Ikernel/sysinit \
+		-Ikernel/sysmgr \
+		-Ikernel/tkernel \
+		-Isysdepend/arm/include \
+		-Isysdepend/arm/mach-em1d \
+		-Isysdepend/arm/kernel/cpu \
+		-Isysdepend/arm/lib/libtk \
+		-Isysdepend/arm/lib/libtm \
+		\
+		-DBKERNEL \
+		-DDEBUG_SAMPLE \
+		-DDRV_CLOCK \
+		-DDRV_CONSOLE \
+		-DDRV_KBPD \
+		-DDRV_LOWKBPD \
+		-DDRV_SCREEN \
+		-DDRV_SYSDISK \
+		-DTKERNEL_CHECK_CONST \
+		-DTKERNEL_ONLY \
+		-DUSE_MEMDRV \
+		-DUSE_MMCDRV \
+		-DUSE_MMC_MULTI \
+		-DUSE_MMC_SD4BIT \
+		-D_TEF_EM1D_
+
+
+
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+KBUILD_CFLAGS   := -Wall -Wundef -Wno-strict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
@@ -767,7 +807,7 @@ KBUILD_CFLAGS   += $(call cc-option,-fconserve-stack)
 KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)
 
 # require functions to have arguments in prototypes, not empty 'int foo()'
-KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)
+# KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)
 
 # Prohibit date/time macros, which would make the build non-deterministic
 KBUILD_CFLAGS   += $(call cc-option,-Werror=date-time)
