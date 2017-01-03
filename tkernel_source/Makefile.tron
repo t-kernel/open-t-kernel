@@ -174,7 +174,7 @@ CFLAGS += -DCONFIG_TM_WRKBUF_SZ="(1<<10)"
 endif
 
 .PHONY: all
-all: tkernel
+all: vmtronx
 
 
 
@@ -186,7 +186,7 @@ all: tkernel
 	@echo	"     CC\t"	$@
 	@$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
 
-tkernel: $(OBJ)
+vmtronx: $(OBJ)
 	@$(CROSS_COMPILE)gcc $^ -o $@ $(INCLUDE) -T$(LDS) -nostdlib -lgcc
 	@echo	"     LD\t"	$@
 	@$(CROSS_COMPILE)objdump -DS $@ >$@.S
