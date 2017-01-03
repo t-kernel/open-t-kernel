@@ -91,7 +91,7 @@ kallsyms()
 	fi
 
 	local aflags="${KBUILD_AFLAGS} ${KBUILD_AFLAGS_KERNEL}               \
-		      ${NOSTDINC_FLAGS} ${LINUXINCLUDE} ${KBUILD_CPPFLAGS}"
+		      ${NOSTDINC_FLAGS} ${TRONXINCLUDE} ${KBUILD_CPPFLAGS}"
 
 	${NM} -n ${1} | \
 		scripts/kallsyms ${kallsymopt} | \
