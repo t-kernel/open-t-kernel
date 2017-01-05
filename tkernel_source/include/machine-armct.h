@@ -10,6 +10,9 @@
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
  *----------------------------------------------------------------------
+ *    Open T-Kernel Project
+ *    Copyright 2017 Du Huanpeng <u74147@gmail.com>
+ *----------------------------------------------------------------------
  */
 
 /*
@@ -33,29 +36,31 @@
  */
 
 #ifndef __MACHINE_H__
-#define __MACHINE_H__
+#error "Please don't include <machine-armct.h> directly, include <machine.h> instead."
+#endif
+
 
 /* ===== System dependencies definitions ================================ */
-
-#include <sys/machine_common.h>
-#include "machine-armct.h"
 
 
 /* ===== Common definitions ============================================= */
 
-#if (defined __GNUC__) && !(defined __SES_ARM) && !(defined __CROSSWORKS_ARM)
+#ifdef __CC_ARM
 
 #ifndef Inline
 #ifdef __cplusplus
-#define Inline		inline
+#define Inline      inline
 #else
-#define Inline		static __inline__
+#define Inline      static __inline
 #endif
 #endif
 
+
 #ifndef Asm
-#ifdef __GNUC__
-#define Asm		__asm__ volatile
+#ifdef __WIP_CC_ARM
+#define Asm(...)		do { } while(0)
+#else
+#define Asm			__asm
 #endif
 #endif
 
@@ -73,6 +78,4 @@
 #define Csym(sym)	_##sym
 #endif
 
-#endif
-
-#endif /* __MACHINE_H__ */
+#endif /* __CC_ARM */
