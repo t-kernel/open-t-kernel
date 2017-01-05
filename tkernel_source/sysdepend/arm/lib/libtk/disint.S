@@ -18,6 +18,8 @@
  *	Enable/disable external interrupt
  */
 
+#if (defined __GNUC__) && !(defined __SES_ARM) && !(defined __CROSSWORKS_ARM)
+
 #include <machine.h>
 #include <tk/sysdef.h>
 
@@ -57,3 +59,6 @@ Csym(enaint):
 	orr	r2, r2, r3
 	msr	cpsr_xc, r2
 	bx	lr
+
+#endif
+

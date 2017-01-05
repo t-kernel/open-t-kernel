@@ -1,4 +1,4 @@
-obj-y += disint.o
+obj-y += disint.o disint-armct.o
 obj-y += int.o
 obj-y += prreg.o
 obj-y += ptimer.o
