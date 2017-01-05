@@ -29,6 +29,7 @@
 extern "C" {
 #endif
 
+#ifndef __CC_ARM
 #ifdef	__size_t
 typedef __size_t	size_t;
 #undef	__size_t
@@ -38,8 +39,11 @@ typedef __size_t	size_t;
 typedef __wchar_t	wchar_t;
 #undef	__wchar_t
 #endif
+#endif
 
+#ifndef NULL
 #define NULL		0
+#endif
 
 extern void* tkl_memset( void *s, int c, size_t n );
 extern int tkl_memcmp( const void *s1, const void *s2, size_t n );
