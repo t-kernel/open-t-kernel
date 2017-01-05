@@ -112,11 +112,12 @@ EXPORT	void	ataAbort(DrvTab *drv)
 /*
  *	ATA command execution
  */
-EXPORT	ER	ataCmd(DrvTab *drv, W cmd, UW lba, W len, void *buf)
+EXPORT	ER	ataCmd(DrvTab *drv, W cmd, UW lba, W len, void *buffer)
 {
 	ER	er;
 	W	cm, cnt, nsec, sc, cy, hd;
 	BOOL	wrt;
+	UB	*buf = buffer;
 
 #define	ATA_HSECSZ	(ATA_SECSZ / sizeof(H))
 

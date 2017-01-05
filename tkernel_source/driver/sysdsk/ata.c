@@ -49,10 +49,11 @@ LOCAL	void	ataDriveInit(DrvTab *drv)
  *		"buf == NULL" at the time of "FORMAT"
  *		return	The number of processed blocks
  */
-LOCAL	INT	ataRWblks(DrvTab *drv, W blk, W cnt, void *buf, W cmd)
+LOCAL	INT	ataRWblks(DrvTab *drv, W blk, W cnt, void *buffer, W cmd)
 {
 	ER	er;
 	W	nblks, nsec, maxlen;
+	UB	*buf = buffer;
 
 #define	WRKBUFSZ	(64 * 1024)
 
