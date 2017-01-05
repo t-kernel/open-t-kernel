@@ -27,6 +27,8 @@
 #include <tk/tkernel.h>
 #include <libstr.h>
 
+#if (defined __GNUC__) && !(defined __SES_ARM) && !(defined __CROSSWORKS_ARM)
+
 /* Define weak alias symbol */
 #if	_Csym == 0
 #define	weak_alias(nm, act)	__asm__(".weak "  #nm " ; "  #nm " = "  #act)
@@ -49,6 +51,22 @@
 	weak_alias(strcat, tkl_strcat);
 	weak_alias(strncat, tkl_strncat);
 #endif	/* use_libstr_func_as_std */
+
+#endif /* __GNUC__ */
+
+#ifdef __CC_ARM
+
+#pragma weak memset = tkl_memset
+#pragma weak memcmp = tkl_memcmp
+#pragma weak memmove = tkl_memmove
+#pragma weak strlen = tkl_strlen
+#pragma weak strcmp = tkl_strcmp
+#pragma weak strcpy = tkl_strcpy
+#pragma weak strncpy = tkl_strncpy
+#pragma weak strcat = tkl_strcat
+#pragma weak strncat = tkl_strncat
+
+#endif
 
 /* memory access size */
 #define	MASZ	(sizeof(unsigned long))
