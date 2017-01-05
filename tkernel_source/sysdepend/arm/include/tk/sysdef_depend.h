@@ -50,7 +50,7 @@
 #define	PSR_UND		PSR_M(27)	/* undefined instruction mode */
 #define	PSR_SYS		PSR_M(31)	/* system mode */
 
-#define PSR_DI		( PSR_I|PSR_A )	/* disable (ordinary) interrupt */
+#define PSR_DI		0x00000180	/* disable (ordinary) interrupt */
 
 /*
  * task mode flag
