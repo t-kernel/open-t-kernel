@@ -10,9 +10,8 @@
  *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
  *
  *----------------------------------------------------------------------
- *    Open T-Kernel
- *    Copyright 2017 by Du Huanpeng.
- *    http://t-kernel.com/
+ *    Open T-Kernel Project
+ *    Copyright 2017 Du Huanpeng <u74147@gmail.com>
  *----------------------------------------------------------------------
  */
 
