@@ -40,6 +40,9 @@ typedef struct {
  * User stack configuration at task startup (only RNG 1-3)
  */
 typedef struct {
+#ifdef __CC_ARM
+	UW	Empty;
+#endif
 	/* Empty */
 } UStackFrame;
 
