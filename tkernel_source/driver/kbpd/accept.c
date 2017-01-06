@@ -215,7 +215,7 @@ LOCAL ER setKeyTab( KeyTab *table, W datacnt )
 LOCAL ER setKeyID( UW kid )
 {
         /* parameter check */
-	if ( kid < 0 || kid > MAX_KID ) return E_PAR;
+	if ( kid > MAX_KID ) return E_PAR;
 
 	kpMgrInfo.kb.keyID = kid;
 	kpMgrInfo.kb.defKeyID = 2; /* fixed */
