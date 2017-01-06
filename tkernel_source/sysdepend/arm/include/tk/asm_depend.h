@@ -24,6 +24,11 @@
 #define base(n)		( (n) & 0xfffff000 )
 #define offs(n)		( (n) & 0x00000fff )
 
+#include "asm_depend-armct.h"
+
+#if (defined __GNUC__) && !(defined __SES_ARM) && !(defined __CROSSWORKS_ARM)
+
+
 /*
  * Interrupt flag specified to CPS instruction
  */
@@ -174,4 +179,5 @@
  .endm
 
 /* ------------------------------------------------------------------------ */
+#endif /* __GNUC__ */
 #endif /* __TK_ASM_DEPEND_H__ */
