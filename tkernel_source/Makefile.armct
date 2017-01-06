@@ -1,0 +1,247 @@
+##SRC += sysdepend/arm/mach-em1d/icrt0.S
+##SRC += sysdepend/arm/mach-em1d/icrt0_ram.S
+# SRC += sysdepend/arm/mach-em1d/cntwus.c
+SRC += sysdepend/arm/mach-em1d/patch.c
+# SRC += sysdepend/arm/mach-em1d/tkdev_init.c
+# SRC += sysdepend/arm/mach-em1d/devinit.c
+# SRC += sysdepend/arm/mach-em1d/power.c
+
+SRC += config/sysdepend/tef_em1d/rominfo_ram.c
+SRC += config/sysdepend/tef_em1d/rominfo_rom.c
+
+# SRC += config/sysdepend/tef_em1d/launch.S
+
+# SRC += sysdepend/arm/mach-mx28/icrt0.S
+# SRC += sysdepend/arm/mach-mx28/icrt0_ram.S
+# SRC += sysdepend/arm/mach-mx28/cntwus.c
+SRC += sysdepend/arm/mach-mx28/patch.c
+# SRC += sysdepend/arm/mach-mx28/tkdev_init.c
+# SRC += sysdepend/arm/mach-mx28/devinit.c
+# SRC += sysdepend/arm/mach-mx28/power.c
+
+SRC += kernel/sysinit/gsyscnf.c
+SRC += kernel/sysinit/sysinit_main.c
+SRC += kernel/sysinit/sysstartup.c
+SRC += kernel/sysinit/gdevcnf.c
+SRC += kernel/tkernel/klock.c
+SRC += kernel/tkernel/version.c
+SRC += kernel/tkernel/misc_calls.c
+SRC += kernel/tkernel/wait.c
+SRC += kernel/tkernel/mailbox.c
+SRC += kernel/tkernel/subsystem.c
+SRC += kernel/tkernel/timer.c
+SRC += kernel/tkernel/mutex.c
+SRC += kernel/tkernel/rendezvous.c
+SRC += kernel/tkernel/task.c
+SRC += kernel/tkernel/semaphore.c
+SRC += kernel/tkernel/tkstart.c
+SRC += kernel/tkernel/messagebuf.c
+SRC += kernel/tkernel/mempfix.c
+SRC += kernel/tkernel/objname.c
+SRC += kernel/tkernel/task_manage.c
+SRC += kernel/tkernel/task_sync.c
+SRC += kernel/tkernel/eventflag.c
+SRC += kernel/tkernel/time_calls.c
+SRC += kernel/tkernel/mempool.c
+SRC += kernel/sysmgr/system.c
+SRC += kernel/sysmgr/deviceio.c
+SRC += kernel/sysmgr/imalloc.c
+SRC += kernel/sysmgr/device.c
+SRC += kernel/sysmgr/smmain.c
+SRC += kernel/sysmgr/syslog.c
+SRC += kernel/sysmain/inittask_def.c
+SRC += kernel/sysmain/inittask_main.c
+SRC += kernel/sysmain/usermain.c
+SRC += kernel/extension/memory/nommu/segmgr.c
+SRC += kernel/extension/memory/nommu/memmgr.c
+SRC += kernel/extension/startup/noext/subsystem.c
+SRC += lib/libdrvif/gdrvif.c
+SRC += lib/libdrvif/sdrvif.c
+SRC += lib/libsys/quesearchge.c
+SRC += lib/libsys/quesearchne.c
+SRC += lib/libsys/quesearchgt.c
+SRC += lib/libsys/logmask.c
+SRC += lib/libsys/bitnot.c
+SRC += lib/libsys/bitsset.c
+SRC += lib/libsys/bitset.c
+SRC += lib/libsys/bitsclr.c
+SRC += lib/libsys/bitsearch0.c
+SRC += lib/libsys/quesearchrevltu.c
+SRC += lib/libsys/quesearchneh.c
+SRC += lib/libsys/quesearch.c
+SRC += lib/libsys/bitclr.c
+SRC += lib/libsys/bittest.c
+SRC += lib/libsys/quesearchh.c
+SRC += lib/libsys/quesearchgeu.c
+SRC += lib/libsys/syslog.c
+SRC += lib/libsys/quesearchgtub.c
+SRC += lib/libsys/bitsearch1.c
+SRC += lib/libsys/setlogmask.c
+SRC += lib/crt/crttk/pstartup.c
+SRC += lib/libtk/startup_elf.c
+SRC += lib/libtk/tkminit.c
+SRC += lib/libtk/fastlock.c
+SRC += lib/libtk/memcheck.c
+SRC += lib/libtk/knlinit.c
+SRC += lib/libtk/fastmlock.c
+SRC += lib/libtk/kmalloc.c
+SRC += lib/libtk/_commarea.c
+SRC += lib/libtk/libinit.c
+SRC += lib/libtk/kmcheck.c
+SRC += lib/libtk/smalloc.c
+SRC += lib/libtk/chkspc3.c
+SRC += lib/libtk/dbgmode.c
+SRC += lib/libtk/vmalloc.c
+SRC += lib/libtk/fsrcvmode.c
+SRC += lib/libtk/malloc.c
+SRC += lib/libtk/chkspc2.c
+SRC += lib/libtk/vmcheck.c
+SRC += lib/libtk/smcheck.c
+SRC += lib/libtk/_exit.c
+SRC += lib/libtk/memalloc.c
+SRC += lib/libtk/chkspc.c
+SRC += lib/libtk/liblock.c
+SRC += lib/libtk/getdembf.c
+SRC += lib/libtm/tm_printf.c
+SRC += lib/libtm/_putstring.c
+SRC += lib/libtm/_getstring.c
+SRC += lib/libtm/_getchar.c
+SRC += lib/libtm/_putchar.c
+SRC += lib/libstr/string.c
+SRC += driver/console/main.c
+SRC += driver/console/ns16450.c
+SRC += driver/console/consmlock.c
+SRC += driver/console/console_drv.c
+SRC += driver/console/line_drv.c
+SRC += driver/clk/main.c
+SRC += driver/clk/em1d512_spi.c
+SRC += driver/clk/rtc.c
+SRC += driver/clk/em1d512_iic.c
+SRC += driver/clk/em1d512_iicspi_svc.c
+SRC += driver/lowkbpd/main.c
+SRC += driver/lowkbpd/common.c
+SRC += driver/lowkbpd/hwkbpd.c
+SRC += driver/sysdsk/mmc-common.c
+SRC += driver/sysdsk/main.c
+SRC += driver/sysdsk/accept.c
+SRC += driver/sysdsk/pccard.c
+SRC += driver/sysdsk/common.c
+SRC += driver/sysdsk/ataio.c
+SRC += driver/sysdsk/mem.c
+SRC += driver/sysdsk/mmc-em1d512.c
+SRC += driver/sysdsk/ata.c
+SRC += driver/sysdsk/atacmd.c
+SRC += driver/sysdsk/inthdr.c
+SRC += driver/screen/main.c
+SRC += driver/screen/common.c
+SRC += driver/screen/em1d512.c
+SRC += driver/screen/conf.c
+SRC += driver/kbpd/key.c
+SRC += driver/kbpd/main.c
+SRC += driver/kbpd/accept.c
+SRC += driver/kbpd/innevt.c
+SRC += driver/kbpd/statmach.c
+SRC += driver/kbpd/etc.c
+SRC += driver/kbpd/pdbut.c
+SRC += driver/kbpd/devcmd.c
+SRC += driver/kbpd/pdsim.c
+SRC += driver/kbpd/receive.c
+SRC += sysdepend/arm/kernel/cpu/cpu_calls.c
+SRC += sysdepend/arm/kernel/cpu/cpu_init.c
+SRC += sysdepend/arm/kernel/cpu/chkplv.c
+SRC += sysdepend/arm/kernel/cpu/cache.c
+SRC += sysdepend/arm/lib/libtk/prreg.c
+SRC += sysdepend/arm/lib/libtk/int.c
+SRC += sysdepend/arm/lib/libtk/waitusec.c
+SRC += sysdepend/arm/lib/libtk/ptimer.c
+SRC += sysdepend/arm/lib/libtk/setspc.c
+SRC += sysdepend/arm/lib/libtk/waitnsec.c
+
+# SRC += sysdepend/arm/kernel/cpu/cpu_support.S
+##SRC += sysdepend/arm/lib/crt/crt0/crtir-armct.S
+##SRC += sysdepend/arm/lib/crt/crt0/crt1s-armct.S
+##SRC += sysdepend/arm/lib/crt/crt0/crt1f-armct.S
+##SRC += sysdepend/arm/lib/crt/crt0/crt0-armct.S
+##SRC += sysdepend/arm/lib/crt/crt0/crt1f.S
+##SRC += sysdepend/arm/lib/crt/crt0/crtir.S
+##SRC += sysdepend/arm/lib/crt/crt0/crti-armct.S
+##SRC += sysdepend/arm/lib/crt/crt0/crt1s.S
+##SRC += sysdepend/arm/lib/crt/crt0/crtn-armct.S
+##SRC += sysdepend/arm/lib/crt/crt0/crtn.S
+##SRC += sysdepend/arm/lib/crt/crt0/crti.S
+##SRC += sysdepend/arm/lib/crt/crt0/crt0.S
+# SRC += sysdepend/arm/lib/crt/crttk/asmstartup.S
+##SRC += sysdepend/arm/lib/libtk/disint.S
+##SRC += sysdepend/arm/lib/libtk/disint-armct.S
+
+
+OBJ := $(SRC)
+OBJ := $(OBJ:.S=.o)
+OBJ := $(OBJ:.c=.o)
+
+
+CC := armcc
+
+VMTRONXINCLUDE += -Iinclude
+VMTRONXINCLUDE += -Ikernel/sysinit
+VMTRONXINCLUDE += -Ikernel/sysmgr
+VMTRONXINCLUDE += -Ikernel/tkernel
+VMTRONXINCLUDE += -Isysdepend/arm/include
+VMTRONXINCLUDE += -Isysdepend/arm/mach-em1d
+VMTRONXINCLUDE += -Isysdepend/arm/kernel/cpu
+VMTRONXINCLUDE += -Isysdepend/arm/lib/libtk
+VMTRONXINCLUDE += -Isysdepend/arm/lib/libtm
+###############################################################
+CFLAGS +=  --cpu=ARM926EJ-S
+CFLAGS += --arm
+CFLAGS += --apcs=/interwork
+CFLAGS += --diag_error=warning
+# CFLAGS += --diag_suppress=nnnn
+CFLAGS += --diag_suppress=68,167,177,111,188
+# CFLAGS += --strict
+# CFLAGS += --long_long
+# CFLAGS += --strict_warnings
+# CFLAGS += --extended_initializers
+# CFLAGS += --no_extended_initializers
+###############################################################
+
+CFLAGS += -D__TRON_ARM_ARCH=5
+# CFLAGS += -D__TRON_ARM_ARCH=6
+CFLAGS += -D_TEF_EM1D_
+CFLAGS += -DBKERNEL
+CFLAGS += -DDEBUG_SAMPLE
+CFLAGS += -DDRV_CLOCK
+CFLAGS += -DDRV_CONSOLE
+CFLAGS += -DDRV_KBPD
+CFLAGS += -DDRV_LOWKBPD
+CFLAGS += -DDRV_SCREEN
+CFLAGS += -DDRV_SYSDISK
+CFLAGS += -DTKERNEL_CHECK_CONST
+CFLAGS += -DTKERNEL_ONLY
+CFLAGS += -DUSE_MEMDRV
+CFLAGS += -DUSE_MMCDRV
+CFLAGS += -DUSE_MMC_MULTI
+CFLAGS += -DUSE_MMC_SD4BIT
+CFLAGS += -D_TEF_EM1D_
+CFLAGS += -DCONFIG_MACH_EM1D
+
+CFLAGS += -D__WIP_CC_ARM
+
+###############################################################
+CFLAGS += $(VMTRONXINCLUDE)
+
+
+.PHONY: all
+all: vmtronx
+
+
+vmtronx: $(OBJ)
+
+%.o: %.c
+	$(CC) $(CFLAGS) $< -c -o $@
+
+%.o: %.S
+	$(CC) $(CFLAGS) $< -c -o $@
+
+clean:
+	rm -f $(OBJ)
