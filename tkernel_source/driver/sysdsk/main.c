@@ -102,7 +102,8 @@ LOCAL	void	ExecTask(SDInfo	*inf)
 	for (ndrv = NULL; ; inf++, ndrv = drv) {
 
 		/* Get & Clear the drive information area  */
-		if (!(drv = (DrvTab*)Kcalloc(1, sizeof(DrvTab)))) {
+		drv = (DrvTab*)Kcalloc(1, sizeof(DrvTab));
+		if (drv == NULL) {
 			goto E_EXIT;
 		}
 		drv->Next = ndrv;
