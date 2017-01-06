@@ -153,7 +153,7 @@ EEXIT1:
 */
 EXPORT	ER	LowKbPdDrv(INT ac, UB *av[])
 {
-	char	*arg;
+	UB	*arg;
 	W	v[L_DEVCONF_VAL];
 
         /* effective? */
@@ -163,13 +163,17 @@ EXPORT	ER	LowKbPdDrv(INT ac, UB *av[])
 
         /* obtain start parameter */
 	TaskPri = DEF_PRIORITY;
-	if (ac > 1 && (arg = av[1]) != NULL) {
-		switch (*arg++) {
-		case '!':	/* priority */
-			TaskPri = STRTOUL(arg, &arg, 0);
-			break;
-		default:
-			return E_PAR;
+
+	if (ac > 1) {
+		arg = av[1];
+		if(arg != NULL) {
+			switch (*arg++) {
+			case '!':	/* priority */
+				TaskPri = STRTOUL(arg, &arg, 0);
+				break;
+			default:
+				return E_PAR;
+			}
 		}
 	}
 
