@@ -64,7 +64,7 @@ Inline	ER	regist_inthdr(SC_DEFS *scdefs, void *sio_inthdr)
 
 	/* Register the interrupt handler */
 	dint.intatr = TA_HLNG;
-	dint.inthdr = sio_inthdr;
+	dint.inthdr = (FP)sio_inthdr;
 	err = tk_def_int(scdefs->c.intvec, &dint);
 	if (err >= E_OK) {
 		/* Enable interrupt */
