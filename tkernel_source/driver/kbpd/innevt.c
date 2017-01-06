@@ -86,8 +86,8 @@ LOCAL BOOL lockKeyDown( UH code )
 		return FALSE;
 	}
 
-	if ( (chgLED = ( mode != kpMgrInfo.kpState.stat.mode ))
-	  || meta != u.uw ) {
+	chgLED = ( mode != kpMgrInfo.kpState.stat.mode );
+	if ( chgLED || meta != u.uw ) {
 
                 /* change input mode */
 		u.uw = meta;
