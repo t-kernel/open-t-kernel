@@ -596,11 +596,11 @@ __scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
 	$(Q)$(MAKE) $(build)=$(@)
 
 # Objects we will link into vmtronx / subdirs we need to visit
-init-y		:= init/
-drivers-y	:= drivers/ sound/ firmware/ driver/
-net-y		:= net/
-libs-y		:= lib/
-core-y		:= usr/
+init-y		:= kernel/sysinit/
+drivers-y	:= driver/
+net-y		:=
+libs-y		:=
+core-y		:= lib/
 endif # KBUILD_EXTMOD
 
 ifeq ($(dot-config),1)
@@ -925,7 +925,7 @@ export mod_sign_cmd
 
 
 ifeq ($(KBUILD_EXTMOD),)
-core-y		+= kernel/ mm/ fs/ ipc/ security/ crypto/ block/
+core-y		+= kernel/
 
 vmtronx-dirs	:= $(patsubst %/,%,$(filter %/, $(init-y) $(init-m) \
 		     $(core-y) $(core-m) $(drivers-y) $(drivers-m) \

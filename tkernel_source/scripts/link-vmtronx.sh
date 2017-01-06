@@ -166,7 +166,7 @@ else
 fi;
 
 # final build of init/
-${MAKE} -f "${srctree}/scripts/Makefile.build" obj=init
+${MAKE} -f "${srctree}/scripts/Makefile.build" obj=kernel/sysinit
 
 kallsymso=""
 kallsyms_vmlinux=""

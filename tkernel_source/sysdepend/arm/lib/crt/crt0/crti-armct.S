@@ -21,7 +21,6 @@
 #ifdef __CC_ARM
 #warning "__WIP_CC_ARM"
 	END
-#else
 .macro FUNC_START
 	.arm
 	mov	ip, sp			// r3 is used to align stack
