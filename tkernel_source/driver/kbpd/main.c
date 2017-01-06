@@ -177,7 +177,7 @@ err_exit:
 EXPORT ER KbPdDrv( INT ac, UB *av[] )
 {
 	PRI		pri = DefaultPriority;
-	char		*arg;
+	UB		*arg;
 	W	v[L_DEVCONF_VAL];
 
         /* effective? */
@@ -187,7 +187,8 @@ EXPORT ER KbPdDrv( INT ac, UB *av[] )
 	if ( ac < 0 ) return E_NOSPT;
 
         /* extract parameters */
-	if ( ac > 1 && (arg = av[1]) != NULL ) {
+	arg = av[1];
+	if ( ac > 1 && arg ) {
 		while ( *arg != NULL ) {
 			switch ( *arg ) {
 			case '!':	/* priority */
