@@ -562,7 +562,8 @@ LOCAL	W	_console_ctl(W port, W req, W arg)
 			rtn = 0;
 			if ((p->input = arg) == EDIT) {
 				if (!p->h_buf) {
-					if (!(p->h_buf = Malloc(HIST_BUFSZ)))
+					p->h_buf = Malloc(HIST_BUFSZ);
+					if (p->h_buf == NULL)
 							rtn = -1;
 				}
 				if (rtn == 0) p->h_buf[0] = 0;
@@ -732,11 +733,13 @@ static	union objname	name = {{ "con0" }};
 		old = NULL;
 	} else {	/* Existent :check the port number */
 		port = arg[0];
-		if (!(old = check_port(port))) return -1;
+		old = check_port(port);
+		if (old == NULL) return -1;
 	}
 
 	/* Create the new port */
-	if (!(p = (CONSCB*)Malloc(sizeof(CONSCB)))) return -1;
+	p = (CONSCB*)Malloc(sizeof(CONSCB));
+	if(p == NULL) return -1;
 	MEMSET((void*)p, 0, sizeof(CONSCB));
 
 	/* Object name */
@@ -749,14 +752,16 @@ static	union objname	name = {{ "con0" }};
 	if (conf == CONF_BUFIO) {
 		if ((sz = arg[2]) < MIN_BUFSZ)
 				sz = sz ? MIN_BUFSZ : DEF_INBUFSZ;
-		if (!(p->in_buf = Malloc(sz)))	goto EEXIT;
+		p->in_buf = Malloc(sz);
+		if (p->in_buf == NULL) goto EEXIT;
 		p->in_bufsz = sz;
 	}
 	/* Create the output buffer */
 	if (conf == CONF_BUFIO) {
 		if ((sz = arg[3]) < MIN_BUFSZ)
 				sz = sz ? MIN_BUFSZ : DEF_OUBUFSZ;
-		if (!(p->ou_buf = Malloc(sz)))	goto EEXIT;
+		p->ou_buf = Malloc(sz);
+		if (p->ou_buf == NULL)	goto EEXIT;
 		p->ou_bufsz = sz;
 	}
 
@@ -807,8 +812,12 @@ LOCAL	W	_console_conf(W req, UW* arg)
 		break;
 
 	case CS_DELETE:		/* Delete the console port */
-		if (arg[0] > 2 && (p = check_port(arg[0]))) n = delete_cons(p);
-		else	n = -1;
+		if (arg[0] > 2) {
+			p = check_port(arg[0]);
+			if(p) {
+				n = delete_cons(p);
+			}
+		} else	n = -1;
 		break;
 
 	case CS_GETCONF:		/* Fetch the console configuration */
