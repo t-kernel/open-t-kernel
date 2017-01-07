@@ -1,13 +1,13 @@
-.globl __aeabi_idiv
-.globl __aeabi_idivmod
-.globl __aeabi_uidiv
-.globl __aeabi_uidivmod
-.globl __divsi3
-.globl __modsi3
-.globl __udivsi3
-.globl __umodsi3
-.globl __aeabi_ldivmod
-.globl __aeabi_uldivmod
+.weak __aeabi_idiv
+.weak __aeabi_idivmod
+.weak __aeabi_uidiv
+.weak __aeabi_uidivmod
+.weak __divsi3
+.weak __modsi3
+.weak __udivsi3
+.weak __umodsi3
+.weak __aeabi_ldivmod
+.weak __aeabi_uldivmod
 
 __aeabi_idiv:
 __aeabi_idivmod:
