@@ -4,11 +4,11 @@
 
 if [[ $# != 2 ]]; then
 	echo "Usage:"
-	echo "	$0 [vmlinux] [base path]"
+	echo "	$0 [vmtronx] [base path]"
 	exit 1
 fi
 
-vmlinux=$1
+vmtronx=$1
 basepath=$2
 declare -A cache
 
@@ -23,13 +23,13 @@ parse_symbol() {
 	# Strip the symbol name so that we could look it up
 	local name=${symbol%+*}
 
-	# Use 'nm vmlinux' to figure out the base address of said symbol.
+	# Use 'nm vmtronx' to figure out the base address of said symbol.
 	# It's actually faster to call it every time than to load it
 	# all into bash.
 	if [[ "${cache[$name]+isset}" == "isset" ]]; then
 		local base_addr=${cache[$name]}
 	else
-		local base_addr=$(nm "$vmlinux" | grep -i ' t ' | awk "/ $name\$/ {print \$1}" | head -n1)
+		local base_addr=$(nm "$vmtronx" | grep -i ' t ' | awk "/ $name\$/ {print \$1}" | head -n1)
 		cache["$name"]="$base_addr"
 	fi
 	# Let's start doing the math to get the exact address into the
@@ -49,7 +49,7 @@ parse_symbol() {
 	if [[ "${cache[$address]+isset}" == "isset" ]]; then
 		local code=${cache[$address]}
 	else
-		local code=$(addr2line -i -e "$vmlinux" "$address")
+		local code=$(addr2line -i -e "$vmtronx" "$address")
 		cache[$address]=$code
 	fi
 

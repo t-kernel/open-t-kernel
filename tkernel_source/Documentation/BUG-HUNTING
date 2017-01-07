@@ -192,7 +192,7 @@ e.g. crash dump output as shown by Dave Miller.
 >        mov        0x13c(%ebx), %eax       ! %eax = inet_sk(sk)->opt
 
 In addition, you can use GDB to figure out the exact file and line
-number of the OOPS from the vmlinux file. If you have
+number of the OOPS from the vmtronx file. If you have
 CONFIG_DEBUG_INFO enabled, you can simply copy the EIP value from the
 OOPS:
 
@@ -200,7 +200,7 @@ OOPS:
 
 And use GDB to translate that to human-readable form:
 
-  gdb vmlinux
+  gdb vmtronx
   (gdb) l *0xc021e50e
 
 If you don't have CONFIG_DEBUG_INFO enabled, you use the function
@@ -210,8 +210,8 @@ offset from the OOPS:
 
 And recompile the kernel with CONFIG_DEBUG_INFO enabled:
 
-  make vmlinux
-  gdb vmlinux
+  make vmtronx
+  gdb vmtronx
   (gdb) p vt_ioctl
   (gdb) l *(0x<address of vt_ioctl> + 0xda8)
 or, as one command

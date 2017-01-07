@@ -17,7 +17,7 @@ use Getopt::Long;
 
 
 my $cross_compile = "";
-my $vmlinux_name = "";
+my $vmtronx_name = "";
 my $modulefile = "";
 
 # Get options
@@ -26,14 +26,14 @@ Getopt::Long::GetOptions(
 	'module|m=s'		=> \$modulefile,
 	'help|h'		=> \&usage,
 ) || usage ();
-my $vmlinux_name = $ARGV[0];
-if (!defined($vmlinux_name)) {
+my $vmtronx_name = $ARGV[0];
+if (!defined($vmtronx_name)) {
 	my $kerver = `uname -r`;
 	chomp($kerver);
-	$vmlinux_name = "/lib/modules/$kerver/build/vmlinux";
-	print "No vmlinux specified, assuming $vmlinux_name\n";
+	$vmtronx_name = "/lib/modules/$kerver/build/vmtronx";
+	print "No vmtronx specified, assuming $vmtronx_name\n";
 }
-my $filename = $vmlinux_name;
+my $filename = $vmtronx_name;
 
 # Parse the oops to find the EIP value
 

@@ -94,14 +94,14 @@ echo 'INSTALL_MOD_PATH=$RPM_BUILD_ROOT make %{?_smp_mflags} KBUILD_SRC= mod-fw= 
 echo 'INSTALL_FW_PATH=$RPM_BUILD_ROOT'"/lib/firmware/$KERNELRELEASE"
 echo 'make INSTALL_FW_PATH=$INSTALL_FW_PATH' firmware_install
 echo "%ifarch ia64"
-echo 'cp $KBUILD_IMAGE $RPM_BUILD_ROOT'"/boot/efi/vmlinuz-$KERNELRELEASE"
-echo 'ln -s '"efi/vmlinuz-$KERNELRELEASE" '$RPM_BUILD_ROOT'"/boot/"
+echo 'cp $KBUILD_IMAGE $RPM_BUILD_ROOT'"/boot/efi/vmtronz-$KERNELRELEASE"
+echo 'ln -s '"efi/vmtronz-$KERNELRELEASE" '$RPM_BUILD_ROOT'"/boot/"
 echo "%else"
 echo "%ifarch ppc64"
-echo "cp vmlinux arch/powerpc/boot"
-echo "cp arch/powerpc/boot/"'$KBUILD_IMAGE $RPM_BUILD_ROOT'"/boot/vmlinuz-$KERNELRELEASE"
+echo "cp vmtronx arch/powerpc/boot"
+echo "cp arch/powerpc/boot/"'$KBUILD_IMAGE $RPM_BUILD_ROOT'"/boot/vmtronz-$KERNELRELEASE"
 echo "%else"
-echo 'cp $KBUILD_IMAGE $RPM_BUILD_ROOT'"/boot/vmlinuz-$KERNELRELEASE"
+echo 'cp $KBUILD_IMAGE $RPM_BUILD_ROOT'"/boot/vmtronz-$KERNELRELEASE"
 echo "%endif"
 echo "%endif"
 
@@ -111,16 +111,16 @@ echo 'cp System.map $RPM_BUILD_ROOT'"/boot/System.map-$KERNELRELEASE"
 echo 'cp .config $RPM_BUILD_ROOT'"/boot/config-$KERNELRELEASE"
 
 echo "%ifnarch ppc64"
-echo 'cp vmlinux vmlinux.orig'
-echo 'bzip2 -9 vmlinux'
-echo 'mv vmlinux.bz2 $RPM_BUILD_ROOT'"/boot/vmlinux-$KERNELRELEASE.bz2"
-echo 'mv vmlinux.orig vmlinux'
+echo 'cp vmtronx vmtronx.orig'
+echo 'bzip2 -9 vmtronx'
+echo 'mv vmtronx.bz2 $RPM_BUILD_ROOT'"/boot/vmtronx-$KERNELRELEASE.bz2"
+echo 'mv vmtronx.orig vmtronx'
 echo "%endif"
 
 if ! $PREBUILT; then
 echo 'rm -f $RPM_BUILD_ROOT'"/lib/modules/$KERNELRELEASE/{build,source}"
 echo "mkdir -p "'$RPM_BUILD_ROOT'"/usr/src/kernels/$KERNELRELEASE"
-echo "EXCLUDES=\"$RCS_TAR_IGNORE --exclude .tmp_versions --exclude=*vmlinux* --exclude=*.o --exclude=*.ko --exclude=*.cmd --exclude=Documentation --exclude=firmware --exclude .config.old --exclude .missing-syscalls.d\""
+echo "EXCLUDES=\"$RCS_TAR_IGNORE --exclude .tmp_versions --exclude=*vmtronx* --exclude=*.o --exclude=*.ko --exclude=*.cmd --exclude=Documentation --exclude=firmware --exclude .config.old --exclude .missing-syscalls.d\""
 echo "tar "'$EXCLUDES'" -cf- . | (cd "'$RPM_BUILD_ROOT'"/usr/src/kernels/$KERNELRELEASE;tar xvf -)"
 echo 'cd $RPM_BUILD_ROOT'"/lib/modules/$KERNELRELEASE"
 echo "ln -sf /usr/src/kernels/$KERNELRELEASE build"
@@ -132,12 +132,12 @@ echo "%clean"
 echo 'rm -rf $RPM_BUILD_ROOT'
 echo ""
 echo "%post"
-echo "if [ -x /sbin/installkernel -a -r /boot/vmlinuz-$KERNELRELEASE -a -r /boot/System.map-$KERNELRELEASE ]; then"
-echo "cp /boot/vmlinuz-$KERNELRELEASE /boot/vmlinuz-$KERNELRELEASE-rpm"
+echo "if [ -x /sbin/installkernel -a -r /boot/vmtronz-$KERNELRELEASE -a -r /boot/System.map-$KERNELRELEASE ]; then"
+echo "cp /boot/vmtronz-$KERNELRELEASE /boot/vmtronz-$KERNELRELEASE-rpm"
 echo "cp /boot/System.map-$KERNELRELEASE /boot/System.map-$KERNELRELEASE-rpm"
-echo "rm -f /boot/vmlinuz-$KERNELRELEASE /boot/System.map-$KERNELRELEASE"
-echo "/sbin/installkernel $KERNELRELEASE /boot/vmlinuz-$KERNELRELEASE-rpm /boot/System.map-$KERNELRELEASE-rpm"
-echo "rm -f /boot/vmlinuz-$KERNELRELEASE-rpm /boot/System.map-$KERNELRELEASE-rpm"
+echo "rm -f /boot/vmtronz-$KERNELRELEASE /boot/System.map-$KERNELRELEASE"
+echo "/sbin/installkernel $KERNELRELEASE /boot/vmtronz-$KERNELRELEASE-rpm /boot/System.map-$KERNELRELEASE-rpm"
+echo "rm -f /boot/vmtronz-$KERNELRELEASE-rpm /boot/System.map-$KERNELRELEASE-rpm"
 echo "fi"
 echo ""
 echo "%files"

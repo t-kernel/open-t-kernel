@@ -1,13 +1,13 @@
 #!/bin/sh
 #
-# link vmlinux
+# link vmtronx
 #
-# vmlinux is linked from the objects selected by $(KBUILD_VMLINUX_INIT) and
+# vmtronx is linked from the objects selected by $(KBUILD_VMLINUX_INIT) and
 # $(KBUILD_VMLINUX_MAIN). Most are built-in.o files from top-level directories
 # in the kernel tree, others are specified in arch/$(ARCH)/Makefile.
 # Ordering when linking is important, and $(KBUILD_VMLINUX_INIT) must be first.
 #
-# vmlinux
+# vmtronx
 #   ^
 #   |
 #   +-< $(KBUILD_VMLINUX_INIT)
@@ -18,10 +18,10 @@
 #   |
 #   +-< ${kallsymso} (see description in KALLSYMS section)
 #
-# vmlinux version (uname -v) cannot be updated during normal
+# vmtronx version (uname -v) cannot be updated during normal
 # descending-into-subdirs phase since we do not yet know if we need to
-# update vmlinux.
-# Therefore this step is delayed until just before final link of vmlinux.
+# update vmtronx.
+# Therefore this step is delayed until just before final link of vmtronx.
 #
 # System.map is generated to document addresses of all kernel symbols
 
@@ -37,7 +37,7 @@ info()
 	fi
 }
 
-# Link of vmlinux.o used for section mismatch analysis
+# Link of vmtronx.o used for section mismatch analysis
 # ${1} output file
 modpost_link()
 {
@@ -45,19 +45,19 @@ modpost_link()
 		--start-group ${KBUILD_VMLINUX_MAIN} --end-group
 }
 
-# Link of vmlinux
+# Link of vmtronx
 # ${1} - optional extra .o files
 # ${2} - output file
-vmlinux_link()
+vmtronx_link()
 {
 	local lds="${objtree}/${KBUILD_LDS}"
 
 	if [ "${SRCARCH}" != "um" ]; then
-		${LD} ${LDFLAGS} ${LDFLAGS_vmlinux} -o ${2}                  \
+		${LD} ${LDFLAGS} ${LDFLAGS_vmtronx} -o ${2}                  \
 			-T ${lds} ${KBUILD_VMLINUX_INIT}                     \
 			--start-group ${KBUILD_VMLINUX_MAIN} --end-group ${1}
 	else
-		${CC} ${CFLAGS_vmlinux} -o ${2}                              \
+		${CC} ${CFLAGS_vmtronx} -o ${2}                              \
 			-Wl,-T,${lds} ${KBUILD_VMLINUX_INIT}                 \
 			-Wl,--start-group                                    \
 				 ${KBUILD_VMLINUX_MAIN}                      \
@@ -118,10 +118,10 @@ cleanup()
 	rm -f .tmp_System.map
 	rm -f .tmp_kallsyms*
 	rm -f .tmp_version
-	rm -f .tmp_vmlinux*
+	rm -f .tmp_vmtronx*
 	rm -f System.map
-	rm -f vmlinux
-	rm -f vmlinux.o
+	rm -f vmtronx
+	rm -f vmtronx.o
 }
 
 #
@@ -148,12 +148,12 @@ case "${KCONFIG_CONFIG}" in
 	. "./${KCONFIG_CONFIG}"
 esac
 
-#link vmlinux.o
-info LD vmlinux.o
-modpost_link vmlinux.o
+#link vmtronx.o
+info LD vmtronx.o
+modpost_link vmtronx.o
 
-# modpost vmlinux.o to check for section mismatches
-${MAKE} -f "${srctree}/scripts/Makefile.modpost" vmlinux.o
+# modpost vmtronx.o to check for section mismatches
+${MAKE} -f "${srctree}/scripts/Makefile.modpost" vmtronx.o
 
 # Update version
 info GEN .version
@@ -169,64 +169,64 @@ fi;
 ${MAKE} -f "${srctree}/scripts/Makefile.build" obj=kernel/sysinit
 
 kallsymso=""
-kallsyms_vmlinux=""
+kallsyms_vmtronx=""
 if [ -n "${CONFIG_KALLSYMS}" ]; then
 
 	# kallsyms support
-	# Generate section listing all symbols and add it into vmlinux
+	# Generate section listing all symbols and add it into vmtronx
 	# It's a three step process:
-	# 1)  Link .tmp_vmlinux1 so it has all symbols and sections,
+	# 1)  Link .tmp_vmtronx1 so it has all symbols and sections,
 	#     but __kallsyms is empty.
 	#     Running kallsyms on that gives us .tmp_kallsyms1.o with
 	#     the right size
-	# 2)  Link .tmp_vmlinux2 so it now has a __kallsyms section of
+	# 2)  Link .tmp_vmtronx2 so it now has a __kallsyms section of
 	#     the right size, but due to the added section, some
 	#     addresses have shifted.
 	#     From here, we generate a correct .tmp_kallsyms2.o
 	# 2a) We may use an extra pass as this has been necessary to
 	#     woraround some alignment related bugs.
 	#     KALLSYMS_EXTRA_PASS=1 is used to trigger this.
-	# 3)  The correct ${kallsymso} is linked into the final vmlinux.
+	# 3)  The correct ${kallsymso} is linked into the final vmtronx.
 	#
-	# a)  Verify that the System.map from vmlinux matches the map from
+	# a)  Verify that the System.map from vmtronx matches the map from
 	#     ${kallsymso}.
 
 	kallsymso=.tmp_kallsyms2.o
-	kallsyms_vmlinux=.tmp_vmlinux2
+	kallsyms_vmtronx=.tmp_vmtronx2
 
 	# step 1
-	vmlinux_link "" .tmp_vmlinux1
-	kallsyms .tmp_vmlinux1 .tmp_kallsyms1.o
+	vmtronx_link "" .tmp_vmtronx1
+	kallsyms .tmp_vmtronx1 .tmp_kallsyms1.o
 
 	# step 2
-	vmlinux_link .tmp_kallsyms1.o .tmp_vmlinux2
-	kallsyms .tmp_vmlinux2 .tmp_kallsyms2.o
+	vmtronx_link .tmp_kallsyms1.o .tmp_vmtronx2
+	kallsyms .tmp_vmtronx2 .tmp_kallsyms2.o
 
 	# step 2a
 	if [ -n "${KALLSYMS_EXTRA_PASS}" ]; then
 		kallsymso=.tmp_kallsyms3.o
-		kallsyms_vmlinux=.tmp_vmlinux3
+		kallsyms_vmtronx=.tmp_vmtronx3
 
-		vmlinux_link .tmp_kallsyms2.o .tmp_vmlinux3
+		vmtronx_link .tmp_kallsyms2.o .tmp_vmtronx3
 
-		kallsyms .tmp_vmlinux3 .tmp_kallsyms3.o
+		kallsyms .tmp_vmtronx3 .tmp_kallsyms3.o
 	fi
 fi
 
-info LD vmlinux
-vmlinux_link "${kallsymso}" vmlinux
+info LD vmtronx
+vmtronx_link "${kallsymso}" vmtronx
 
 if [ -n "${CONFIG_BUILDTIME_EXTABLE_SORT}" ]; then
-	info SORTEX vmlinux
-	sortextable vmlinux
+	info SORTEX vmtronx
+	sortextable vmtronx
 fi
 
 info SYSMAP System.map
-mksysmap vmlinux System.map
+mksysmap vmtronx System.map
 
 # step a (see comment above)
 if [ -n "${CONFIG_KALLSYMS}" ]; then
-	mksysmap ${kallsyms_vmlinux} .tmp_System.map
+	mksysmap ${kallsyms_vmtronx} .tmp_System.map
 
 	if ! cmp -s System.map .tmp_System.map; then
 		echo >&2 Inconsistent kallsyms data

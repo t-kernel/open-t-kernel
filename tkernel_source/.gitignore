@@ -44,10 +44,10 @@ Module.symvers
 /tags
 /TAGS
 /linux
-/vmlinux
-/vmlinux.32
-/vmlinux-gdb.py
-/vmlinuz
+/vmtronx
+/vmtronx.32
+/vmtronx-gdb.py
+/vmtronz
 /System.map
 /Module.markers
 

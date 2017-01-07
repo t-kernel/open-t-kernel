@@ -267,7 +267,7 @@ cmd_gzip = (cat $(filter-out FORCE,$^) | gzip -n -f -9 > $@) || \
 quiet_cmd_dt_S_dtb= DTB     $@
 cmd_dt_S_dtb=						\
 (							\
-	echo '\#include <asm-generic/vmlinux.lds.h>'; 	\
+	echo '\#include <asm-generic/vmtronx.lds.h>'; 	\
 	echo '.section .dtb.init.rodata,"a"';		\
 	echo '.balign STRUCT_ALIGNMENT';		\
 	echo '.global __dtb_$(*F)_begin';		\

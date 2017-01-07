@@ -74,7 +74,7 @@
     Two machines are required for using kgdb. One of these machines is
     a development machine and the other is the target machine.  The
     kernel to be debugged runs on the target machine. The development
-    machine runs an instance of gdb against the vmlinux file which
+    machine runs an instance of gdb against the vmtronx file which
     contains the symbols (not a boot image such as bzImage, zImage,
     uImage...).  In gdb the developer specifies the connection
     parameters and connects to kgdb.  The type of connection a
@@ -99,7 +99,7 @@
     </para>
     <para>
     While it is not a hard requirement that you have symbols in your
-    vmlinux file, gdb tends not to be very useful without the symbolic
+    vmtronx file, gdb tends not to be very useful without the symbolic
     data, so you will want to turn
     on <symbol>CONFIG_DEBUG_INFO</symbol> which is called "Compile the
     kernel with debug info" in the config menu.
@@ -538,7 +538,7 @@
     Example (using a directly connected port):
     </para>
     <programlisting>
-    % gdb ./vmlinux
+    % gdb ./vmtronx
     (gdb) set remotebaud 115200
     (gdb) target remote /dev/ttyS0
     </programlisting>
@@ -546,7 +546,7 @@
     Example (kgdb to a terminal server on TCP port 2012):
     </para>
     <programlisting>
-    % gdb ./vmlinux
+    % gdb ./vmtronx
     (gdb) target remote 192.168.2.2:2012
     </programlisting>
     <para>

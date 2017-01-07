@@ -4,10 +4,10 @@ correct my mistakes ;-)    (mbligh@aracnet.com)
 Thanks to John Levon, Dave Hansen, et al. for help writing this.
 
 <test> is the thing you're trying to measure.
-Make sure you have the correct System.map / vmlinux referenced!
+Make sure you have the correct System.map / vmtronx referenced!
 
 It is probably easiest to use "make install" for linux and hack
-/sbin/installkernel to copy vmlinux to /boot, in addition to vmlinuz,
+/sbin/installkernel to copy vmtronx to /boot, in addition to vmtronz,
 config, System.map, which are usually installed by default.
 
 Readprofile
@@ -42,7 +42,7 @@ a 0Hz CPU, APIC was not on. Be aware that idle=poll may mean a performance
 penalty.
 
 One time setup:
-		opcontrol --setup --vmlinux=/boot/vmlinux
+		opcontrol --setup --vmtronx=/boot/vmtronx
 
 clear		opcontrol --reset
 start		opcontrol --start
@@ -50,7 +50,7 @@ start		opcontrol --start
 stop		opcontrol --stop
 dump output	opreport >  output_file
 
-To only report on the kernel, run opreport -l /boot/vmlinux > output_file
+To only report on the kernel, run opreport -l /boot/vmtronx > output_file
 
 A reset is needed to clear old statistics, which survive a reboot.
 

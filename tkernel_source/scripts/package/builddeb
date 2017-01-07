@@ -99,10 +99,10 @@ um)
 	installed_image_path="usr/bin/linux-$version"
 	;;
 parisc|mips|powerpc)
-	installed_image_path="boot/vmlinux-$version"
+	installed_image_path="boot/vmtronx-$version"
 	;;
 *)
-	installed_image_path="boot/vmlinuz-$version"
+	installed_image_path="boot/vmtronz-$version"
 esac
 
 BUILD_DEBUG="$(grep -s '^CONFIG_DEBUG_INFO=y' $KCONFIG_CONFIG || true)"
@@ -362,12 +362,12 @@ if [ -n "$BUILD_DEBUG" ] ; then
 	# Different tools want the image in different locations
 	# perf
 	mkdir -p $dbg_dir/usr/lib/debug/lib/modules/$version/
-	cp vmlinux $dbg_dir/usr/lib/debug/lib/modules/$version/
+	cp vmtronx $dbg_dir/usr/lib/debug/lib/modules/$version/
 	# systemtap
 	mkdir -p $dbg_dir/usr/lib/debug/boot/
-	ln -s ../lib/modules/$version/vmlinux $dbg_dir/usr/lib/debug/boot/vmlinux-$version
+	ln -s ../lib/modules/$version/vmtronx $dbg_dir/usr/lib/debug/boot/vmtronx-$version
 	# kdump-tools
-	ln -s lib/modules/$version/vmlinux $dbg_dir/usr/lib/debug/vmlinux-$version
+	ln -s lib/modules/$version/vmtronx $dbg_dir/usr/lib/debug/vmtronx-$version
 
 	cat <<EOF >> debian/control
 

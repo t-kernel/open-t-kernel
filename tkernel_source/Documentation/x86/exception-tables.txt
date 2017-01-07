@@ -156,9 +156,9 @@ memory. But what does the .section stuff do?????
 
 To understand this we have to look at the final kernel:
 
- > objdump --section-headers vmlinux
+ > objdump --section-headers vmtronx
  >
- > vmlinux:     file format elf32-i386
+ > vmtronx:     file format elf32-i386
  >
  > Sections:
  > Idx Name          Size      VMA       LMA       File off  Algn
@@ -183,7 +183,7 @@ There are obviously 2 non standard ELF sections in the generated object
 file. But first we want to find out what happened to our code in the
 final kernel executable:
 
- > objdump --disassemble --section=.text vmlinux
+ > objdump --disassemble --section=.text vmtronx
  >
  > c017e785 <do_con_write+c1> xorl   %edx,%edx
  > c017e787 <do_con_write+c3> movl   0xc01c7bec,%eax
@@ -201,14 +201,14 @@ The instructions bracketed in the .section directives are no longer
 in the normal execution path. They are located in a different section
 of the executable file:
 
- > objdump --disassemble --section=.fixup vmlinux
+ > objdump --disassemble --section=.fixup vmtronx
  >
  > c0199ff5 <.fixup+10b5> movl   $0xfffffff2,%eax
  > c0199ffa <.fixup+10ba> xorb   %dl,%dl
  > c0199ffc <.fixup+10bc> jmp    c017e7a7 <do_con_write+e3>
 
 And finally:
- > objdump --full-contents --section=__ex_table vmlinux
+ > objdump --full-contents --section=__ex_table vmtronx
  >
  >  c01aa7c4 93c017c0 e09f19c0 97c017c0 99c017c0  ................
  >  c01aa7d4 f6c217c0 e99f19c0 a5e717c0 f59f19c0  ................
@@ -239,12 +239,12 @@ are local labels. The local label 1b (1b stands for next label 1
 backward) is the address of the instruction that might fault, i.e.
 in our case the address of the label 1 is c017e7a5:
 the original assembly code: > 1:      movb (%ebx),%dl
-and linked in vmlinux     : > c017e7a5 <do_con_write+e1> movb   (%ebx),%dl
+and linked in vmtronx     : > c017e7a5 <do_con_write+e1> movb   (%ebx),%dl
 
 The local label 3 (backwards again) is the address of the code to handle
 the fault, in our case the actual value is c0199ff5:
 the original assembly code: > 3:      movl $-14,%eax
-and linked in vmlinux     : > c0199ff5 <.fixup+10b5> movl   $0xfffffff2,%eax
+and linked in vmtronx     : > c0199ff5 <.fixup+10b5> movl   $0xfffffff2,%eax
 
 The assembly code
  > .section __ex_table,"a"

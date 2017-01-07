@@ -185,7 +185,7 @@ grub.conf needs to be modified as follows:
         title Linux 2.6.29-tip w/ tboot
           root (hd0,0)
                 kernel /tboot.gz logging=serial,vga,memory
-                module /vmlinuz-2.6.29-tip intel_iommu=on ro
+                module /vmtronz-2.6.29-tip intel_iommu=on ro
                        root=LABEL=/ rhgb console=ttyS0,115200 3
                 module /initrd-2.6.29-tip.img
                 module /Q35_SINIT_17.BIN

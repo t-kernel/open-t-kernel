@@ -82,17 +82,17 @@ modpost = scripts/mod/modpost                    \
 MODPOST_OPT=$(subst -i,-n,$(filter -i,$(MAKEFLAGS)))
 
 # We can go over command line length here, so be careful.
-quiet_cmd_modpost = MODPOST $(words $(filter-out vmlinux FORCE, $^)) modules
+quiet_cmd_modpost = MODPOST $(words $(filter-out vmtronx FORCE, $^)) modules
       cmd_modpost = $(MODLISTCMD) | sed 's/\.ko$$/.o/' | $(modpost) $(MODPOST_OPT) -s -T -
 
 PHONY += __modpost
 __modpost: $(modules:.ko=.o) FORCE
-	$(call cmd,modpost) $(wildcard vmlinux)
+	$(call cmd,modpost) $(wildcard vmtronx)
 
 quiet_cmd_kernel-mod = MODPOST $@
       cmd_kernel-mod = $(modpost) $@
 
-vmlinux.o: FORCE
+vmtronx.o: FORCE
 	$(call cmd,kernel-mod)
 
 # Declare generated files as targets for modpost

@@ -17,7 +17,7 @@
 #	sparc port by Martin Habets <errandir_news@mph.eclipse.co.uk>
 #
 #	Usage:
-#	objdump -d vmlinux | scripts/checkstack.pl [arch]
+#	objdump -d vmtronx | scripts/checkstack.pl [arch]
 #
 #	TODO :	Port to all architectures (one regex per arch)
 

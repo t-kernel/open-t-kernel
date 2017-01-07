@@ -44,10 +44,10 @@ Setup
 
  o cd /path/to/linux-build
 
- o Start gdb: gdb vmlinux
+ o Start gdb: gdb vmtronx
 
    Note: Some distros may restrict auto-loading of gdb scripts to known safe
-   directories. In case gdb reports to refuse loading vmlinux-gdb.py, add
+   directories. In case gdb reports to refuse loading vmtronx-gdb.py, add
 
     add-auto-load-safe-path /path/to/linux-build
 
@@ -62,7 +62,7 @@ Examples of using the Linux-provided gdb helpers
 
  o Load module (and main kernel) symbols:
     (gdb) lx-symbols
-    loading vmlinux
+    loading vmtronx
     scanning for modules in /home/user/linux/build
     loading @0xffffffffa0020000: /home/user/linux/build/net/netfilter/xt_tcpudp.ko
     loading @0xffffffffa0016000: /home/user/linux/build/net/netfilter/xt_pkttype.ko

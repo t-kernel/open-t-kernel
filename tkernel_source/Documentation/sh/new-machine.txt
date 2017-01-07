@@ -270,7 +270,7 @@ Architecture specific targets (sh):
 
 which then allows you to do:
 
-$ make ARCH=sh CROSS_COMPILE=sh4-linux- vapor_defconfig vmlinux
+$ make ARCH=sh CROSS_COMPILE=sh4-linux- vapor_defconfig vmtronx
 
 which will in turn copy the defconfig for this board, run it through
 oldconfig (prompting you for any new options since the time of creation),

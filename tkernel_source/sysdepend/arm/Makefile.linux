@@ -13,9 +13,9 @@
 # Ensure linker flags are correct
 LDFLAGS		:=
 
-LDFLAGS_vmlinux	:=-p --no-undefined -X --pic-veneer
+LDFLAGS_vmtronx	:=-p --no-undefined -X --pic-veneer
 ifeq ($(CONFIG_CPU_ENDIAN_BE8),y)
-LDFLAGS_vmlinux	+= --be8
+LDFLAGS_vmtronx	+= --be8
 LDFLAGS_MODULE	+= --be8
 endif
 
@@ -253,7 +253,7 @@ INSTALL_TARGETS	= zinstall uinstall install
 
 PHONY += bzImage $(BOOT_TARGETS) $(INSTALL_TARGETS)
 
-$(BOOT_TARGETS): vmlinux
+$(BOOT_TARGETS): vmtronx
 	$(Q)$(MAKE) $(build)=$(boot) MACHINE=$(MACHINE) $(boot)/$@
 
 $(INSTALL_TARGETS):

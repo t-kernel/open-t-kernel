@@ -106,8 +106,8 @@ keypair using openssl if one does not exist in the files:
 	signing_key.priv
 	signing_key.x509
 
-during the building of vmlinux (the public part of the key needs to be built
-into vmlinux) using parameters in the:
+during the building of vmtronx (the public part of the key needs to be built
+into vmtronx) using parameters in the:
 
 	x509.genkey
 

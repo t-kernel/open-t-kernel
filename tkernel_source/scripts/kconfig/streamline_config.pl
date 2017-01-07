@@ -74,12 +74,12 @@ my @searchconfigs = (
 	    "exec" => "cat",
 	},
 	{
-	    "file" => "/boot/vmlinuz-$uname",
+	    "file" => "/boot/vmtronz-$uname",
 	    "exec" => "scripts/extract-ikconfig",
 	    "test" => "scripts/extract-ikconfig",
 	},
 	{
-	    "file" => "vmlinux",
+	    "file" => "vmtronx",
 	    "exec" => "scripts/extract-ikconfig",
 	    "test" => "scripts/extract-ikconfig",
 	},

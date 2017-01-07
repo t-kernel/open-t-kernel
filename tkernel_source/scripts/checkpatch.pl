@@ -4306,7 +4306,7 @@ sub process {
 # multi-statement macros should be enclosed in a do while loop, grab the
 # first statement and ensure its the whole macro if its not enclosed
 # in a known good container
-		if ($realfile !~ m@/vmlinux.lds.h$@ &&
+		if ($realfile !~ m@/vmtronx.lds.h$@ &&
 		    $line =~ /^.\s*\#\s*define\s*$Ident(\()?/) {
 			my $ln = $linenr;
 			my $cnt = $realcnt;
@@ -4416,7 +4416,7 @@ sub process {
 # single-statement macros do not need to be enclosed in do while (0) loop,
 # macro should not end with a semicolon
 		if ($^V && $^V ge 5.10.0 &&
-		    $realfile !~ m@/vmlinux.lds.h$@ &&
+		    $realfile !~ m@/vmtronx.lds.h$@ &&
 		    $line =~ /^.\s*\#\s*define\s+$Ident(\()?/) {
 			my $ln = $linenr;
 			my $cnt = $realcnt;
@@ -4469,9 +4469,9 @@ sub process {
 #	.
 #	ALIGN(...)
 #	VMLINUX_SYMBOL(...)
-		if ($realfile eq 'vmlinux.lds.h' && $line =~ /(?:(?:^|\s)$Ident\s*=|=\s*$Ident(?:\s|$))/) {
+		if ($realfile eq 'vmtronx.lds.h' && $line =~ /(?:(?:^|\s)$Ident\s*=|=\s*$Ident(?:\s|$))/) {
 			WARN("MISSING_VMLINUX_SYMBOL",
-			     "vmlinux.lds.h needs VMLINUX_SYMBOL() around C-visible symbols\n" . $herecurr);
+			     "vmtronx.lds.h needs VMLINUX_SYMBOL() around C-visible symbols\n" . $herecurr);
 		}
 
 # check for redundant bracing round if etc

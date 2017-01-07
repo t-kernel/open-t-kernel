@@ -42,7 +42,7 @@ Prepare your boot loader to use the initrd you will create or
 modify. For lilo the simplest setup looks like the following
 lines:
 
-image=/boot/vmlinuz
+image=/boot/vmtronz
 initrd=/boot/initrd.gz
 label=linux
 append="root=/dev/ram0 init=/linuxrc rw"

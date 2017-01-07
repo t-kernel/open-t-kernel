@@ -63,7 +63,7 @@ messages ;-)
 Actually, there are things you can do that make this easier. I have two 
 separate approaches:
 
-	gdb /usr/src/linux/vmlinux
+	gdb /usr/src/linux/vmtronx
 	gdb> disassemble <offending_function>
 
 That's the easy way to find the problem, at least if the bug-report is 

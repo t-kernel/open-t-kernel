@@ -36,8 +36,8 @@ Getting and Building Xen and Dom0
 
  4. copy kernels and xen
     # cp xen/xen.gz /boot/efi/efi/redhat/
-    # cp build-linux-2.6.18-xen_ia64/vmlinux.gz \
-      /boot/efi/efi/redhat/vmlinuz-2.6.18.8-xen
+    # cp build-linux-2.6.18-xen_ia64/vmtronx.gz \
+      /boot/efi/efi/redhat/vmtronz-2.6.18.8-xen
 
  5. make initrd for Dom0/DomU
     # make -C linux-2.6.18-xen.hg ARCH=ia64 modules_install \
@@ -104,7 +104,7 @@ Boot Xen & Domain0
      default=xen
      relocatable
 
-     image=vmlinuz-2.6.18.8-xen
+     image=vmtronz-2.6.18.8-xen
              label=xen
              vmm=xen.gz
              initrd=initrd-2.6.18.8-xen.img
@@ -145,7 +145,7 @@ Getting and Building domU with pv_ops
     # make
 
  5. install the kernel and initrd
-    # cp vmlinux.gz /boot/efi/efi/redhat/vmlinuz-2.6-pv_ops-xenU
+    # cp vmtronx.gz /boot/efi/efi/redhat/vmtronz-2.6-pv_ops-xenU
     # make modules_install
     # mkinitrd -f /boot/efi/efi/redhat/initrd-2.6-pv_ops-xenU.img \
       2.6.26-rc3xen-ia64-08941-g1b12161 --builtin mptspi \
@@ -158,7 +158,7 @@ Boot DomainU with pv_ops
 
  1. make config of DomU
    # vi /etc/xen/rhel5
-     kernel = "/boot/efi/efi/redhat/vmlinuz-2.6-pv_ops-xenU"
+     kernel = "/boot/efi/efi/redhat/vmtronz-2.6-pv_ops-xenU"
      ramdisk = "/boot/efi/efi/redhat/initrd-2.6-pv_ops-xenU.img"
      vcpus = 1
      memory = 512

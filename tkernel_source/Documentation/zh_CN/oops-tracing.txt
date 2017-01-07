@@ -71,7 +71,7 @@ From: Linus Torvalds <torvalds@osdl.org>
 
 实际上，你有办法使它更简单。我有两个不同的方法：
 
-	gdb /usr/src/linux/vmlinux
+	gdb /usr/src/linux/vmtronx
 	gdb> disassemble <offending_function>
 
 那是发现问题的简单办法，至少如果bug报告做的好的情况下（象这个一样-运行ksymoops

@@ -57,7 +57,7 @@ if hasattr(gdb, 'Breakpoint'):
 class LxSymbols(gdb.Command):
     """(Re-)load symbols of Linux kernel and currently loaded modules.
 
-The kernel (vmlinux) is taken from the current working directly. Modules (.ko)
+The kernel (vmtronx) is taken from the current working directly. Modules (.ko)
 are scanned recursively, starting in the same directory. Optionally, the module
 search path can be extended by a space separated list of paths passed to the
 lx-symbols command."""
@@ -130,7 +130,7 @@ lx-symbols command."""
             gdb.write("no module object found for '{0}'\n".format(module_name))
 
     def load_all_symbols(self):
-        gdb.write("loading vmlinux\n")
+        gdb.write("loading vmtronx\n")
 
         # Dropping symbols will disable all breakpoints. So save their states
         # and restore them afterward.
@@ -139,9 +139,9 @@ lx-symbols command."""
             for bp in gdb.breakpoints():
                 saved_states.append({'breakpoint': bp, 'enabled': bp.enabled})
 
-        # drop all current symbols and reload vmlinux
+        # drop all current symbols and reload vmtronx
         gdb.execute("symbol-file", to_string=True)
-        gdb.execute("symbol-file vmlinux")
+        gdb.execute("symbol-file vmtronx")
 
         self.loaded_modules = []
         module_list = modules.module_list()

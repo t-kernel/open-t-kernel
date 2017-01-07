@@ -318,7 +318,7 @@ kprobe address resolution code.
 
 If you need to insert a probe in the middle of a function, you may find
 it useful to "Compile the kernel with debug info" (CONFIG_DEBUG_INFO),
-so you can use "objdump -d -l vmlinux" to see the source-to-object
+so you can use "objdump -d -l vmtronx" to see the source-to-object
 code mapping.
 
 4. API Reference

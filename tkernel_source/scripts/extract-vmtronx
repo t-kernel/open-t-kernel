@@ -1,6 +1,6 @@
 #!/bin/sh
 # ----------------------------------------------------------------------
-# extract-vmlinux - Extract uncompressed vmlinux from a kernel image
+# extract-vmtronx - Extract uncompressed vmtronx from a kernel image
 #
 # Inspired from extract-ikconfig
 # (c) 2009,2010 Dick Streefland <dick@streefland.net>
@@ -10,10 +10,10 @@
 # Licensed under the GNU General Public License, version 2 (GPLv2).
 # ----------------------------------------------------------------------
 
-check_vmlinux()
+check_vmtronx()
 {
 	# Use readelf to check if it's a valid ELF
-	# TODO: find a better to way to check that it's really vmlinux
+	# TODO: find a better to way to check that it's really vmtronx
 	#       and not just an elf
 	readelf -h $1 > /dev/null 2>&1 || return 1
 
@@ -31,7 +31,7 @@ try_decompress()
 	do
 		pos=${pos%%:*}
 		tail -c+$pos "$img" | $3 > $tmp 2> /dev/null
-		check_vmlinux $tmp
+		check_vmtronx $tmp
 	done
 }
 
@@ -45,11 +45,11 @@ then
 fi
 
 # Prepare temp files:
-tmp=$(mktemp /tmp/vmlinux-XXX)
+tmp=$(mktemp /tmp/vmtronx-XXX)
 trap "rm -f $tmp" 0
 
 # Initial attempt for uncompressed images or objects:
-check_vmlinux $img
+check_vmtronx $img
 
 # That didn't work, so retry after decompression.
 try_decompress '\037\213\010' xy    gunzip
@@ -59,4 +59,4 @@ try_decompress '\135\0\0\0'   xxx   unlzma
 try_decompress '\211\114\132' xy    'lzop -d'
 
 # Bail out:
-echo "$me: Cannot find vmlinux." >&2
+echo "$me: Cannot find vmtronx." >&2

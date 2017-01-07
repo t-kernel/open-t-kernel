@@ -66,7 +66,7 @@ fi
 #
 cp -v -- "${objtree}/System.map" "${tmpdir}/boot/System.map-${KERNELRELEASE}"
 cp -v -- "${objtree}/.config" "${tmpdir}/boot/config-${KERNELRELEASE}"
-cp -v -- "${objtree}/vmlinux" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}"
+cp -v -- "${objtree}/vmtronx" "${tmpdir}/boot/vmtronx-${KERNELRELEASE}"
 
 
 #
@@ -74,42 +74,42 @@ cp -v -- "${objtree}/vmlinux" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}"
 #
 case "${ARCH}" in
 	x86|i386|x86_64)
-		[ -f "${objtree}/arch/x86/boot/bzImage" ] && cp -v -- "${objtree}/arch/x86/boot/bzImage" "${tmpdir}/boot/vmlinuz-${KERNELRELEASE}"
+		[ -f "${objtree}/arch/x86/boot/bzImage" ] && cp -v -- "${objtree}/arch/x86/boot/bzImage" "${tmpdir}/boot/vmtronz-${KERNELRELEASE}"
 		;;
 	alpha)
-		[ -f "${objtree}/arch/alpha/boot/vmlinux.gz" ] && cp -v -- "${objtree}/arch/alpha/boot/vmlinux.gz" "${tmpdir}/boot/vmlinuz-${KERNELRELEASE}"
+		[ -f "${objtree}/arch/alpha/boot/vmtronx.gz" ] && cp -v -- "${objtree}/arch/alpha/boot/vmtronx.gz" "${tmpdir}/boot/vmtronz-${KERNELRELEASE}"
 		;;
 	parisc*)
-		[ -f "${KBUILD_IMAGE}" ] && cp -v -- "${KBUILD_IMAGE}" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}"
+		[ -f "${KBUILD_IMAGE}" ] && cp -v -- "${KBUILD_IMAGE}" "${tmpdir}/boot/vmtronx-${KERNELRELEASE}"
 		[ -f "${objtree}/lifimage" ] && cp -v -- "${objtree}/lifimage" "${tmpdir}/boot/lifimage-${KERNELRELEASE}"
 		;;
 	vax)
-		[ -f "${objtree}/vmlinux.SYS" ] && cp -v -- "${objtree}/vmlinux.SYS" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}.SYS"
-		[ -f "${objtree}/vmlinux.dsk" ] && cp -v -- "${objtree}/vmlinux.dsk" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}.dsk"
+		[ -f "${objtree}/vmtronx.SYS" ] && cp -v -- "${objtree}/vmtronx.SYS" "${tmpdir}/boot/vmtronx-${KERNELRELEASE}.SYS"
+		[ -f "${objtree}/vmtronx.dsk" ] && cp -v -- "${objtree}/vmtronx.dsk" "${tmpdir}/boot/vmtronx-${KERNELRELEASE}.dsk"
 		;;
 	mips)
-		if [ -f "${objtree}/arch/mips/boot/compressed/vmlinux.bin" ]; then
-			cp -v -- "${objtree}/arch/mips/boot/compressed/vmlinux.bin" "${tmpdir}/boot/vmlinuz-${KERNELRELEASE}"
-		elif [ -f "${objtree}/arch/mips/boot/compressed/vmlinux.ecoff" ]; then
-			cp -v -- "${objtree}/arch/mips/boot/compressed/vmlinux.ecoff" "${tmpdir}/boot/vmlinuz-${KERNELRELEASE}"
-		elif [ -f "${objtree}/arch/mips/boot/compressed/vmlinux.srec" ]; then
-			cp -v -- "${objtree}/arch/mips/boot/compressed/vmlinux.srec" "${tmpdir}/boot/vmlinuz-${KERNELRELEASE}"
-		elif [ -f "${objtree}/vmlinux.32" ]; then
-			cp -v -- "${objtree}/vmlinux.32" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}"
-		elif [ -f "${objtree}/vmlinux.64" ]; then
-			cp -v -- "${objtree}/vmlinux.64" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}"
-		elif [ -f "${objtree}/arch/mips/boot/vmlinux.bin" ]; then
-			cp -v -- "${objtree}/arch/mips/boot/vmlinux.bin" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}"
-		elif [ -f "${objtree}/arch/mips/boot/vmlinux.ecoff" ]; then
-			cp -v -- "${objtree}/arch/mips/boot/vmlinux.ecoff" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}"
-		elif [ -f "${objtree}/arch/mips/boot/vmlinux.srec" ]; then
-			cp -v -- "${objtree}/arch/mips/boot/vmlinux.srec" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}"
-		elif [ -f "${objtree}/vmlinux" ]; then
-			cp -v -- "${objtree}/vmlinux" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}"
+		if [ -f "${objtree}/arch/mips/boot/compressed/vmtronx.bin" ]; then
+			cp -v -- "${objtree}/arch/mips/boot/compressed/vmtronx.bin" "${tmpdir}/boot/vmtronz-${KERNELRELEASE}"
+		elif [ -f "${objtree}/arch/mips/boot/compressed/vmtronx.ecoff" ]; then
+			cp -v -- "${objtree}/arch/mips/boot/compressed/vmtronx.ecoff" "${tmpdir}/boot/vmtronz-${KERNELRELEASE}"
+		elif [ -f "${objtree}/arch/mips/boot/compressed/vmtronx.srec" ]; then
+			cp -v -- "${objtree}/arch/mips/boot/compressed/vmtronx.srec" "${tmpdir}/boot/vmtronz-${KERNELRELEASE}"
+		elif [ -f "${objtree}/vmtronx.32" ]; then
+			cp -v -- "${objtree}/vmtronx.32" "${tmpdir}/boot/vmtronx-${KERNELRELEASE}"
+		elif [ -f "${objtree}/vmtronx.64" ]; then
+			cp -v -- "${objtree}/vmtronx.64" "${tmpdir}/boot/vmtronx-${KERNELRELEASE}"
+		elif [ -f "${objtree}/arch/mips/boot/vmtronx.bin" ]; then
+			cp -v -- "${objtree}/arch/mips/boot/vmtronx.bin" "${tmpdir}/boot/vmtronx-${KERNELRELEASE}"
+		elif [ -f "${objtree}/arch/mips/boot/vmtronx.ecoff" ]; then
+			cp -v -- "${objtree}/arch/mips/boot/vmtronx.ecoff" "${tmpdir}/boot/vmtronx-${KERNELRELEASE}"
+		elif [ -f "${objtree}/arch/mips/boot/vmtronx.srec" ]; then
+			cp -v -- "${objtree}/arch/mips/boot/vmtronx.srec" "${tmpdir}/boot/vmtronx-${KERNELRELEASE}"
+		elif [ -f "${objtree}/vmtronx" ]; then
+			cp -v -- "${objtree}/vmtronx" "${tmpdir}/boot/vmtronx-${KERNELRELEASE}"
 		fi
 		;;
 	*)
-		[ -f "${KBUILD_IMAGE}" ] && cp -v -- "${KBUILD_IMAGE}" "${tmpdir}/boot/vmlinux-kbuild-${KERNELRELEASE}"
+		[ -f "${KBUILD_IMAGE}" ] && cp -v -- "${KBUILD_IMAGE}" "${tmpdir}/boot/vmtronx-kbuild-${KERNELRELEASE}"
 		echo "" >&2
 		echo '** ** **  WARNING  ** ** **' >&2
 		echo "" >&2

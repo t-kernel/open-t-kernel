@@ -233,7 +233,7 @@ KNOWN ISSUES
           Example using the Grub bootloader:
               title Red Hat Enterprise Linux AS (2.4.21-27.ELsmp)
               root (hd0,0)
-              kernel /vmlinuz-2.4.21-27.ELsmp ro root=/dev/hda3 noirqbalance
+              kernel /vmtronz-2.4.21-27.ELsmp ro root=/dev/hda3 noirqbalance
               initrd /initrd-2.4.21-27.ELsmp.img
 
   2. After running insmod, the driver is loaded and the incorrect network

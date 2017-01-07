@@ -270,7 +270,7 @@ User Mode Linux, like so:
   gcc -static hello.c -o init
   echo init | cpio -o -H newc | gzip > test.cpio.gz
   # Testing external initramfs using the initrd loading mechanism.
-  qemu -kernel /boot/vmlinuz -initrd test.cpio.gz /dev/zero
+  qemu -kernel /boot/vmtronz -initrd test.cpio.gz /dev/zero
 
 When debugging a normal root filesystem, it's nice to be able to boot with
 "init=/bin/sh".  The initramfs equivalent is "rdinit=/bin/sh", and it's

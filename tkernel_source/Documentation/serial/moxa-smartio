@@ -359,11 +359,11 @@ Content
 	   c. make dep		     /* take a few minutes */
 	   d. make bzImage	     /* take probably 10-20 minutes */
 	   e. make install	     /* copy boot image to correct position */
-	   f. Please make sure the boot kernel (vmlinuz) is in the
+	   f. Please make sure the boot kernel (vmtronz) is in the
 	      correct position.
 	   g. If you use 'lilo' utility, you should check /etc/lilo.conf
-	      'image' item specified the path which is the 'vmlinuz' path,
-	      or you will load wrong (or old) boot kernel image (vmlinuz).
+	      'image' item specified the path which is the 'vmtronz' path,
+	      or you will load wrong (or old) boot kernel image (vmtronz).
 	      After checking /etc/lilo.conf, please run "lilo".
 
 	  Note that if the result of "make bzImage" is ERROR, then you have to

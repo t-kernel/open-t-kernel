@@ -17,7 +17,7 @@
 #
 #	The source must be compiled/assembled first, the object files
 #	are the primary input to this script.  Incomplete or missing
-#	objects will result in a flawed analysis.  Compile both vmlinux
+#	objects will result in a flawed analysis.  Compile both vmtronx
 #	and modules.
 #
 #	Even with complete objects, treat the result of the analysis
@@ -206,7 +206,7 @@ sub linux_objects
 		|| m:sound/.*/snd-:
 		|| m:^.*/\.tmp_:
 		|| m:^\.tmp_:
-		|| m:/vmlinux-obj.o$:
+		|| m:/vmtronx-obj.o$:
 		|| m:^tools/:
 		)
 	) {

@@ -95,7 +95,7 @@ bounds.h
 bsetup
 btfixupprep
 build
-bvmlinux
+bvmtronx
 bzImage*
 capability_names.h
 capflags.c
@@ -240,12 +240,12 @@ vdso64.lds
 vdso64.so.dbg
 version.h*
 vmImage
-vmlinux
-vmlinux-*
-vmlinux.aout
-vmlinux.bin.all
-vmlinux.lds
-vmlinuz
+vmtronx
+vmtronx-*
+vmtronx.aout
+vmtronx.bin.all
+vmtronx.lds
+vmtronz
 voffset.h
 vsyscall.lds
 vsyscall_32.lds

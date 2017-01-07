@@ -264,14 +264,14 @@ the warning.
 If your kernel was compiled with CONFIG_DEBUG_INFO=y, then all we have to do
 is give this address to the addr2line program, like this:
 
-	$ addr2line -e vmlinux -i ffffffff8104ede8
+	$ addr2line -e vmtronx -i ffffffff8104ede8
 	arch/x86/include/asm/string_64.h:12
 	include/asm-generic/siginfo.h:287
 	kernel/signal.c:380
 	kernel/signal.c:410
 
-The "-e vmlinux" tells addr2line which file to look in. IMPORTANT: This must
-be the vmlinux of the kernel that produced the warning in the first place! If
+The "-e vmtronx" tells addr2line which file to look in. IMPORTANT: This must
+be the vmtronx of the kernel that produced the warning in the first place! If
 not, the line number information will almost certainly be wrong.
 
 The "-i" tells addr2line to also print the line numbers of inlined functions.
@@ -341,7 +341,7 @@ kmemcheck stack dump, i.e.:
  [<ffffffff8100b87d>] do_notify_resume+0xad/0x7d0
  [<ffffffff8100c7b5>] int_signal+0x12/0x17
 
-	$ addr2line -e vmlinux -i ffffffff8104f04e ffffffff81050bd8 \
+	$ addr2line -e vmtronx -i ffffffff8104f04e ffffffff81050bd8 \
 		ffffffff8100b87d ffffffff8100c7b5
 	kernel/signal.c:446
 	kernel/signal.c:1806
@@ -494,7 +494,7 @@ that, we'll need the RIP address again:
 
 RIP: 0010:[<ffffffff8104ede8>]  [<ffffffff8104ede8>] __dequeue_signal+0xc8/0x190
 
-	$ objdump -d --no-show-raw-insn vmlinux | grep -C 8 ffffffff8104ede8:
+	$ objdump -d --no-show-raw-insn vmtronx | grep -C 8 ffffffff8104ede8:
 	ffffffff8104edc8:       mov    %r8,0x8(%r8)
 	ffffffff8104edcc:       test   %r10d,%r10d
 	ffffffff8104edcf:       js     ffffffff8104ee88 <__dequeue_signal+0x168>
@@ -544,7 +544,7 @@ initialized. This is the beginning of the struct:
 On 64-bit, the int is 4 bytes long, so it must the union member that has
 not been initialized. We can verify this using gdb:
 
-	$ gdb vmlinux
+	$ gdb vmtronx
 	...
 	(gdb) p &((struct siginfo *) 0)->_sifields
 	$1 = (union {...} *) 0x10

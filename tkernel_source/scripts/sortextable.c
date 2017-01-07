@@ -13,7 +13,7 @@
  */
 
 /*
- * Strategy: alter the vmlinux file in-place.
+ * Strategy: alter the vmtronx file in-place.
  */
 
 #include <sys/types.h>
@@ -327,7 +327,7 @@ main(int argc, char *argv[])
 	int i;
 
 	if (argc < 2) {
-		fprintf(stderr, "usage: sortextable vmlinux...\n");
+		fprintf(stderr, "usage: sortextable vmtronx...\n");
 		return 0;
 	}
 

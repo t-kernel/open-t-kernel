@@ -79,7 +79,7 @@ Then start GDB in the base of the kernel tree:
 
 Or:
 
-	frv-uclinux-gdb vmlinux		[MMU linux]
+	frv-uclinux-gdb vmtronx		[MMU linux]
 
 When the prompt appears:
 

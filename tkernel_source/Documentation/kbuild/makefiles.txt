@@ -66,7 +66,7 @@ The Makefiles have five parts:
 The top Makefile reads the .config file, which comes from the kernel
 configuration process.
 
-The top Makefile is responsible for building two major products: vmlinux
+The top Makefile is responsible for building two major products: vmtronx
 (the resident kernel image) and modules (any module files).
 It builds these goals by recursively descending into the subdirectories of
 the kernel source tree.
@@ -147,13 +147,13 @@ more details, with real examples.
 
 --- 3.2 Built-in object goals - obj-y
 
-	The kbuild Makefile specifies object files for vmlinux
+	The kbuild Makefile specifies object files for vmtronx
 	in the $(obj-y) lists.  These lists depend on the kernel
 	configuration.
 
 	Kbuild compiles all the $(obj-y) files.  It then calls
 	"$(LD) -r" to merge these files into one built-in.o file.
-	built-in.o is later linked into vmlinux by the parent Makefile.
+	built-in.o is later linked into vmtronx by the parent Makefile.
 
 	The order of files in $(obj-y) is significant.  Duplicates in
 	the lists are allowed: the first instance will be linked into
@@ -408,7 +408,7 @@ more details, with real examples.
 
 	Example:
 		#arch/blackfin/boot/Makefile
-		$(obj)/vmImage: $(obj)/vmlinux.gz
+		$(obj)/vmImage: $(obj)/vmtronx.gz
 			$(call if_changed,uimage)
 			@$(kecho) 'Kernel: $@ is ready'
 
@@ -593,7 +593,7 @@ more details, with real examples.
 
 	Example:
 		#Makefile
-		LDFLAGS_vmlinux += $(call ld-option, -X)
+		LDFLAGS_vmtronx += $(call ld-option, -X)
 
 
 === 4 Host Program support
@@ -823,7 +823,7 @@ When kbuild executes, the following steps are followed (roughly):
 4) Recursively descend down in all directories listed in
    init-* core* drivers-* net-* libs-* and build all targets.
    - The values of the above variables are expanded in arch/$(ARCH)/Makefile.
-5) All object files are then linked and the resulting file vmlinux is
+5) All object files are then linked and the resulting file vmtronx is
    located at the root of the obj tree.
    The very first objects linked are listed in head-y, assigned by
    arch/$(ARCH)/Makefile.
@@ -852,33 +852,33 @@ When kbuild executes, the following steps are followed (roughly):
 	linking the .ko files used for modules.
 	Default is "-r", for relocatable output.
 
-    LDFLAGS_vmlinux	Options for $(LD) when linking vmlinux
+    LDFLAGS_vmtronx	Options for $(LD) when linking vmtronx
 
-	LDFLAGS_vmlinux is used to specify additional flags to pass to
-	the linker when linking the final vmlinux image.
-	LDFLAGS_vmlinux uses the LDFLAGS_$@ support.
+	LDFLAGS_vmtronx is used to specify additional flags to pass to
+	the linker when linking the final vmtronx image.
+	LDFLAGS_vmtronx uses the LDFLAGS_$@ support.
 
 	Example:
 		#arch/x86/Makefile
-		LDFLAGS_vmlinux := -e stext
+		LDFLAGS_vmtronx := -e stext
 
     OBJCOPYFLAGS	objcopy flags
 
 	When $(call if_changed,objcopy) is used to translate a .o file,
 	the flags specified in OBJCOPYFLAGS will be used.
 	$(call if_changed,objcopy) is often used to generate raw binaries on
-	vmlinux.
+	vmtronx.
 
 	Example:
 		#arch/s390/Makefile
 		OBJCOPYFLAGS := -O binary
 
 		#arch/s390/boot/Makefile
-		$(obj)/image: vmlinux FORCE
+		$(obj)/image: vmtronx FORCE
 			$(call if_changed,objcopy)
 
 	In this example, the binary $(obj)/image is a binary version of
-	vmlinux. The usage of $(call if_changed,xxx) will be described later.
+	vmtronx. The usage of $(call if_changed,xxx) will be described later.
 
     KBUILD_AFLAGS		$(AS) assembler flags
 
@@ -992,14 +992,14 @@ When kbuild executes, the following steps are followed (roughly):
 --- 6.4 List directories to visit when descending
 
 	An arch Makefile cooperates with the top Makefile to define variables
-	which specify how to build the vmlinux file.  Note that there is no
+	which specify how to build the vmtronx file.  Note that there is no
 	corresponding arch-specific section for modules; the module-building
 	machinery is all architecture-independent.
 
 
     head-y, init-y, core-y, libs-y, drivers-y, net-y
 
-	$(head-y) lists objects to be linked first in vmlinux.
+	$(head-y) lists objects to be linked first in vmtronx.
 	$(libs-y) lists directories where a lib.a archive can be located.
 	The rest list directories where a built-in.o object file can be
 	located.
@@ -1020,7 +1020,7 @@ When kbuild executes, the following steps are followed (roughly):
 
 --- 6.5 Architecture-specific boot images
 
-	An arch Makefile specifies goals that take the vmlinux file, compress
+	An arch Makefile specifies goals that take the vmtronx file, compress
 	it, wrap it in bootstrapping code, and copy the resulting files
 	somewhere. This includes various kinds of installation commands.
 	The actual goals are not standardized across architectures.
@@ -1039,7 +1039,7 @@ When kbuild executes, the following steps are followed (roughly):
 	Example:
 		#arch/x86/Makefile
 		boot := arch/x86/boot
-		bzImage: vmlinux
+		bzImage: vmtronx
 			$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
 
 	"$(Q)$(MAKE) $(build)=<dir>" is the recommended way to invoke
@@ -1061,7 +1061,7 @@ When kbuild executes, the following steps are followed (roughly):
 	An architecture shall always, per default, build a bootable image.
 	In "make help", the default goal is highlighted with a '*'.
 	Add a new prerequisite to all: to select a default goal different
-	from vmlinux.
+	from vmtronx.
 
 	Example:
 		#arch/x86/Makefile
@@ -1156,7 +1156,7 @@ When kbuild executes, the following steps are followed (roughly):
 
     dtc
 	Create flattened device tree blob object suitable for linking
-	into vmlinux. Device tree blobs linked into vmlinux are placed
+	into vmtronx. Device tree blobs linked into vmtronx are placed
 	in an init section in the image. Platform code *must* copy the
 	blob to non-init memory prior to calling unflatten_device_tree().
 
@@ -1184,10 +1184,10 @@ When kbuild executes, the following steps are followed (roughly):
 		#
 		quiet_cmd_image = BUILD   $@
 		      cmd_image = $(obj)/tools/build $(BUILDFLAGS) \
-		                                     $(obj)/vmlinux.bin > $@
+		                                     $(obj)/vmtronx.bin > $@
 
 		targets += bzImage
-		$(obj)/bzImage: $(obj)/vmlinux.bin $(obj)/tools/build FORCE
+		$(obj)/bzImage: $(obj)/vmtronx.bin $(obj)/tools/build FORCE
 			$(call if_changed,image)
 			@echo 'Kernel: $@ is ready'
 
@@ -1200,23 +1200,23 @@ When kbuild executes, the following steps are followed (roughly):
 
 --- 6.9 Preprocessing linker scripts
 
-	When the vmlinux image is built, the linker script
-	arch/$(ARCH)/kernel/vmlinux.lds is used.
-	The script is a preprocessed variant of the file vmlinux.lds.S
+	When the vmtronx image is built, the linker script
+	arch/$(ARCH)/kernel/vmtronx.lds is used.
+	The script is a preprocessed variant of the file vmtronx.lds.S
 	located in the same directory.
 	kbuild knows .lds files and includes a rule *lds.S -> *lds.
 
 	Example:
 		#arch/x86/kernel/Makefile
-		always := vmlinux.lds
+		always := vmtronx.lds
 
 		#Makefile
-		export CPPFLAGS_vmlinux.lds += -P -C -U$(ARCH)
+		export CPPFLAGS_vmtronx.lds += -P -C -U$(ARCH)
 
 	The assignment to $(always) is used to tell kbuild to build the
-	target vmlinux.lds.
-	The assignment to $(CPPFLAGS_vmlinux.lds) tells kbuild to use the
-	specified options when building the target vmlinux.lds.
+	target vmtronx.lds.
+	The assignment to $(CPPFLAGS_vmtronx.lds) tells kbuild to use the
+	specified options when building the target vmtronx.lds.
 
 	When building the *.lds target, kbuild uses the variables:
 	KBUILD_CPPFLAGS	: Set in top-level Makefile
