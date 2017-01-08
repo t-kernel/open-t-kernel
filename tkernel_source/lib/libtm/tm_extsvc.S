@@ -17,7 +17,7 @@
  *
  *	Extended service call
  */
-#define	_in_asm_source_
+
 
 #include "tmon.h"
 

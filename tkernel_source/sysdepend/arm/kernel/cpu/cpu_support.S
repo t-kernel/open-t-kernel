@@ -18,7 +18,7 @@
  *
  *	CPU operation specific to EM1-D512, etc.
  */
-#define	_in_asm_source_
+
 
 #include <machine.h>
 #include <tk/errno.h>

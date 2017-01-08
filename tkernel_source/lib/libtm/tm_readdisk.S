@@ -17,7 +17,7 @@
  *
  *	Read from disk
  */
-#define	_in_asm_source_
+
 
 #include "tmon.h"
 

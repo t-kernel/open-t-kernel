@@ -17,7 +17,7 @@
  *
  *	Get disk information
  */
-#define	_in_asm_source_
+
 
 #include "tmon.h"
 

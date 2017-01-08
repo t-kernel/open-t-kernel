@@ -17,7 +17,7 @@
  *
  *	Input single line from console
  */
-#define	_in_asm_source_
+
 
 #include "tmon.h"
 
