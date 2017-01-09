@@ -67,7 +67,7 @@ LOCAL BOOL callSubModuleSVC( ESVCFUNC func, W fno, W p1, W p2, W p3, W *er )
  */
 LOCAL W procExtSVC( W fno, W p1, W p2, W p3 )
 {
-	W	er;
+	W	er = E_PAR;
 
 	switch ( fno ) {
 	  case TMEF_PORTBPS:	/* debug port speed (bps) */
@@ -86,8 +86,7 @@ LOCAL W procExtSVC( W fno, W p1, W p2, W p3 )
 		CALL_ESVC(sysExtSVC) ||
 		CALL_ESVC(usbSVC) ||
 		CALL_ESVC(pciSVC) ||
-		CALL_ESVC(memDiskSVC) ||
-		(er = E_PAR);
+		CALL_ESVC(memDiskSVC);
 	}
 
 	return er;

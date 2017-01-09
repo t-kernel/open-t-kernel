@@ -35,10 +35,10 @@ int do_fiq(int r0, int r1, int r2, int r3)
 {
 	static int rand = 0;
 	int vec;
+	void (*isr)();
 
 	rand++;
 
-	void (*isr)();
 
 
 	isr = (void *)in_w(0x80000000);

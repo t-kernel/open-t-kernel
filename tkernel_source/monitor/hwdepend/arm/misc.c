@@ -27,7 +27,7 @@ EXPORT void callUserResetInit( void )
 {
 	printk("%s:%s\n", __FILE__, __func__);
 	return ;
-
+#ifndef __CC_ARM
 	UW	wp = (UW)ROMInfo->resetinit;
 
 	if (  invalidPC2(wp)
@@ -35,6 +35,7 @@ EXPORT void callUserResetInit( void )
 	  ||  inMemArea(wp, wp+4, MSA_MON) ) return; /* invalid */
 
 	callExtProg(ROMInfo->resetinit);
+#endif
 }
 
 /*

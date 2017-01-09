@@ -109,10 +109,12 @@ EXPORT	W	writeMem(UW addr, void *buf, W len, W unit)
 /*
         read character string
 */
-EXPORT	W	readMemStr(UW addr, void *buf, W len)
+EXPORT	W	readMemStr(UW addr, void *buffer, W len)
 {
 	W	i, n, alen;
 	UW	pa;
+	UB	*buf = buffer;
+	
 
 	for (alen = 0; alen < len; alen += i) {
                 /* memory address check & conversion to physical address */

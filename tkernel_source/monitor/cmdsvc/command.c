@@ -1178,7 +1178,7 @@ LOCAL	const	CMDTAB	cmdTab[] = {
 	{"HELP        ","H   ",	cmdHelp,	0,		&helpH	  },
 	{"HELP        ","?   ",	cmdHelp,	0,		&helpH	  },
 	{"EXIT        ","EX  ",	cmdExit,	0,		&helpEX	  },
-	{ } /* end */
+	{"            ","    ", NULL,           0,              NULL      } /* end */
 };
 /*
         searching command
