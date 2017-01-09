@@ -1,0 +1,184 @@
+
+# SRC += hwdepend/arm/cpu/cpuctrl2.S
+# SRC += hwdepend/arm/cpu/eitent-start.S
+# SRC += hwdepend/arm/cpu/eitent.S
+# SRC += hwdepend/arm/cpu/monhdr.S
+# SRC += hwdepend/arm/cpu/monitor-handler.S
+# SRC += hwdepend/arm/cpu/reset-reset.S
+# SRC += hwdepend/arm/cpu/reset-setupc.S
+
+# SRC += hwdepend/mips/mach-m150/boot/eitent.S
+# SRC += hwdepend/mips/mach-m150/command.c
+# SRC += hwdepend/mips/mach-m150/console.c
+# SRC += hwdepend/mips/mach-m150/m150_serial.c
+# SRC += hwdepend/mips/mach-m150/printf.c
+# SRC += hwdepend/mips/mach-m150/sio.c
+# SRC += hwdepend/mips/mach-m150/startup.c
+# SRC += hwdepend/mips/mach-m150/string.c
+# SRC += hwdepend/mips/mach-m150/svc.c
+# SRC += hwdepend/mips/mach-m150/system.c
+
+# SRC += hwdepend/arm/mach-acd2/chkaddr.c
+# SRC += hwdepend/arm/mach-acd2/config.c
+# SRC += hwdepend/arm/mach-acd2/cpuctrl.c
+# SRC += hwdepend/arm/mach-acd2/diskio.c
+# SRC += hwdepend/arm/mach-acd2/eitent-interrupts.c
+# SRC += hwdepend/arm/mach-acd2/eitproc.c
+# SRC += hwdepend/arm/mach-acd2/hwinfo.c
+# SRC += hwdepend/arm/mach-acd2/memattr.S
+# SRC += hwdepend/arm/mach-acd2/misc.c
+# SRC += hwdepend/arm/mach-acd2/reset-lowlevel.S
+# SRC += hwdepend/arm/mach-acd2/system.c
+# SRC += hwdepend/arm/mach-acd2/waitusec.c
+# SRC += hwdepend/arm/mach-asm9/chkaddr.c
+# SRC += hwdepend/arm/mach-asm9/config.c
+# SRC += hwdepend/arm/mach-asm9/cpuctrl.c
+# SRC += hwdepend/arm/mach-asm9/diskio.c
+# SRC += hwdepend/arm/mach-asm9/eitproc.c
+# SRC += hwdepend/arm/mach-asm9/hwinfo.c
+# SRC += hwdepend/arm/mach-asm9/memattr.S
+# SRC += hwdepend/arm/mach-asm9/misc.c
+# SRC += hwdepend/arm/mach-asm9/reset-lowlevel.S
+# SRC += hwdepend/arm/mach-asm9/system.c
+# SRC += hwdepend/arm/mach-asm9/waitusec.c
+# SRC += hwdepend/arm/mach-em1d/chkaddr.c
+# SRC += hwdepend/arm/mach-em1d/config.c
+# SRC += hwdepend/arm/mach-em1d/cpuctrl.c
+# SRC += hwdepend/arm/mach-em1d/diskio.c
+# SRC += hwdepend/arm/mach-em1d/eitproc.c
+# SRC += hwdepend/arm/mach-em1d/hwinfo.c
+# SRC += hwdepend/arm/mach-em1d/memattr.S
+# SRC += hwdepend/arm/mach-em1d/misc.c
+# SRC += hwdepend/arm/mach-em1d/reset.S
+# SRC += hwdepend/arm/mach-em1d/startup.c
+# SRC += hwdepend/arm/mach-em1d/system.c
+# SRC += hwdepend/arm/mach-em1d/waitusec.c
+SRC += hwdepend/arm/mach-mx28/chkaddr.c
+# SRC += hwdepend/arm/mach-mx28/config.c
+SRC += hwdepend/arm/mach-mx28/cpuctrl.c
+# SRC += hwdepend/arm/mach-mx28/diskio.c
+SRC += hwdepend/arm/mach-mx28/eitproc.c
+SRC += hwdepend/arm/mach-mx28/hwinfo.c
+# SRC += hwdepend/arm/mach-mx28/icoll.c
+# SRC += hwdepend/arm/mach-mx28/memattr.S
+SRC += hwdepend/arm/mach-mx28/misc.c
+# SRC += hwdepend/arm/mach-mx28/reset-lowlevel.S
+SRC += hwdepend/arm/mach-mx28/system.c
+SRC += hwdepend/arm/mach-mx28/waitusec.c
+# SRC += hwdepend/arm/mach-sam9/chkaddr.c
+# SRC += hwdepend/arm/mach-sam9/config.c
+# SRC += hwdepend/arm/mach-sam9/cpuctrl.c
+# SRC += hwdepend/arm/mach-sam9/diskio.c
+# SRC += hwdepend/arm/mach-sam9/eitproc.c
+# SRC += hwdepend/arm/mach-sam9/hwinfo.c
+# SRC += hwdepend/arm/mach-sam9/memattr.S
+# SRC += hwdepend/arm/mach-sam9/misc.c
+# SRC += hwdepend/arm/mach-sam9/reset-lowlevel.S
+# SRC += hwdepend/arm/mach-sam9/system.c
+# SRC += hwdepend/arm/mach-sam9/waitusec.c
+SRC += hwdepend/arm/misc.c
+SRC += hwdepend/arm/monent.c
+
+
+SRC += cmdsvc/boot.c
+SRC += cmdsvc/break.c
+SRC += cmdsvc/command.c
+SRC += cmdsvc/console.c
+SRC += cmdsvc/disassemble.c
+SRC += cmdsvc/helpmsg.c
+SRC += cmdsvc/load.c
+SRC += cmdsvc/memory.c
+SRC += cmdsvc/register.c
+SRC += cmdsvc/step.c
+SRC += cmdsvc/svc.c
+SRC += cmdsvc/wrkbuf.c
+SRC += driver/flash/cfi.c
+SRC += driver/flash/cfi_16x1.c
+SRC += driver/flash/main.c
+SRC += driver/flash/reset-em1d.c
+SRC += driver/flash/setup-em1d.c
+SRC += driver/memdisk/memdsk.c
+# SRC += driver/sio/ns16550.c
+# SRC += driver/sio/sio-acd2.c
+# SRC += driver/sio/sio-asm9.c
+SRC += driver/sio/sio-mx28.c
+# SRC += driver/sio/sio-sam9.c
+SRC += driver/sio/sio.c
+
+SRC += lib/printk.c
+SRC += lib/raise.c
+SRC += lib/string-gpl.c
+SRC += lib/string.c
+SRC += tmmain/kernel.c
+# SRC += tmmain/monkey.S
+SRC += tmmain/startup.c
+SRC += tmmain/version.c
+
+OBJ := $(SRC)
+OBJ := $(OBJ:.S=.o)
+OBJ := $(OBJ:.c=.o)
+
+
+
+CC := armcc
+
+ARCH :=arm
+MACH :=mach-mx28
+
+TMONXINCLUDE += -Ihwdepend/arm/$(MACH)/include
+TMONXINCLUDE += -Ihwdepend/arm/include
+TMONXINCLUDE += -Iinclude
+TMONXINCLUDE += -Ihwdepend/arm/$(MACH)
+TMONXINCLUDE += -Icmdsvc
+TMONXINCLUDE += -I../sysdepend/arm/include
+TMONXINCLUDE += -I../include
+###############################################################
+CFLAGS +=  --cpu=ARM926EJ-S
+CFLAGS += --arm
+CFLAGS += --apcs=/interwork
+CFLAGS += --diag_error=warning
+# CFLAGS += --diag_suppress=nnnn
+CFLAGS += --diag_suppress=68,167,177,111,188
+# CFLAGS += --strict
+# CFLAGS += --long_long
+# CFLAGS += --strict_warnings
+# CFLAGS += --extended_initializers
+# CFLAGS += --no_extended_initializers
+###############################################################
+CFLAGS += -D_TEF_EM1D_
+CFLAGS += -D__ARM__
+CFLAGS += -D__TMONITOR__
+CFLAGS += -DCONFIG_MACH_MX28
+CFLAGS += -DCONFIG_TM_MONKEY
+CFLAGS += -D__TRON_ARM_ARCH=5
+CFLAGS += -DCONFIG_SKIP_LOWLEVEL
+CFLAGS += -DCONFIG_TM_DELAY64US=256
+CFLAGS += -DCONFIG_TM_INIT_SP="(0x00020000-0x10)"
+CFLAGS += -DCONFIG_TM_STACK_TOP=0x44000000
+CFLAGS += -DCONFIG_TM_STACK_SIZE=0x00080000
+CFLAGS += -DCONFIG_TM_HEAP_TOP=0
+CFLAGS += -DCONFIG_TM_HEAP_SIZE=0
+CFLAGS += -DCONFIG_TM_SIO
+CFLAGS += -DCONFIG_TM_DISK
+CFLAGS += -DCONFIG_TM_FLASHROM
+CFLAGS += -DCONFIG_TM_BAUD_RATE=115200
+CFLAGS += -DCONFIG_TM_EARLY_PRINTK
+CFLAGS += -DCONFIG_TM_WRKBUF_SZ="(1<<10)"
+CFLAGS += -DCONFIG_EIT_VECTBL=0
+CFLAGS += -D__WIP_CC_ARM
+###############################################################
+CFLAGS += $(TMONXINCLUDE)
+
+.PHONY: all
+all: vmtmonx
+
+vmtmonx: $(OBJ)
+
+%.o: %.c
+	$(CC) $(CFLAGS) $< -c -o $@
+
+%.o: %.S
+	$(CC) $(CFLAGS) $< -c -o $@
+
+clean:
+	rm -f $(OBJ)
