@@ -20,13 +20,6 @@
 #error "Only include this from assembly code"
 #endif
 
-#include <asm/ptrace.h>
-#include <asm/domain.h>
-#include <asm/opcodes-virt.h>
-#include <asm/asm-offsets.h>
-#include <asm/page.h>
-#include <asm/thread_info.h>
-
 #define IOMEM(x)	(x)
 
 /*
