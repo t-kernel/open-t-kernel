@@ -39,7 +39,7 @@ Boston, MA 02111-1307, USA.  */
 
 .macro ARM_DIV_BODY dividend, divisor, result, curbit
 
-#if __LINUX_ARM_ARCH__ >= 5
+#if __TRON_ARM_ARCH__ >= 5
 
 	clz	\curbit, \divisor
 	clz	\result, \dividend
@@ -105,7 +105,7 @@ Boston, MA 02111-1307, USA.  */
 
 .macro ARM_DIV2_ORDER divisor, order
 
-#if __LINUX_ARM_ARCH__ >= 5
+#if __TRON_ARM_ARCH__ >= 5
 
 	clz	\order, \divisor
 	rsb	\order, \order, #31
@@ -136,7 +136,7 @@ Boston, MA 02111-1307, USA.  */
 
 .macro ARM_MOD_BODY dividend, divisor, order, spare
 
-#if __LINUX_ARM_ARCH__ >= 5
+#if __TRON_ARM_ARCH__ >= 5
 
 	clz	\order, \divisor
 	clz	\spare, \dividend

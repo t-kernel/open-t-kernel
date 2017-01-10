@@ -59,7 +59,7 @@
 /*
  * Data preload for architectures that support it
  */
-#if __LINUX_ARM_ARCH__ >= 5
+#if __TRON_ARM_ARCH__ >= 5
 #define PLD(code...)	code
 #else
 #define PLD(code...)
@@ -83,7 +83,7 @@
 /*
  * Enable and disable interrupts
  */
-#if __LINUX_ARM_ARCH__ >= 6
+#if __TRON_ARM_ARCH__ >= 6
 	.macro	disable_irq_notrace
 	cpsid	i
 	.endm
@@ -272,9 +272,9 @@
  * Instruction barrier
  */
 	.macro	instr_sync
-#if __LINUX_ARM_ARCH__ >= 7
+#if __TRON_ARM_ARCH__ >= 7
 	isb
-#elif __LINUX_ARM_ARCH__ == 6
+#elif __TRON_ARM_ARCH__ == 6
 	mcr	p15, 0, r0, c7, c5, 4
 #endif
 	.endm
@@ -284,13 +284,13 @@
  */
 	.macro	smp_dmb mode
 #ifdef CONFIG_SMP
-#if __LINUX_ARM_ARCH__ >= 7
+#if __TRON_ARM_ARCH__ >= 7
 	.ifeqs "\mode","arm"
 	ALT_SMP(dmb	ish)
 	.else
 	ALT_SMP(W(dmb)	ish)
 	.endif
-#elif __LINUX_ARM_ARCH__ == 6
+#elif __TRON_ARM_ARCH__ == 6
 	ALT_SMP(mcr	p15, 0, r0, c7, c10, 5)	@ dmb
 #else
 #error Incompatible SMP platform
@@ -329,7 +329,7 @@
  * you cannot return to the original mode.
  */
 .macro safe_svcmode_maskall reg:req
-#if __LINUX_ARM_ARCH__ >= 6 && !defined(CONFIG_CPU_V7M)
+#if __TRON_ARM_ARCH__ >= 6 && !defined(CONFIG_CPU_V7M)
 	mrs	\reg , cpsr
 	eor	\reg, \reg, #HYP_MODE
 	tst	\reg, #MODE_MASK
@@ -486,7 +486,7 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
 
 	.irp	c,,eq,ne,cs,cc,mi,pl,vs,vc,hi,ls,ge,lt,gt,le,hs,lo
 	.macro	ret\c, reg
-#if __LINUX_ARM_ARCH__ < 6
+#if __TRON_ARM_ARCH__ < 6
 	mov\c	pc, \reg
 #else
 	.ifeqs	"\reg", "lr"
