@@ -372,6 +372,71 @@ SRC += sysdepend/arm/lib/libsvc/tk_ref_smb.S
 SRC += sysdepend/arm/lib/libsvc/_getkernelcommonarea.S
 SRC += sysdepend/arm/lib/libsvc/_syslog_send.S
 ######################################################################
+
+## ./etc/mkiflib ARM include/sys/consio.h ##
+SRC += sysdepend/arm/lib/libsvc/console_get.S
+SRC += sysdepend/arm/lib/libsvc/console_put.S
+SRC += sysdepend/arm/lib/libsvc/console_conf.S
+SRC += sysdepend/arm/lib/libsvc/console_in.S
+SRC += sysdepend/arm/lib/libsvc/console_out.S
+SRC += sysdepend/arm/lib/libsvc/console_ctl.S
+
+## ./etc/mkiflib ARM include/sys/segment.h ##
+SRC += sysdepend/arm/lib/libsvc/lockspace.S
+SRC += sysdepend/arm/lib/libsvc/unlockspace.S
+SRC += sysdepend/arm/lib/libsvc/cnvphysicaladdr.S
+SRC += sysdepend/arm/lib/libsvc/chkspace.S
+SRC += sysdepend/arm/lib/libsvc/chkspacetstr.S
+SRC += sysdepend/arm/lib/libsvc/chkspacebstr.S
+SRC += sysdepend/arm/lib/libsvc/chkspacelen.S
+SRC += sysdepend/arm/lib/libsvc/readmemspace.S
+SRC += sysdepend/arm/lib/libsvc/writememspace.S
+SRC += sysdepend/arm/lib/libsvc/setmemspaceb.S
+SRC += sysdepend/arm/lib/libsvc/flushmemcache.S
+SRC += sysdepend/arm/lib/libsvc/setcachemode.S
+SRC += sysdepend/arm/lib/libsvc/controlcache.S
+SRC += sysdepend/arm/lib/libsvc/getspaceinfo.S
+SRC += sysdepend/arm/lib/libsvc/setmemoryaccess.S
+SRC += sysdepend/arm/lib/libsvc/mapmemory.S
+SRC += sysdepend/arm/lib/libsvc/unmapmemory.S
+SRC += sysdepend/arm/lib/libsvc/makespace.S
+SRC += sysdepend/arm/lib/libsvc/unmakespace.S
+SRC += sysdepend/arm/lib/libsvc/changespace.S
+
+## ./etc/mkiflib ARM include/tk/sysmgr.h ##
+SRC += sysdepend/arm/lib/libsvc/tk_get_cfn.S
+SRC += sysdepend/arm/lib/libsvc/tk_get_cfs.S
+SRC += sysdepend/arm/lib/libsvc/tk_get_smb.S
+SRC += sysdepend/arm/lib/libsvc/tk_rel_smb.S
+SRC += sysdepend/arm/lib/libsvc/tk_ref_smb.S
+SRC += sysdepend/arm/lib/libsvc/_getkernelcommonarea.S
+SRC += sysdepend/arm/lib/libsvc/_syslog_send.S
+
+## ./etc/mkiflib ARM include/tk/devmgr.h ##
+SRC += sysdepend/arm/lib/libsvc/tk_opn_dev.S
+SRC += sysdepend/arm/lib/libsvc/tk_cls_dev.S
+SRC += sysdepend/arm/lib/libsvc/tk_rea_dev.S
+SRC += sysdepend/arm/lib/libsvc/tk_srea_dev.S
+SRC += sysdepend/arm/lib/libsvc/tk_wri_dev.S
+SRC += sysdepend/arm/lib/libsvc/tk_swri_dev.S
+SRC += sysdepend/arm/lib/libsvc/tk_wai_dev.S
+SRC += sysdepend/arm/lib/libsvc/tk_sus_dev.S
+SRC += sysdepend/arm/lib/libsvc/tk_get_dev.S
+SRC += sysdepend/arm/lib/libsvc/tk_ref_dev.S
+SRC += sysdepend/arm/lib/libsvc/tk_oref_dev.S
+SRC += sysdepend/arm/lib/libsvc/tk_lst_dev.S
+SRC += sysdepend/arm/lib/libsvc/tk_evt_dev.S
+SRC += sysdepend/arm/lib/libsvc/tk_rea_dev_du.S
+SRC += sysdepend/arm/lib/libsvc/tk_srea_dev_d.S
+SRC += sysdepend/arm/lib/libsvc/tk_wri_dev_du.S
+SRC += sysdepend/arm/lib/libsvc/tk_swri_dev_d.S
+SRC += sysdepend/arm/lib/libsvc/tk_wai_dev_u.S
+SRC += sysdepend/arm/lib/libsvc/tk_def_dev.S
+SRC += sysdepend/arm/lib/libsvc/tk_ref_idv.S
+
+######################################################################
+
+
 OBJ := $(SRC)
 OBJ := $(OBJ:.S=.o)
 OBJ := $(OBJ:.c=.o)
@@ -448,13 +513,13 @@ distclean:
 	git checkout -- sysdepend/arm/lib/libsvc
 
 prepare:
-	./etc/mktksvc ARM include/tk/dbgspt.h
+	./etc/mktksvc ARM include/tk/syscall.h
 	./etc/mktdsvc ARM include/tk/dbgspt.h
 	./etc/mkiflib ARM include/sys/consio.h
 	./etc/mkiflib ARM include/sys/segment.h
 	./etc/mkiflib ARM include/tk/sysmgr.h
 	./etc/mkiflib ARM include/tk/devmgr.h
-	./etc/mkiflib ARM include/device/serialio.h
-	./etc/mkiflib ARM include/device/pcmcia.h
-	./etc/mkiflib ARM include/device/em1d512_iic.h
 
+# ./etc/mkiflib ARM include/device/em1d512_iic.h
+# ./etc/mkiflib ARM include/device/pcmcia.h
+# ./etc/mkiflib ARM include/device/serialio.h
