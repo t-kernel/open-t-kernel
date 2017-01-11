@@ -58,7 +58,8 @@ if ( $cpu eq "" ) {
 }
 if ( $infile eq "" ) {
 	print STDERR "Too few arguments\n";
-	exit(1);
+	print STDERR "Default: include/tk/dbgspt.h\n";
+	$infile = "include/tk/dbgspt.h";
 }
 
 #
@@ -159,7 +160,8 @@ if ( $makedeps ) {
 #
 # generate function code definition file
 #
-open(FN_H, ">$ENV{'BD'}/include/sys/svc/$fn_h") || die "can not open $ENV{'BD'}/include/sys/svc/$fn_h\n";
+# open(FN_H, ">$ENV{'BD'}/include/sys/svc/$fn_h") || die "can not open $ENV{'BD'}/include/sys/svc/$fn_h\n";
+open(FN_H, ">include/sys/svc/$fn_h") || die "can not open include/sys/svc/$fn_h\n";
 
 ### create header part ###
 print FN_H <<EndOfFnHeader;
@@ -186,7 +188,8 @@ close(FN_H);
 #
 # generate branch table
 #
-open(TB_H, ">$ENV{'BD'}/include/sys/svc/$tb_h") || die "can not open $ENV{'BD'}/include/sys/svc/$tb_h\n";
+# open(TB_H, ">$ENV{'BD'}/include/sys/svc/$tb_h") || die "can not open $ENV{'BD'}/include/sys/svc/$tb_h\n";
+open(TB_H, ">include/sys/svc/$tb_h") || die "can not open include/sys/svc/$tb_h\n";
 
 ### create header part ###
 print TB_H <<EndOfTbHeader;
@@ -234,7 +237,9 @@ for ( $i = 0; $i <= $#syscalls; $i++ ) {
 	$fname =~ tr/A-Z/a-z/;	# to lower case
 
 	# open library source file
-	open(LIB, ">sysdepend/$cpu/$fname.S") || die "can not open sysdepend/$cpu/$fname.S\n";
+#	open(LIB, ">sysdepend/$cpu/$fname.S") || die "can not open sysdepend/$cpu/$fname.S\n";
+	open(LIB, ">sysdepend/arm/lib/libsvc/$fname.S") || die "sysdepend/arm/lib/libsvc/$fname.S\n";
+	print stderr "GEN: sysdepend/arm/lib/libsvc/$fname.S\n";
 
 	print LIB <<EndOfIfLibHeader;
 $copyright_c
@@ -247,7 +252,8 @@ $copyright_c
 EndOfIfLibHeader
 
 	# system dependencies
-	require("$ENV{'BD'}/etc/sysdepend/cpu/$cpu/makeiftd.pl");
+#	require("$ENV{'BD'}/etc/sysdepend/cpu/$cpu/makeiftd.pl");
+	require("etc/sysdepend/cpu/em1d/makeiftd.pl");
 	&makelib();
 
 	close(LIB);

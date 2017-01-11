@@ -307,9 +307,62 @@ SRC += sysdepend/arm/lib/libsvc/tk_cre_cyc_u.S
 SRC += sysdepend/arm/lib/libsvc/tk_ref_cyc_u.S
 SRC += sysdepend/arm/lib/libsvc/tk_sta_alm_u.S
 SRC += sysdepend/arm/lib/libsvc/tk_ref_alm_u.S
+
+## include/tk/dbgspt.h ##
+SRC +=  sysdepend/arm/lib/libsvc/td_lst_tsk.S
+SRC +=  sysdepend/arm/lib/libsvc/td_lst_sem.S
+SRC +=  sysdepend/arm/lib/libsvc/td_lst_flg.S
+SRC +=  sysdepend/arm/lib/libsvc/td_lst_mbx.S
+SRC +=  sysdepend/arm/lib/libsvc/td_lst_mtx.S
+SRC +=  sysdepend/arm/lib/libsvc/td_lst_mbf.S
+SRC +=  sysdepend/arm/lib/libsvc/td_lst_por.S
+SRC +=  sysdepend/arm/lib/libsvc/td_lst_mpf.S
+SRC +=  sysdepend/arm/lib/libsvc/td_lst_mpl.S
+SRC +=  sysdepend/arm/lib/libsvc/td_lst_cyc.S
+SRC +=  sysdepend/arm/lib/libsvc/td_lst_alm.S
+SRC +=  sysdepend/arm/lib/libsvc/td_lst_ssy.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_sem.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_flg.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_mbx.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_mtx.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_mbf.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_por.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_mpf.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_mpl.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_cyc.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_alm.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_ssy.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_tsk.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_tex.S
+SRC +=  sysdepend/arm/lib/libsvc/td_inf_tsk.S
+SRC +=  sysdepend/arm/lib/libsvc/td_get_reg.S
+SRC +=  sysdepend/arm/lib/libsvc/td_set_reg.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_sys.S
+SRC +=  sysdepend/arm/lib/libsvc/td_get_tim.S
+SRC +=  sysdepend/arm/lib/libsvc/td_get_otm.S
+SRC +=  sysdepend/arm/lib/libsvc/td_rdy_que.S
+SRC +=  sysdepend/arm/lib/libsvc/td_sem_que.S
+SRC +=  sysdepend/arm/lib/libsvc/td_flg_que.S
+SRC +=  sysdepend/arm/lib/libsvc/td_mbx_que.S
+SRC +=  sysdepend/arm/lib/libsvc/td_mtx_que.S
+SRC +=  sysdepend/arm/lib/libsvc/td_smbf_que.S
+SRC +=  sysdepend/arm/lib/libsvc/td_rmbf_que.S
+SRC +=  sysdepend/arm/lib/libsvc/td_cal_que.S
+SRC +=  sysdepend/arm/lib/libsvc/td_acp_que.S
+SRC +=  sysdepend/arm/lib/libsvc/td_mpf_que.S
+SRC +=  sysdepend/arm/lib/libsvc/td_mpl_que.S
+SRC +=  sysdepend/arm/lib/libsvc/td_hok_svc.S
+SRC +=  sysdepend/arm/lib/libsvc/td_hok_dsp.S
+SRC +=  sysdepend/arm/lib/libsvc/td_hok_int.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_dsname.S
+SRC +=  sysdepend/arm/lib/libsvc/td_set_dsname.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_cyc_u.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_alm_u.S
+SRC +=  sysdepend/arm/lib/libsvc/td_ref_tsk_u.S
+SRC +=  sysdepend/arm/lib/libsvc/td_inf_tsk_u.S
+SRC +=  sysdepend/arm/lib/libsvc/td_get_tim_u.S
+SRC +=  sysdepend/arm/lib/libsvc/td_get_otm_u.S
 ######################################################################
-
-
 OBJ := $(SRC)
 OBJ := $(OBJ:.S=.o)
 OBJ := $(OBJ:.c=.o)
@@ -383,3 +436,4 @@ clean:
 
 mktksvc:
 	./etc/mktksvc ARM
+	./etc/mktdsvc ARM
