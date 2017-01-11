@@ -56,7 +56,7 @@ Csym(${func}):
 
 ;----------------------------------------------------------------------
 ;    Open T-Kernel Project
-;    Copyright 2017 Du Huanpeng <u74147@gmail.com>
+;    Copyright 2017 Du Huanpeng <u74147\@gmail.com>
 ;----------------------------------------------------------------------
 
         ARM
