@@ -363,6 +363,15 @@ SRC +=  sysdepend/arm/lib/libsvc/td_inf_tsk_u.S
 SRC +=  sysdepend/arm/lib/libsvc/td_get_tim_u.S
 SRC +=  sysdepend/arm/lib/libsvc/td_get_otm_u.S
 ######################################################################
+## Default: include/tk/sysmgr.h ##
+SRC += sysdepend/arm/lib/libsvc/tk_get_cfn.S
+SRC += sysdepend/arm/lib/libsvc/tk_get_cfs.S
+SRC += sysdepend/arm/lib/libsvc/tk_get_smb.S
+SRC += sysdepend/arm/lib/libsvc/tk_rel_smb.S
+SRC += sysdepend/arm/lib/libsvc/tk_ref_smb.S
+SRC += sysdepend/arm/lib/libsvc/_getkernelcommonarea.S
+SRC += sysdepend/arm/lib/libsvc/_syslog_send.S
+######################################################################
 OBJ := $(SRC)
 OBJ := $(OBJ:.S=.o)
 OBJ := $(OBJ:.c=.o)
@@ -429,11 +438,23 @@ vmtronx: $(OBJ)
 	$(CC) $(CFLAGS) $< -c -o $@
 
 %.o: %.S
-	$(CC) $(CFLAGS) $< -c -o $@
+	$(CC) $(CFLAGS) $< -c -o $@ -D__ASSEMBLY__ -D_in_asm_source_
 
 clean:
 	rm -f $(OBJ)
 
-mktksvc:
-	./etc/mktksvc ARM
-	./etc/mktdsvc ARM
+distclean:
+	rm -f $(OBJ)
+	git checkout -- sysdepend/arm/lib/libsvc
+
+prepare:
+	./etc/mktksvc ARM include/tk/dbgspt.h
+	./etc/mktdsvc ARM include/tk/dbgspt.h
+	./etc/mkiflib ARM include/sys/consio.h
+	./etc/mkiflib ARM include/sys/segment.h
+	./etc/mkiflib ARM include/tk/sysmgr.h
+	./etc/mkiflib ARM include/tk/devmgr.h
+	./etc/mkiflib ARM include/device/serialio.h
+	./etc/mkiflib ARM include/device/pcmcia.h
+	./etc/mkiflib ARM include/device/em1d512_iic.h
+
