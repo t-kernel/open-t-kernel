@@ -43,6 +43,9 @@ typedef struct {
 #ifdef __CC_ARM
 	UW	Empty;
 #endif
+#ifdef __ICCARM__
+	UW	Empty;
+#endif
 	/* Empty */
 } UStackFrame;
 
