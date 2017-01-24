@@ -454,6 +454,7 @@ VMTRONXINCLUDE += -Isysdepend/arm/kernel/cpu
 VMTRONXINCLUDE += -Isysdepend/arm/lib/libtk
 VMTRONXINCLUDE += -Isysdepend/arm/lib/libtm
 ###############################################################
+ifeq ("$(CC)", "armcc")
 CFLAGS +=  --cpu=ARM926EJ-S
 CFLAGS += --arm
 CFLAGS += --apcs=/interwork
@@ -465,6 +466,38 @@ CFLAGS += --diag_suppress=68,167,177,111,188
 # CFLAGS += --strict_warnings
 # CFLAGS += --extended_initializers
 # CFLAGS += --no_extended_initializers
+CFLAGS += -DWIP__CC_ARM
+endif
+
+ifeq ("$(CC)", "iccarm")
+CFLAGS += --cpu=ARM926EJ-S
+# CFLAGS += --cpu=Cortex-R4
+CFLAGS += --arm
+CFLAGS += --interwork
+CFLAGS += --diag_warning=Pe167
+CFLAGS += --diag_suppress=Pa050,Pa124,Pa050,Pe167,Pe068,Pe111,Pe188,Pe177,Pe549
+CFLAGS += --use_unix_directory_separators
+CFLAGS += --silent
+CFLAGS += --char_is_signed
+CFLAGS += --fpu=none
+CFLAGS += -Oh
+# CFLAGS += --cpu=Cortex-M3
+# CFLAGS += --cpu=ARM1176JZF-S
+# CFLAGS += --aapcs=std
+# CFLAGS += --aapcs=vfp
+# CFLAGS += --aeabi
+# CFLAGS += --c89
+# CFLAGS += --char_is_unsigned
+# CFLAGS += --cpu_mode=arm
+# CFLAGS += --cpu_mode=thumb
+# CFLAGS += # --fpu={VFPv2|VFPv3|VFPv3_d16|VFPv4|VFPv4_sp|VFP9-S|none}
+# CFLAGS += --only_stdout 
+# CFLAGS += -O[n|l|m|h|hs|hz]
+# CFLAGS += --no_warnings
+# CFLAGS += --preinclude includefile
+CFLAGS += -DWIP__ICCARM__
+endif
+
 ###############################################################
 
 CFLAGS += -D__TRON_ARM_ARCH=5
@@ -486,8 +519,6 @@ CFLAGS += -DUSE_MMC_MULTI
 CFLAGS += -DUSE_MMC_SD4BIT
 CFLAGS += -D_TEF_EM1D_
 CFLAGS += -DCONFIG_MACH_EM1D
-
-CFLAGS += -D__WIP_CC_ARM
 
 ###############################################################
 CFLAGS += $(VMTRONXINCLUDE)
