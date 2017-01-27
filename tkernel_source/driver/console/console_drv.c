@@ -812,12 +812,13 @@ LOCAL	W	_console_conf(W req, UW* arg)
 		break;
 
 	case CS_DELETE:		/* Delete the console port */
+		n = -1;
 		if (arg[0] > 2) {
 			p = check_port(arg[0]);
 			if(p) {
 				n = delete_cons(p);
 			}
-		} else	n = -1;
+		}
 		break;
 
 	case CS_GETCONF:		/* Fetch the console configuration */
