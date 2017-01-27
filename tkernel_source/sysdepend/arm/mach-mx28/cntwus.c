@@ -26,7 +26,9 @@
  *	disable the inline expansion caused by compiler optimization to obtain accurate
  *      measurement.
  */
-__attribute__ ((noinline))
+/*
+ * TODO: __attribute__ ((noinline))
+ */
 LOCAL void WaitLoop( UW count )
 {
 	Asm("	_loop:	subs	%0, %0, #1	\n"
