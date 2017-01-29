@@ -1,0 +1,45 @@
+/*
+ *----------------------------------------------------------------------
+ *    T-Kernel 2.0 Software Package
+ *
+ *    Copyright 2011 by Ken Sakamura.
+ *    This software is distributed under the latest version of T-License 2.x.
+ *----------------------------------------------------------------------
+ *
+ *    Released by T-Engine Forum(http://www.t-engine.org/) at 2011/05/17.
+ *    Modified by TRON Forum(http://www.tron.org/) at 2015/06/01.
+ *
+ *----------------------------------------------------------------------
+ */
+
+/*
+ *	@(#)asmstartup.S (crttk/EM1-D512)
+ *
+ *	Driver/manager startup
+ */
+
+extern void _P_startup(void);
+extern int *__data_org;
+extern int *__data_start;
+extern int *_edata;
+extern int *__bss_start;
+extern int *_end;
+void _C_startup(int ac)
+{
+	if(ac < 0) goto l_noinit; 
+
+	if(__data_org   == __data_start) goto l_noinit;
+	if(__data_start == _edata) goto nocopy_data;
+copy_data:;
+	*__data_start++ = *_edata++;
+	if(__data_start < _edata) goto copy_data;
+nocopy_data:
+	if(__bss_start >= _end) goto nobss;
+clrbss:
+	*__bss_start++ = 0;
+	if(__bss_start < _end) goto clrbss;
+nobss:
+l_noinit:
+	_P_startup();
+}
+

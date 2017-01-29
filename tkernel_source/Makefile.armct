@@ -171,6 +171,7 @@ SRC += sysdepend/arm/lib/libtk/waitnsec.c
 ##SRC += sysdepend/arm/lib/crt/crt0/crti.S
 ##SRC += sysdepend/arm/lib/crt/crt0/crt0.S
 # SRC += sysdepend/arm/lib/crt/crttk/asmstartup.S
+SRC += sysdepend/arm/lib/crt/crttk/asmstartup-armct.S
 ##SRC += sysdepend/arm/lib/libtk/disint.S
 ##SRC += sysdepend/arm/lib/libtk/disint-armct.S
 
