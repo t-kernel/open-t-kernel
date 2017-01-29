@@ -443,6 +443,8 @@ OBJ := $(OBJ:.c=.o)
 
 
 CC := armcc
+CC := iccarm
+CC := arm-none-eabi-gcc
 
 VMTRONXINCLUDE += -Iinclude
 VMTRONXINCLUDE += -Ikernel/sysinit
@@ -458,7 +460,7 @@ VMTRONXINCLUDE += -Isysdepend/arm/lib/libtm
 ifeq ("$(CC)", "arm-none-eabi-gcc")
 CFLAGS += -O2
 CFLAGS += -mcpu=arm926ej-s
-#CFLAGS += -mcpu=arm1176jzf-s
+# CFLAGS += -mcpu=arm1176jzf-s
 CFLAGS += -msoft-float
 CFLAGS += -mfpu=vfp
 CFLAGS += -mthumb-interwork
@@ -471,7 +473,7 @@ CFLAGS += -DWIP__GNUC__
 endif
 
 ifeq ("$(CC)", "armcc")
-CFLAGS +=  --cpu=ARM926EJ-S
+CFLAGS += --cpu=ARM926EJ-S
 CFLAGS += --arm
 CFLAGS += --apcs=/interwork
 CFLAGS += --diag_error=warning
@@ -511,6 +513,10 @@ CFLAGS += -Oh
 # CFLAGS += -O[n|l|m|h|hs|hz]
 # CFLAGS += --no_warnings
 # CFLAGS += --preinclude includefile
+# MISRAC += --misrac2004=all
+# MISRAC += --misrac2004=2.3
+# MISRAC += --misrac_verbose
+CFLAGS += $(MISRAC)
 CFLAGS += -DWIP__ICCARM__
 endif
 
@@ -550,7 +556,15 @@ vmtronx: $(OBJ)
 	$(CC) $(CFLAGS) $< -c -o $@
 
 %.o: %.S
+ifeq ("$(CC)", "arm-none-eabi-gcc")
 	$(CC) $(CFLAGS) $< -c -o $@ -D__ASSEMBLY__ -D_in_asm_source_
+endif
+ifeq ("$(CC)", "armcc")
+	@echo "AS "$<
+endif
+ifeq ("$(CC)", "iccarm")
+	@echo "AS "$<
+endif
 
 clean:
 	rm -f $(OBJ)
