@@ -18,6 +18,7 @@
  *	Driver/manager startup
  */
 
+#ifdef __GNUC__
 #include <machine.h>
 #include <tk/asm.h>
 
@@ -57,3 +58,5 @@ Csym(_C_startup):
 
   l_noinit:
 	b	Csym(_P_startup)
+#endif /* __GNUC__ */
+
