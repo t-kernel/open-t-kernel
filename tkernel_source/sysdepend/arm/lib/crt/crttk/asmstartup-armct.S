@@ -18,6 +18,7 @@
  *	Driver/manager startup
  */
 
+#ifdef __CC_ARM
 #include <machine.h>
 #include <tk/asm.h>
 
@@ -74,3 +75,5 @@ l_noinit
         IMPORT _end [DATA]
 
         END
+#endif /* __CC_ARM */
+
