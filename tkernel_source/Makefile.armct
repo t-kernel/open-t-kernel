@@ -10,6 +10,7 @@ SRC += config/sysdepend/tef_em1d/rominfo_ram.c
 SRC += config/sysdepend/tef_em1d/rominfo_rom.c
 
 # SRC += config/sysdepend/tef_em1d/launch.S
+# SRC += config/sysdepend/tef_em1d/launch-armct.S
 
 # SRC += sysdepend/arm/mach-mx28/icrt0.S
 # SRC += sysdepend/arm/mach-mx28/icrt0_ram.S
