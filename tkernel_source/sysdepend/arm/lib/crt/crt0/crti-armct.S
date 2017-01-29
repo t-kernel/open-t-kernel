@@ -19,7 +19,7 @@
  */
 
 #ifdef __CC_ARM
-#warning "__WIP_CC_ARM"
+#warning "WIP__CC_ARM"
 	END
 .macro FUNC_START
 	.arm

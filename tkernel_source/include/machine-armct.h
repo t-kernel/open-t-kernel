@@ -57,7 +57,7 @@
 
 
 #ifndef Asm
-#ifdef __WIP_CC_ARM
+#ifdef WIP__CC_ARM
 #define Asm(...)		do { } while(0)
 #else
 #define Asm			__asm
