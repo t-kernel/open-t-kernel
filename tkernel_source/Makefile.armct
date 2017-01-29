@@ -454,6 +454,22 @@ VMTRONXINCLUDE += -Isysdepend/arm/kernel/cpu
 VMTRONXINCLUDE += -Isysdepend/arm/lib/libtk
 VMTRONXINCLUDE += -Isysdepend/arm/lib/libtm
 ###############################################################
+
+ifeq ("$(CC)", "arm-none-eabi-gcc")
+CFLAGS += -O2
+CFLAGS += -mcpu=arm926ej-s
+#CFLAGS += -mcpu=arm1176jzf-s
+CFLAGS += -msoft-float
+CFLAGS += -mfpu=vfp
+CFLAGS += -mthumb-interwork
+CFLAGS += -mstructure-size-boundary=8
+CFLAGS += -ffreestanding
+CFLAGS += -fomit-frame-pointer
+CFLAGS += -Wall
+CFLAGS += -Wno-pointer-sign
+CFLAGS += -DWIP__GNUC__
+endif
+
 ifeq ("$(CC)", "armcc")
 CFLAGS +=  --cpu=ARM926EJ-S
 CFLAGS += --arm
