@@ -33,6 +33,7 @@ the Free Software Foundation, 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.  */
 
 
+#ifdef __GNUC__
 #include <linux/linkage.h>
 #include <asm/assembler.h>
 #include <asm/unwind.h>
@@ -361,3 +362,5 @@ UNWIND(.save {lr})
 	ldr	pc, [sp], #8
 UNWIND(.fnend)
 ENDPROC(Ldiv0)
+#endif /* __GNUC__ */
+
