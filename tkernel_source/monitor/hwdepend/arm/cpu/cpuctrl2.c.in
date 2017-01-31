@@ -1,0 +1,12 @@
+typedef unsigned UW;
+
+void FlushCache( void )
+{
+	return;
+}
+
+void setCacheMMU( UW cp15r1 )
+{
+	(void)cp15r1;
+	return;
+}
