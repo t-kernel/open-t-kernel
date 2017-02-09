@@ -1,4 +1,4 @@
-#ifdef WIP__GNUC__
+#ifdef __GNUC__
 .weak __aeabi_idiv
 .weak __aeabi_uidiv
 .weak __divsi3
@@ -27,5 +27,5 @@ __div0:
 	b	.
 
 	.end
-#endif /* WIP__GNUC__ */
+#endif /* __GNUC__ */
 
