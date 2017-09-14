@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<emIDE_project_file>
+	<FileVersion major="1" minor="7" />
+	<Project>
+		<Option title="open t-monitor" />
+		<Option pch_mode="2" />
+		<Option compiler="armelfgcc" />
+		<Build>
+			<Target title="t-monitor">
+				<Option output="t-monitor" prefix_auto="1" extension_auto="1" />
+				<Option object_output="objs" />
+				<Option type="1" />
+				<Option compiler="armelfgcc" />
+				<Compiler>
+					<Add option="-mcpu=arm1176jzf-s" />
+					<Add option="-mfpu=vfp" />
+					<Add option="-mstructure-size-boundary=8" />
+					<Add option="-ffreestanding" />
+					<Add option="-Wno-pointer-sign" />
+					<Add option="-D_TEF_EM1D_" />
+					<Add directory="../../../../monitor/include" />
+					<Add directory="../../../../include" />
+				</Compiler>
+				<Linker>
+					<Add option="-mcpu=arm1176jzf-s" />
+					<Add option="-msoft-float" />
+					<Add option="-mfpu=vfp" />
+					<Add option="-mthumb-interwork" />
+					<Add option="-static" />
+					<Add option="-nostdlib" />
+					<Add option="-lgcc" />
+					<Add option="-T..\..\..\..\monitor\tmmain\build\tef_em1d\t-monitor.lnk" />
+				</Linker>
+				<PostOutput>
+					<ConvertedOutput PostOutputCreate="1" />
+					<ConvertedOutput PostOutputType="BIN" />
+					<ConvertedOutput PostOutputFile="${TARGET_OUTPUT_DIR}${TARGET_OUTPUT_BASENAME}" />
+				</PostOutput>
+			</Target>
+		</Build>
+		<Linker>
+			<Add option="-T..\..\..\..\monitor\tmmain\build\tef_em1d\t-monitor.lnk" />
+		</Linker>
+		<PostOutput>
+			<ConvertedOutput PostOutputCreate="0" />
+			<ConvertedOutput PostOutputType="HEX" />
+			<ConvertedOutput PostOutputFile="${TARGET_OUTPUT_DIR}${TARGET_OUTPUT_BASENAME}" />
+		</PostOutput>
+		<Unit filename="../../../../include/basic.h" />
+		<Unit filename="../../../../include/device/clk.h" />
+		<Unit filename="../../../../include/device/devconf.h" />
+		<Unit filename="../../../../include/device/disk.h" />
+		<Unit filename="../../../../include/device/em1d512_iic.h" />
+		<Unit filename="../../../../include/device/gdrvif.h" />
+		<Unit filename="../../../../include/device/kbpd.h" />
+		<Unit filename="../../../../include/device/keycode.h" />
+		<Unit filename="../../../../include/device/lowkbpd.h" />
+		<Unit filename="../../../../include/device/pcmcia.h" />
+		<Unit filename="../../../../include/device/rs.h" />
+		<Unit filename="../../../../include/device/screen.h" />
+		<Unit filename="../../../../include/device/sdrvif.h" />
+		<Unit filename="../../../../include/device/serialio.h" />
+		<Unit filename="../../../../include/device/videomode.h" />
+		<Unit filename="../../../../include/libstr.h" />
+		<Unit filename="../../../../include/machine.h" />
+		<Unit filename="../../../../include/stddef.h" />
+		<Unit filename="../../../../include/stdtype.h" />
+		<Unit filename="../../../../include/sys/bitop.h" />
+		<Unit filename="../../../../include/sys/commarea.h" />
+		<Unit filename="../../../../include/sys/consio.h" />
+		<Unit filename="../../../../include/sys/debug.h" />
+		<Unit filename="../../../../include/sys/imalloc.h" />
+		<Unit filename="../../../../include/sys/libs.h" />
+		<Unit filename="../../../../include/sys/memalloc.h" />
+		<Unit filename="../../../../include/sys/misc.h" />
+		<Unit filename="../../../../include/sys/queue.h" />
+		<Unit filename="../../../../include/sys/rominfo.h" />
+		<Unit filename="../../../../include/sys/segment.h" />
+		<Unit filename="../../../../include/sys/ssid.h" />
+		<Unit filename="../../../../include/sys/str_align.h" />
+		<Unit filename="../../../../include/sys/svc/fnconsio.h" />
+		<Unit filename="../../../../include/sys/svc/fndevmgr.h" />
+		<Unit filename="../../../../include/sys/svc/fnsegment.h" />
+		<Unit filename="../../../../include/sys/svc/fnsysmgr.h" />
+		<Unit filename="../../../../include/sys/svc/ifconsio.h" />
+		<Unit filename="../../../../include/sys/svc/ifdevmgr.h" />
+		<Unit filename="../../../../include/sys/svc/ifsegment.h" />
+		<Unit filename="../../../../include/sys/svc/ifsysmgr.h" />
+		<Unit filename="../../../../include/sys/svc/tdfncd.h" />
+		<Unit filename="../../../../include/sys/svc/tdsvctbl.h" />
+		<Unit filename="../../../../include/sys/svc/tkfncd.h" />
+		<Unit filename="../../../../include/sys/svc/tksvctbl.h" />
+		<Unit filename="../../../../include/sys/syscall.h" />
+		<Unit filename="../../../../include/sys/sysdepend/machine_common.h" />
+		<Unit filename="../../../../include/sys/sysdepend/rominfo_common.h" />
+		<Unit filename="../../../../include/sys/sysdepend/segment_common.h" />
+		<Unit filename="../../../../include/sys/sysdepend/str_align_common.h" />
+		<Unit filename="../../../../include/sys/sysdepend/sysexc_common.h" />
+		<Unit filename="../../../../include/sys/sysdepend/sysinfo_common.h" />
+		<Unit filename="../../../../include/sys/sysdepend/tef_em1d/machine_depend.h" />
+		<Unit filename="../../../../include/sys/sysdepend/tef_em1d/rominfo_depend.h" />
+		<Unit filename="../../../../include/sys/sysdepend/tef_em1d/segment_depend.h" />
+		<Unit filename="../../../../include/sys/sysdepend/tef_em1d/str_align_depend.h" />
+		<Unit filename="../../../../include/sys/sysdepend/tef_em1d/sysexc_depend.h" />
+		<Unit filename="../../../../include/sys/sysdepend/tef_em1d/sysinfo_depend.h" />
+		<Unit filename="../../../../include/sys/sysexc.h" />
+		<Unit filename="../../../../include/sys/sysinfo.h" />
+		<Unit filename="../../../../include/sys/syslog.h" />
+		<Unit filename="../../../../include/sys/util.h" />
+		<Unit filename="../../../../include/tcode.h" />
+		<Unit filename="../../../../include/tk/asm.h" />
+		<Unit filename="../../../../include/tk/dbgspt.h" />
+		<Unit filename="../../../../include/tk/devmgr.h" />
+		<Unit filename="../../../../include/tk/errno.h" />
+		<Unit filename="../../../../include/tk/ptimer.h" />
+		<Unit filename="../../../../include/tk/syscall.h" />
+		<Unit filename="../../../../include/tk/sysdef.h" />
+		<Unit filename="../../../../include/tk/sysdepend/asm_common.h" />
+		<Unit filename="../../../../include/tk/sysdepend/dbgspt_common.h" />
+		<Unit filename="../../../../include/tk/sysdepend/syscall_common.h" />
+		<Unit filename="../../../../include/tk/sysdepend/sysdef_common.h" />
+		<Unit filename="../../../../include/tk/sysdepend/syslib_common.h" />
+		<Unit filename="../../../../include/tk/sysdepend/tef_em1d/asm_depend.h" />
+		<Unit filename="../../../../include/tk/sysdepend/tef_em1d/cpuattr.h" />
+		<Unit filename="../../../../include/tk/sysdepend/tef_em1d/cpudef.h" />
+		<Unit filename="../../../../include/tk/sysdepend/tef_em1d/dbgspt_depend.h" />
+		<Unit filename="../../../../include/tk/sysdepend/tef_em1d/sysdef_depend.h" />
+		<Unit filename="../../../../include/tk/sysdepend/tef_em1d/syslib_depend.h" />
+		<Unit filename="../../../../include/tk/sysext.h" />
+		<Unit filename="../../../../include/tk/syslib.h" />
+		<Unit filename="../../../../include/tk/sysmgr.h" />
+		<Unit filename="../../../../include/tk/tkernel.h" />
+		<Unit filename="../../../../include/tk/typedef.h" />
+		<Unit filename="../../../../include/tk/util.h" />
+		<Unit filename="../../../../include/tm/tmonitor.h" />
+		<Unit filename="../../../../include/typedef.h" />
+		<Unit filename="../../../bin/tef_em1d/_dmy" />
+		<Unit filename="../../../cmdsvc/build/tef_em1d/Makefile" />
+		<Unit filename="../../../cmdsvc/src/armv6/break.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/armv6/chkaddr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/armv6/cpudep.h" />
+		<Unit filename="../../../cmdsvc/src/armv6/disassemble.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/armv6/misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/armv6/monent.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/armv6/monhdr.S" />
+		<Unit filename="../../../cmdsvc/src/armv6/register.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/armv6/step.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/boot.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/cmdsvc.h" />
+		<Unit filename="../../../cmdsvc/src/command.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/console.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/help.h" />
+		<Unit filename="../../../cmdsvc/src/helpmsg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/load.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/memory.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/string.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/svc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../cmdsvc/src/wrkbuf.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../driver/flash/build/tef_em1d/Makefile" />
+		<Unit filename="../../../driver/flash/src/cfi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../driver/flash/src/cfi_16x1.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../driver/flash/src/flash.h" />
+		<Unit filename="../../../driver/flash/src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../driver/flash/src/reset-em1d.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../driver/flash/src/setup-em1d.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../driver/memdisk/build/tef_em1d/Makefile" />
+		<Unit filename="../../../driver/memdisk/src/memdsk.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../driver/sio/build/tef_em1d/Makefile" />
+		<Unit filename="../../../driver/sio/src/ns16550.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../hwdepend/tef_em1d/build/Makefile" />
+		<Unit filename="../../../hwdepend/tef_em1d/src/config.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../hwdepend/tef_em1d/src/cpuctrl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../hwdepend/tef_em1d/src/cpuctrl2.S" />
+		<Unit filename="../../../hwdepend/tef_em1d/src/diskio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../hwdepend/tef_em1d/src/eitent.S" />
+		<Unit filename="../../../hwdepend/tef_em1d/src/eitproc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../hwdepend/tef_em1d/src/hwdepend.h" />
+		<Unit filename="../../../hwdepend/tef_em1d/src/hwinfo.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../hwdepend/tef_em1d/src/memattr.S" />
+		<Unit filename="../../../hwdepend/tef_em1d/src/misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../hwdepend/tef_em1d/src/reset.S" />
+		<Unit filename="../../../hwdepend/tef_em1d/src/setup_em1d512.h" />
+		<Unit filename="../../../hwdepend/tef_em1d/src/sio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../hwdepend/tef_em1d/src/startup.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../hwdepend/tef_em1d/src/sysdepend.h" />
+		<Unit filename="../../../hwdepend/tef_em1d/src/system.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../hwdepend/tef_em1d/src/waitusec.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../include/arm/cpudepend.h" />
+		<Unit filename="../../../include/arm/em1d512.h" />
+		<Unit filename="../../../include/device.h" />
+		<Unit filename="../../../include/tmonitor.h" />
+		<Unit filename="Makefile" />
+		<Unit filename="monitor.lnk" />
+		<Unit filename="t-monitor.lnk" />
+		<Unit filename="version.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger>
+				<remote_debugging target="t-monitor">
+					<options conn_type="0" serial_baud="115200" ip_address="localhost" ip_port="2331" remote_server="Other (External tool)" Break_at_Main="1" Break_at_Main_Symbol="main" additional_cmds="monitor reset&#x0A;load" />
+				</remote_debugging>
+			</debugger>
+			<J-Link>
+				<GDBServer TargetName="t-monitor">
+					<CmdOption UseGDBServer="0" />
+					<CmdOption TargetDevice="" />
+					<CmdOption TargetInterface="0" />
+					<CmdOption InterfaceSpeed="4000" />
+					<CmdOption TargetEndian="0" />
+					<CmdOption OverrideExe="0" Filename="C:\Program Files (x86)\SEGGER\JLink_V500c\JLinkGDBServer.exe" />
+					<CmdOption StartServer="1" />
+					<CmdOption CloseServer="1" />
+					<CmdOption ServerIP="localhost" />
+					<CmdOption ServerPort="2331" />
+					<CmdOption UseAdvancedOptions="0" />
+					<CmdOption SelectJLink="" />
+					<CmdOption InitRegs="1" />
+					<CmdOption LocalhostOnly="1" />
+					<CmdOption Log="0" Filename="" />
+					<CmdOption Silent="0" />
+					<CmdOption StayOnTop="0" />
+					<CmdOption VerifyDownload="0" />
+					<CmdOption NoTargetTimeout="0" />
+					<CmdOption JTAGConf="0" IRPre="0" DRPre="0" />
+					<CmdOption JLinkScript="0" Filename="" />
+					<CmdOption JLinkSettings="0" Filename="" />
+					<CmdOption GDBInit="0" Filename="" />
+					<CmdOption AdditionalOptions="" />
+				</GDBServer>
+			</J-Link>
+		</Extensions>
+	</Project>
+</emIDE_project_file>
