@@ -31,6 +31,17 @@
 // see <sys/sysdepend/tef_em1d/sysinfo_depend.h>
 #define	N_INTVEC	256
 
+#if __TRON_ARM_ARCH__<6
+// http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0802b/Cihfdedi.html
+.macro	srsdb sp, imm
+	sub	sp, #8
+	str	lr, [sp, #0]
+	mrs	lr, spsr
+	str	lr, [sp, #4]
+	ldr	lr, [sp, #0]
+.endm
+#endif
+
 /*
  *       EIT entry
  */
