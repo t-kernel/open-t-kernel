@@ -24,6 +24,29 @@
 #include <sys/sysinfo.h>
 #include "cpudep.h"
 
+#if __TRON_ARM_ARCH__ < 6
+// http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0802b/Cihfdedi.html
+.macro rfefd sp
+	ldr	lr, [sp, #0]
+	msr	spsr, lr
+	ldr	lr, [sp, #4]
+	add	sp, #8
+	movs	pc, lr
+.endm
+// http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0802b/Cihfdedi.html
+.macro cps mode
+	mrs	r3, cpsr
+	bic	r3, #31
+	orr	r3, \mode
+	msr	cpsr, r3
+.endm
+.macro cpsid aif
+	mrs	r2, cpsr
+	orr	r2, #0xC000000
+	msr	cpsr, r2
+.endm
+#endif
+
 /*
  * Monitor entry (registered as default handler)
  *		+---------------+
