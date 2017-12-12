@@ -89,7 +89,7 @@ startup_entry:
 	msr	cpsr_fsxc, r0
 
 // use On-Chip SRAM as stack area
-	ldr	sp, =0xa0020000
+	ldr	sp, =CONFIG_INIT_SP
 
 // not in effect: MMU, cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
