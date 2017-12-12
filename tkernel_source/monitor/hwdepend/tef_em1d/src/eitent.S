@@ -70,6 +70,43 @@ fiq_entry:
 	bx	ip
 
 /*
+ *       EIT entry
+ */
+__start:
+
+
+
+	ldr	pc, L0000		// 00 : reset
+	ldr	pc, L0004		// 04 : undefined instruction exception
+	ldr	pc, L0008		// 08 : supervisor call (SVC)
+	ldr	pc, L000C		// 0C : prefetch abort
+	ldr	pc, L0010		// 10 : data abort
+	ldr	pc, L0014		// 14 : (reserved)
+	ldr	pc, L0018		// 18 : interrupt
+@	ldr	pc, L001C		// 1C : fast interrupt
+
+/*
+ * fast interrupt
+ *       calls the handler defined at FIQ interrupt vector unconditionally.
+ *       no saving of registers to stack is performed.
+ *       the content of R12_fiq(ip) register is overwritten.
+ */
+__fiq_entry:
+	ldr	ip, =base(EIT_VECTBL)
+	ldr	ip, [ip, #offs(EITVEC(EIT_FIQ))]
+	bx	ip
+ 
+L0000:	.word	startup_entry		// 00 : reset
+L0004:	.word	undef_entry		// 04 : undefined instruction exception
+L0008:	.word	svc_entry		// 08 : supervisor call (SVC)
+L000C:	.word	iabort_entry		// 0C : prefetch abort
+L0010:	.word	dabort_entry		// 10 : data abort
+L0014:	.word	0				// 14 : (reserved)
+L0018:	.word	irq_entry		// 18 : interrupt
+L001C:	.word	fiq_entry		// 1C : fast interrupt
+
+
+/*
  * interrupt
  *       ACPU interrupt mask status register of Interrupt controller (AINT)
  *      Judge the priority of interrupts using (IT0_MST0,1,2),
