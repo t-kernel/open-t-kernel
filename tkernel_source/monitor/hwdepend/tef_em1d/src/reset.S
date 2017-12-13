@@ -95,9 +95,9 @@ startup_entry:
 // in effect: Force AP, TEX remap, Subpage AP
 	.DSB	r0
 	mrc	p15, 0, r0, cr1, cr0, 0
-	ldr	r1, =~0x01003f85
+	ldr	r1, =~0x00003005
 	and	r0, r0, r1
-	ldr	r1, =0x30800000
+	ldr	r1, =0x00000000
 	orr	r0, r0, r1
 	mcr	p15, 0, r0, cr1, cr0, 0
 
@@ -239,9 +239,9 @@ reset_entry:
 // in effect: Force AP, TEX remap, Subpage AP
 	.DSB	r0
 	mrc	p15, 0, r0, cr1, cr0, 0
-	ldr	r1, =~0x01003f84
+	ldr	r1, =~0x00003004
 	and	r0, r0, r1
-	ldr	r1, =0x30800000
+	ldr	r1, =0x00000000
 	orr	r0, r0, r1
 	mcr	p15, 0, r0, cr1, cr0, 0
 
