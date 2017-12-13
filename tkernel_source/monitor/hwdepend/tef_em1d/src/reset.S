@@ -64,15 +64,15 @@
 .endm
 .macro .ISB reg, val=#0
 	_mov	\reg, \val
-	mcr	p15, 0, \reg, cr7, c5, 4
+	mcr	p15, 0, \reg, c7, c5, 4
 .endm
 .macro .DSB reg, val=#0
 	_mov	\reg, \val
-	mcr	p15, 0, \reg, cr7, c10, 4
+	mcr	p15, 0, \reg, c7, c10, 4
 .endm
 .macro .DMB reg, val=#0
 	_mov	\reg, \val
-	mcr	p15, 0, \reg, cr7, c10, 5
+	mcr	p15, 0, \reg, c7, c10, 5
 .endm
 
 /*----------------------------------------------------------------------
@@ -94,12 +94,12 @@ startup_entry:
 // not in effect: MMU, cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
 	.DSB	r0
-	mrc	p15, 0, r0, cr1, cr0, 0
+	mrc	p15, 0, r0, c1, c0, 0
 	ldr	r1, =~0x00003005
 	and	r0, r0, r1
 	ldr	r1, =0x00000000
 	orr	r0, r0, r1
-	mcr	p15, 0, r0, cr1, cr0, 0
+	mcr	p15, 0, r0, c1, c0, 0
 
 // Setup clock divider
 
@@ -158,28 +158,28 @@ flashtable_loop:
 	
 // initialization of CP15
 	ldr	r0, =0x00000004
-	mcr	p15, 0, r0, cr2, cr0, 2		// TTBCR
+	mcr	p15, 0, r0, c2, c0, 2		// TTBCR
 	ldr	r0, =(PAGETBL_BASE + 0x09)	// WB/WA, no-shared, cachable
-	mcr	p15, 0, r0, cr2, cr0, 1		// TTBR1
-	mcr	p15, 0, r0, cr2, cr0, 0		// TTBR0
+	mcr	p15, 0, r0, c2, c0, 1		// TTBR1
+	mcr	p15, 0, r0, c2, c0, 0		// TTBR0
 	ldr	r0, =EITENT_BASE
-	mcr	p15, 0, r0, cr12, cr0, 0	// VBAR
+	mcr	p15, 0, r0, c2, c0, 0		// VBAR
 	ldr	r0, =0x000a8aa4
-	mcr	p15, 0, r0, cr10, cr2, 0 	// PRRR
+	mcr	p15, 0, r0, c10, c2, 0 		// PRRR
 	ldr	r0, =0x44e048e0
-	mcr	p15, 0, r0, cr10, cr2, 1	// NMRR
+	mcr	p15, 0, r0, c10, c2, 1		// NMRR
 	ldr	r0, =0x55555555			// All client
-	mcr	p15, 0, r0, cr3, cr0, 0		// Domain access
+	mcr	p15, 0, r0, c3, c0, 0		// Domain access
 
 // MMU enable
 	.DSB	r0
-	mcr	p15, 0, r0, cr8, cr7, 0		// I/D TLB invalidate
-	mcr	p15, 0, r0, cr7, cr5, 6		// invalidate BTC
+	mcr	p15, 0, r0, c8, c7, 0		// I/D TLB invalidate
+	mcr	p15, 0, r0, c7, c5, 6		// invalidate BTC
 	.DSB	r0
 	.ISB	r0
-	mrc	p15, 0, r0, cr1, cr0, 0
+	mrc	p15, 0, r0, c1, c0, 0
 	orr	r0, r0, #0x00000001
-	mcr	p15, 0, r0, cr1, cr0, 0
+	mcr	p15, 0, r0, c1, c0, 0
 	.ISB	r0
 
 // perform reset processing
@@ -238,23 +238,23 @@ reset_entry:
 // not in effect: cache (D/I), program-flow prediction, High-Vector, VIC
 // in effect: Force AP, TEX remap, Subpage AP
 	.DSB	r0
-	mrc	p15, 0, r0, cr1, cr0, 0
+	mrc	p15, 0, r0, c1, c0, 0
 	ldr	r1, =~0x00003004
 	and	r0, r0, r1
 	ldr	r1, =0x00000000
 	orr	r0, r0, r1
-	mcr	p15, 0, r0, cr1, cr0, 0
+	mcr	p15, 0, r0, c1, c0, 0
 
 	.ISB	r0
-	mcr	p15, 0, r0, cr8, cr7, 0		// I/D TLB invalidate
+	mcr	p15, 0, r0, c8, c7, 0		// I/D TLB invalidate
 	.DSB	r0
 	bl	Csym(FlushCache)		// Clean/invalidate I/D cache
 
 // Turn on VFP
-	mrc	p15, 0, r0, cr1, cr0, 2
+	mrc	p15, 0, r0, c1, c0, 2
 	orr	r0, r0, #0x00f00000	// VFP(CP11,CP10) enable
 	bic	r0, r0, #0xc0000000	// Should be Zero
-	mcr	p15, 0, r0, cr1, cr0, 2
+	mcr	p15, 0, r0, c1, c0, 2
 	.ISB	r0			// Flush Prefetch buffer
 
 // initialize data area
