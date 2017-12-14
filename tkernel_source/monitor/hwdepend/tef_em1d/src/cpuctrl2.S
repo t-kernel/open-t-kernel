@@ -44,15 +44,15 @@ Csym(FlushCache):
   l_flush_dcache2:
 	mov	ip, r2, lsl #DCACHE_NWAY_SHIFT
 	orr	ip, ip, r3, lsl #DCACHE_NSEG_SHIFT
-	mcr	p15, 0, ip, cr7, c14, 2		// data cache is written back,
+	mcr	p15, 0, ip, c7, c14, 2		// data cache is written back,
 	subs	r3, r3, #1			// and is invalidated
 	bpl	l_flush_dcache2
 	subs	r2, r2, #1
 	bpl	l_flush_dcache1
 
 	ldr	ip, =0
-	mcr	p15, 0, ip, cr7, c7, 0		// Invalidate I/D-Cache
-	mcr	p15, 0, ip, cr7, c10, 4		// Drain Write Buffer
+	mcr	p15, 0, ip, c7, c7, 0		// Invalidate I/D-Cache
+	mcr	p15, 0, ip, c7, c10, 4		// Drain Write Buffer
 
 	bx	lr
 
@@ -73,16 +73,16 @@ Csym(setCacheMMU):
 
         /* TLB flush */
 	ldr	ip, =0
-	mcr	p15, 0, ip, cr8, c7, 0		// Invalidate I/D-TLB
+	mcr	p15, 0, ip, c8, c7, 0		// Invalidate I/D-TLB
 
         /* set new r1 for CP15 */
-	mrc	p15, 0, r2, cr1, cr0, 0
+	mrc	p15, 0, r2, c1, c0, 0
 	ldr	r3, =0x3307			// V,I,R,S,C,A,M (B = 0)
 	and	r0, r4, r3
 	mvn	r3, r3				// clear old V,I,R,S,C,A,M
 	and	r2, r2, r3
 	orr	r0, r0, r2
-	mcr	p15, 0, r0, cr1, cr0, 0
+	mcr	p15, 0, r0, c1, c0, 0
 	nop
 	nop
 
