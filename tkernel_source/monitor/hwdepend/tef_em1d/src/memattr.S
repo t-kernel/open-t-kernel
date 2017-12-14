@@ -34,15 +34,15 @@
 .endm
 .macro .ISB reg, val=#0
 	_mov	\reg, \val
-	mcr	p15, 0, \reg, cr7, c5, 4
+	mcr	p15, 0, \reg, c7, c5, 4
 .endm
 .macro .DSB reg, val=#0
 	_mov	\reg, \val
-	mcr	p15, 0, \reg, cr7, c10, 4
+	mcr	p15, 0, \reg, c7, c10, 4
 .endm
 .macro .DMB reg, val=#0
 	_mov	\reg, \val
-	mcr	p15, 0, \reg, cr7, c10, 5
+	mcr	p15, 0, \reg, c7, c10, 5
 .endm
 
 /*
@@ -69,8 +69,8 @@ changememattr_start:
 	str	r4, [ip]
 
 	.DSB	r4
-	mcr	p15, 0, r4, cr8, cr7, 0		// I/D TLB invalidate
-	mcr	p15, 0, r4, cr7, cr5, 6		// invalidate BTC
+	mcr	p15, 0, r4, c8, c7, 0		// I/D TLB invalidate
+	mcr	p15, 0, r4, c7, c5, 6		// invalidate BTC
 	.DSB	r4
 	.ISB	r4
 
@@ -98,8 +98,8 @@ changememattr_loop:
 
         /* Jump to the address in the originally mapped area */
 	.DSB	r4
-	mcr	p15, 0, r4, cr8, cr7, 0		// I/D TLB invalidate
-	mcr	p15, 0, r4, cr7, cr5, 6		// invalidate BTC
+	mcr	p15, 0, r4, c8, c7, 0		// I/D TLB invalidate
+	mcr	p15, 0, r4, c7, c5, 6		// invalidate BTC
 	.DSB	r4
 	.ISB	r4
 
@@ -113,8 +113,8 @@ changememattr_finish:
 	str	r4, [ip]			// PAGETBL_BASE
 
 	.DSB	r4
-	mcr	p15, 0, r4, cr8, cr7, 0		// I/D TLB invalidate
-	mcr	p15, 0, r4, cr7, cr5, 6		// invalidate BTC
+	mcr	p15, 0, r4, c8, c7, 0		// I/D TLB invalidate
+	mcr	p15, 0, r4, c7, c5, 6		// invalidate BTC
 	.DSB	r4
 	.ISB	r4
 
