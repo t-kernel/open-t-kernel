@@ -251,10 +251,12 @@ reset_entry:
 	bl	Csym(FlushCache)		// Clean/invalidate I/D cache
 
 // Turn on VFP
+#ifdef CONFIG_VFP
 	mrc	p15, 0, r0, c1, c0, 2
 	orr	r0, r0, #0x00f00000	// VFP(CP11,CP10) enable
 	bic	r0, r0, #0xc0000000	// Should be Zero
 	mcr	p15, 0, r0, c1, c0, 2
+#endif
 	.ISB	r0			// Flush Prefetch buffer
 
 // initialize data area
@@ -311,6 +313,7 @@ bss_loop:
 	mov	lr, #0
 	msr	spsr_fsxc, lr
 
+#ifdef CONFIG_VFP
         // clear VFP
 	mov	r0, #0x40000000		// EX=0,EN=1,SBZ/other flags = 0
 	fmxr	fpexc, r0
@@ -319,6 +322,7 @@ bss_loop:
 	fmxr	fpscr, r1
 
 	fldmiad	r7, {d0-d15}		// zero clear
+#endif
 
         // return to SVC mode
 	mov	r0, #(PSR_SVC | PSR_I | PSR_F)
