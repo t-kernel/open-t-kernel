@@ -134,22 +134,22 @@ Csym(_defaultHdr):
 	mrs	r3, spsr
 	stmia	r7!, {r3, sp, lr}	// svc: spsr, sp, lr
 
-	mrc	p15, 0, r2, cr1, cr0, 0
-	mrc	p15, 0, r3, cr2, cr0, 0
-	mrc	p15, 0, r4, cr2, cr0, 1
-	mrc	p15, 0, r5, cr2, cr0, 2
-	mrc	p15, 0, r6, cr3, cr0, 0
+	mrc	p15, 0, r2, c1, c0, 0
+	mrc	p15, 0, r3, c2, c0, 0
+	mrc	p15, 0, r4, c2, c0, 1
+	mrc	p15, 0, r5, c2, c0, 2
+	mrc	p15, 0, r6, c3, c0, 0
 	stmia	r7!, {r2,r3,r4,r5,r6}		// cp15: r1,r2,r3
 
-	mrc	p15, 0, r2, cr5, cr0, 0
-	mrc	p15, 0, r3, cr5, cr0, 1
-	mrc	p15, 0, r4, cr6, cr0, 0
-	mrc	p15, 0, r5, cr6, cr0, 2
-	mrc	p15, 0, r6, cr13, cr0, 1	// cp15: r5,r6,r13
+	mrc	p15, 0, r2, c5, c0, 0
+	mrc	p15, 0, r3, c5, c0, 1
+	mrc	p15, 0, r4, c6, c0, 0
+	mrc	p15, 0, r5, c6, c0, 2
+	mrc	p15, 0, r6, c13, c0, 1	// cp15: r5,r6,r13
 	stmia	r7!, {r2,r3,r4,r5,r6}
 
 	ldr	r2, =0xFFFFFFFF
-	mcr	p15, 0, r2, cr3, cr0, 0	// cp15:r3(domain) manager
+	mcr	p15, 0, r2, c3, c0, 0	// cp15:r3(domain) manager
 
         // set up stack exclusively used for monitor (SVC mode)
 	ldr	r2, =__stack_top
@@ -165,18 +165,18 @@ Csym(_defaultHdr):
 	ldr	r7, =Csym(regStack) + ((39 + 10) * 4)
 
 	ldmdb	r7!, {r2,r3,r4,r5,r6}		// cp15: r5,r6,r13
-	mcr	p15, 0, r2, cr5, cr0, 0
-	mcr	p15, 0, r3, cr5, cr0, 1
-	mcr	p15, 0, r4, cr6, cr0, 0
-	mcr	p15, 0, r5, cr6, cr0, 2
-	mcr	p15, 0, r6, cr13, cr0, 1
+	mcr	p15, 0, r2, c5, c0, 0
+	mcr	p15, 0, r3, c5, c0, 1
+	mcr	p15, 0, r4, c6, c0, 0
+	mcr	p15, 0, r5, c6, c0, 2
+	mcr	p15, 0, r6, c13, c0, 1
 
 	ldmdb	r7!, {r2,r3,r4,r5,r6}		// cp15: r1,r2,r3
 //	mcr	p15, 0, r2, cr1, cr0, 0		// already restored inside entMonitor
 //RO	mcr	p15, 0, r3, cr2, cr0, 0		// no need to restore (Read Only)
 //RO	mcr	p15, 0, r4, cr2, cr0, 1
 //RO	mcr	p15, 0, r5, cr2, cr0, 2
-	mcr	p15, 0, r6, cr3, cr0, 0
+	mcr	p15, 0, r6, c3, c0, 0
 
 	ldmdb	r7!, {r3, sp, lr}	// svc: spsr, sp, lr
 	msr	spsr_fsxc, r3
