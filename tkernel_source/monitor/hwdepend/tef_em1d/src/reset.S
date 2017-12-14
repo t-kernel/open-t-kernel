@@ -138,7 +138,7 @@ setup_bcr:
 // creation of temporary page table
 	ldr	r0, =PAGETBL_BASE
 	ldr	r1, =0x00000000
-	ldr	r2, =0x00000402	// Kernel/RW, Strongly-order
+	ldr	r2, =0x00000002	// Kernel/RW, Strongly-order
 tmptable_loop:
 	orr	r3, r1, r2
 	str	r3, [r0], #4
@@ -148,7 +148,7 @@ tmptable_loop:
 // Mapping of FlashROM area (0x70000000 - 0x72000000 --> 0x00000000 -)
 	ldr	r0, =(PAGETBL_BASE + (0x700 << 2))
 	ldr	r1, =0x00000000
-	ldr	r2, =0x0000940e	// Kernel/RO, Normal WB/WA
+	ldr	r2, =0x0000041e	// Kernel/RO, Normal WB/WA
 flashtable_loop:
 	orr	r3, r1, r2
 	str	r3, [r0], #4
@@ -157,6 +157,7 @@ flashtable_loop:
 	bne	flashtable_loop
 	
 // initialization of CP15
+#if __TRON_ARM_ARCH__ == 6
 	ldr	r0, =0x00000004
 	mcr	p15, 0, r0, c2, c0, 2		// TTBCR
 	ldr	r0, =(PAGETBL_BASE + 0x09)	// WB/WA, no-shared, cachable
@@ -168,13 +169,19 @@ flashtable_loop:
 	mcr	p15, 0, r0, c10, c2, 0 		// PRRR
 	ldr	r0, =0x44e048e0
 	mcr	p15, 0, r0, c10, c2, 1		// NMRR
+#else
+	ldr	r0, =PAGETBL_BASE		// WB/WA, no-shared, cachable
+	mcr	p15, 0, r0, c2, c0, 0		// TTBR0
+#endif
 	ldr	r0, =0x55555555			// All client
 	mcr	p15, 0, r0, c3, c0, 0		// Domain access
 
 // MMU enable
 	.DSB	r0
 	mcr	p15, 0, r0, c8, c7, 0		// I/D TLB invalidate
+#if __TRON_ARM_ARCH__ == 6
 	mcr	p15, 0, r0, c7, c5, 6		// invalidate BTC
+#endif
 	.DSB	r0
 	.ISB	r0
 	mrc	p15, 0, r0, c1, c0, 0
