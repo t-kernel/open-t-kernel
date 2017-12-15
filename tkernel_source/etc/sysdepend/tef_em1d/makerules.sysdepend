@@ -243,4 +243,5 @@ endif
 STRIP = $(GNUARM_2)/bin/strip --strip-unneeded
 
 OBJCOPY = $(GNU_BD)/bin/arm_2-unknown-tkernel-objcopy
+OBJDUMP = $(GNU_BD)/bin/objdump
 OUTPUT_SREC = -O srec --srec-forceS3 --srec-len 32

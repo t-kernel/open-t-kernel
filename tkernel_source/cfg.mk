@@ -5,8 +5,8 @@
 
 
 export BD=${PWD}
-export GNU_BD="/opt/gcc-arm"
-export GNUarm_2="/opt/gcc-arm/."
+export GNU_BD="/home/du/opt/gcc-arm-none-eabi/"
+export GNUarm_2="/home/du/opt/gcc-arm-none-eabi/"
 export BUILD_TARGET="tef_em1d"
 
 alias bd='cd ${BD}'
@@ -19,6 +19,7 @@ tk-link ()
 	CROSS=${1}
 	ln -s ${CROSS}ar ar
 	ln -s ${CROSS}objcopy arm_2-unknown-tkernel-objcopy
+	ln -s ${CROSS}objdump arm_2-unknown-tkernel-objcopy
 	ln -s ${CROSS}gcc gcc4arm
 	ln -s ${CROSS}nm  nm
 	ln -s ${CROSS}ranlib  ranlib

@@ -100,12 +100,15 @@ endif
 
 .PHONY: all clean install
 
-ALL = $(TARGET).mot $(TARGET).map
+ALL = $(TARGET).mot $(TARGET).map $(TARGET).S
 
 all: hwdepend cmdsvc drivers $(ALL) install
 
 $(TARGET).mot:	$(TARGET)
 	$(OBJCOPY) -O srec --srec-forceS3 --srec-len 32 $< $@
+
+$(TARGET).S:	$(TARGET)
+	$(OBJDUMP) -DS $< >$@
 
 $(TARGET): $(M_OBJ) $(OBJ) version.o
 	$(CC) $(TARGET_ARCH) $(LDFLAGS) $^ $(LDLIBS) $(OUTPUT_OPTION)
