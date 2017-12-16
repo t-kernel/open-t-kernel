@@ -95,8 +95,8 @@ startup_entry:
 // in effect: Force AP, TEX remap, Subpage AP
 	.DSB	r0
 	mrc	p15, 0, r0, c1, c0, 0
-	ldr	r1, =~0x00003005
-	and	r0, r0, r1
+	ldr	r1, =0x00003005
+	bic	r0, r1
 	ldr	r1, =0x00000000
 	orr	r0, r0, r1
 	mcr	p15, 0, r0, c1, c0, 0
@@ -147,7 +147,7 @@ tmptable_loop:
 	bne	tmptable_loop
 #else
 	ldr	r0, =PAGETBL_BASE
-	ldr	r1, =0x00000012
+	ldr	r1, =0x00000412
 	mov	r2, #4096
 tmptable_loop:
 	str	r1, [r0], #4
@@ -172,7 +172,7 @@ flashtable_loop:
 	ldr	r0, =PAGETBL_BASE			@ 0x43000000 -> 0x00000000
 	ldr	r1, =PAGETBL_BASE+(0x70000000>>18)	@ 0x43000000 -> 0x70000000
 
-	ldr	r2, =0x4300041e
+	ldr	r2, =0x43000412
 	mov	r3, #4
 flashtable_loop:
 	str	r2, [r0], #4
