@@ -21,7 +21,7 @@
  */
 
 #define	EITENT_BASE	0x70000000	// address for exception branch processing
-#define	PAGETBL_BASE	0x30000000	// address of the first level table page.
+#define	PAGETBL_BASE	0x42000000	// address of the first level table page.
 
 /*
  * clock value

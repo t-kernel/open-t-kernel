@@ -135,6 +135,7 @@ setup_bcr:
 // initialization of DDR memory
 	bl	setup_ddr
 
+#if 0
 // creation of temporary page table
 	ldr	r0, =PAGETBL_BASE
 	ldr	r1, =0x00000000
@@ -144,7 +145,18 @@ tmptable_loop:
 	str	r3, [r0], #4
 	adds	r1, r1, #0x00100000
 	bne	tmptable_loop
+#else
+	ldr	r0, =PAGETBL_BASE
+	ldr	r1, =0x00000012
+	mov	r2, #4096
+tmptable_loop:
+	str	r1, [r0], #4
+	adds	r1, #0x00100000
+	subs	r2, #1
+	bne	tmptable_loop
+#endif
 
+#if 0
 // Mapping of FlashROM area (0x70000000 - 0x72000000 --> 0x00000000 -)
 	ldr	r0, =(PAGETBL_BASE + (0x700 << 2))
 	ldr	r1, =0x00000000
@@ -156,6 +168,29 @@ flashtable_loop:
 	cmp	r1, #0x02000000
 	bne	flashtable_loop
 	
+#else
+	ldr	r0, =PAGETBL_BASE			@ 0x43000000 -> 0x00000000
+	ldr	r1, =PAGETBL_BASE+(0x70000000>>18)	@ 0x43000000 -> 0x70000000
+
+	ldr	r2, =0x4300041e
+	mov	r3, #4
+flashtable_loop:
+	str	r2, [r0], #4
+	str	r2, [r1], #4
+	adds	r2, #0x00100000
+	subs	r3, #1
+	bne	flashtable_loop
+
+        ldr     r0, =PAGETBL_BASE+(0x30000000>>18)
+	ldr	r1, =0x42000412				@ 0x42000000 -> 0x30000000
+	mov	r2, #16
+ramtable_loop:
+	str	r1, [r0], #4
+	adds	r1, #0x00100000
+	subs	r2, #1
+	bne	ramtable_loop
+#endif
+
 // initialization of CP15
 #if __TRON_ARM_ARCH__ == 6
 	ldr	r0, =0x00000004
