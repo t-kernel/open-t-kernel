@@ -138,7 +138,7 @@ setup_bcr:
 // creation of temporary page table
 	ldr	r0, =PAGETBL_BASE
 	ldr	r1, =0x00000000
-	ldr	r2, =0x00000002	// Kernel/RW, Strongly-order
+	ldr	r2, =0x00000012	// Kernel/RW, Strongly-order
 tmptable_loop:
 	orr	r3, r1, r2
 	str	r3, [r0], #4
