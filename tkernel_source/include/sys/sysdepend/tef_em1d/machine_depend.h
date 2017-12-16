@@ -46,6 +46,6 @@
 #define _Csym			0
 #endif
 
-#define CONFIG_INIT_SP		0xa0020000
+#define CONFIG_INIT_SP		0x00020000
 
 #endif /* __SYS_MACHINE_DEPEND_H__ */
