@@ -183,6 +183,18 @@ typedef struct {
  */
 #define	RSDRV_PWON(siocb)		/* no operation */
 
+#undef regLSTS
+#undef LS_DRDY
+#undef LS_RxERR
+#undef IN
+#undef regDATA
+
+#define regLSTS   (0x80074018)
+#define LS_DRDY   (1<<5)
+#define LS_RxERR  (0)
+#define regDATA   (0x80074000)
+#define IN(addr)  (*((volatile int *)addr))
+
 /*
  * serial port I/O
  */
@@ -191,13 +203,13 @@ LOCAL void putSIO_16550( SIOCB *scb, UB c )
 	RSDRV_PWON(scb);
 
         /* wait until transmission is ready. */
-	while ((IN(regLSTS) & LS_THRE) == 0);
+	while ((~IN(regLSTS) & LS_THRE) == 0);
 
         /* write transmission data */
 	OUT(regDATA, c);
 
         /* wait until the completion of transmission */
-	while ((IN(regLSTS) & LS_THRE) == 0);
+	while ((~IN(regLSTS) & LS_THRE) == 0);
 }
 
 /*
@@ -221,7 +233,7 @@ LOCAL W getSIO_16550(SIOCB *scb, W tmo )
 	while (scb->iptr - scb->optr < SIO_RCVBUFSZ) {
 
                 /* is there data in FIFO? */
-		if ( !((sts = IN(regLSTS)) & (LS_DRDY | LS_RxERR))) {
+		if ( !((sts = ~IN(regLSTS)) & (LS_DRDY | LS_RxERR))) {
 			if (scb->iptr != scb->optr) break;  /* already received */
 			if (tmo-- <= 0) break;		    /* timeout */
 			waitUsec(20);
@@ -267,7 +279,7 @@ EXPORT ER initSIO_ns16550(SIOCB *scb, const CFGSIO *csio, W speed)
 
         /* select the target port */
 	scb->info = DefSIO[csio->info].iob;
-
+#if 0
         /* communicatin speed default value */
 	div = LC_LINE_SPEED(speed);
 
@@ -285,7 +297,7 @@ EXPORT ER initSIO_ns16550(SIOCB *scb, const CFGSIO *csio, W speed)
 	OUT(regFCTL, dtFC);		/* FIFO mode */
 	OUT(regMCTL, dtMC);		/* modem mode */
 	OUT(regINTE, dtIM);		/* interrupt mask */
-
+#endif
         /* I/O function default */
 	scb->put = putSIO_16550;
 	scb->get = getSIO_16550;

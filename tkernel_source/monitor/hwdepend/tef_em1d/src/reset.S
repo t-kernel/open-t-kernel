@@ -1,4 +1,30 @@
 /*
+ * int kputc(int ch);
+ */
+	.text
+	.balign	4
+	.globl	kputc
+	.type	kputc, %function
+kputc:
+	push	{r1, r2}
+
+	mov	r2, #(1<<(7+2))
+1:
+	subs	r2, #1
+	mvneq	r0, #0
+	bxeq	lr
+
+	ldr	r1, =0x80074018
+	ldr	r1, [r1]
+	tst	r1, #(1<<5)
+	bne	1b
+	ldr	r1, =0x80074000
+	strb	r0, [r1]
+
+	pop	{r1, r2}
+	bx	lr
+
+/*
  *----------------------------------------------------------------------
  *    T-Kernel 2.0 Software Package
  *

@@ -47,8 +47,13 @@ IMPORT	void	_gio7Hdr(void);
 IMPORT	void	_defaultHdr(void);
 
 /* macros for manipulating cache/MMU/PMIC */
+#if 0
 #define	EnbCacheMMU(x)	setCacheMMU(ENB_CACHEMMU)
 #define	DisCacheMMU(x)	setCacheMMU(ENB_MMUONLY) /* MMU can't be turned off */
+#else
+#define	EnbCacheMMU(x)
+#define	DisCacheMMU(x)
+#endif
 
 /* ------------------------------------------------------------------------ */
 
@@ -64,15 +69,12 @@ IMPORT	W	N_NoMemSeg;
 /* initialize SPI for PMIC communication */
 LOCAL	void	pmicInit(void)
 {
-	out_w(SPn_MODE(SP0), 0x2700);		// 8bit, CS0, Master, CPU mode
-	out_w(SPn_TIECS(SP0), 0x000f);		// CS0: follow the specification by SPn_POL
-	out_w(SPn_POL(SP0), SPIPol);
-	out_w(SPn_ENCLR(SP0), ~0);		// interrupt disable
+	// 8bit, CS0, Master, CPU mode
+	// CS0: follow the specification by SPn_POL
+	// interrupt disable
 
-	out_w(SPn_CONTROL(SP0), 0x0100);	// start reset
-	waitUsec(10);
-	out_w(SPn_CONTROL(SP0), 0x0000);	// release reset
-	out_w(SPn_CONTROL2(SP0), 0x0000);
+	// start reset
+	// release reset
 
 	return;
 }
@@ -157,32 +159,14 @@ EXPORT	void	resetSystem(W boot)
 	DisCacheMMU();
 
         /* set up interrupt controller */
-	out_w(IT0_IDS0, ~0);		// CPU: all interrupts disabled
-	out_w(IT0_IDS1, ~0);
-	out_w(IT0_IDS2, ~0);
-	out_w(IT0_IIR, ~0);
-	out_w(IT3_IPI0_CLR, 0x0000003f);
-	out_w(IT3_IDS0, ~0);		// DSP: all interrupts disabled
-	out_w(IT3_IDS1, ~0);
-	out_w(IT3_IDS2, ~0);
-	out_w(IT3_IIR, ~0);
-	out_w(IT0_IPI3_CLR, 0x0000003f);
-	out_w(IT0_FID, 0x00000001);	// CPU: FIQ disabled
-	out_w(GIO_IIA(GIO_L), 0);	// GPIO: interrupt disabled
-	out_w(GIO_IIA(GIO_H), 0);
-	out_w(GIO_IIA(GIO_HH), 0);
-	out_w(GIO_IIA(GIO_HHH), 0);
-	out_w(GIO_GSW(GIO_L), 0);	// GPIO: FIQ interrupt disabled
-	out_w(GIO_GSW(GIO_H), 0);
-	out_w(GIO_GSW(GIO_HH), 0);
-	out_w(GIO_GSW(GIO_HHH), 0);
-	out_w(IT0_LIIR, 0x0000000f);	// internal interrupt disabled
-	out_w(IT_PINV_CLR0, ~0);	// inhibit interrupt polarity inversion
-	out_w(IT_PINV_CLR1, ~0);
-	out_w(IT_PINV_CLR2, ~0);
-	out_w(IT0_IEN0, 0x0c000000);	// CPU: GPIO interrupt enabled
-	out_w(IT0_IEN1, 0x003c0000);
-	out_w(IT0_IEN2, 0x00018000);
+	// CPU: all interrupts disabled
+	// DSP: all interrupts disabled
+	// CPU: FIQ disabled
+	// GPIO: interrupt disabled
+	// GPIO: FIQ interrupt disabled
+	// internal interrupt disabled
+	// inhibit interrupt polarity inversion
+	// CPU: GPIO interrupt enabled
 
         /* power on controller initialization */
 	pmicInit();
@@ -252,11 +236,13 @@ EXPORT	void	resetSystem(W boot)
 		}
 	}
 
+#if 0
 	DSB();
 	Asm("mcr p15, 0, %0, cr8, c7, 0":: "r"(0));	// I/D TLB invalidate
 	Asm("mcr p15, 0, %0, cr7, c5, 6":: "r"(0));	// invalidate BTC
 	DSB();
 	ISB();
+#endif
 
 	EnbCacheMMU();
 
@@ -281,16 +267,10 @@ EXPORT	void	sysExit(W reset)
 	cpuLED(0x00);
 
         /* all interrupts disabled */
-	out_w(IT0_IDS0, ~0);		// CPU: all interrupts disabled
-	out_w(IT0_IDS1, ~0);
-	out_w(IT0_IDS2, ~0);
-	out_w(IT3_IPI0_CLR, 0x0000003f);
-	out_w(IT3_IDS0, ~0);		// DSP: all interrupts disabled
-	out_w(IT3_IDS1, ~0);
-	out_w(IT3_IDS2, ~0);
-	out_w(IT0_IPI3_CLR, 0x0000003f);
-	out_w(IT0_FID, 0x00000001);	// FIQ disabled
-	out_w(IT0_LIIR, 0x0000000f);	// internal interrupt disabled
+	// CPU: all interrupts disabled
+	// DSP: all interrupts disabled
+	// FIQ disabled
+	// internal interrupt disabled
 
         /* power on controller initialization */
 	pmicInit();
