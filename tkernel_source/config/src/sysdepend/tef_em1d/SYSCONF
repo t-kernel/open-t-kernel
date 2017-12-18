@@ -82,7 +82,7 @@ TEV_FFLock	4	# Release of an FIFO lock waiting state
 #
 #	Segment manager
 #
-RealMemEnd	0x40000000	# RAM bottom address (logical address)
+RealMemEnd	0x31000000	# RAM bottom address (logical address)
 
 #
 #	Exception/Interrupt stack

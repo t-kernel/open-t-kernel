@@ -30,10 +30,11 @@ IMPORT	ER	initMemDisk(DISKCB *, const CFGDISK *);
 
 /* memory region definition */
 EXPORT	MEMSEG	MemSeg[] = {
+	{0x00000000, 0x02000000, MSA_FROM,	PGA_RO|PGA_C |0x90000000},
 	// Bank1/2/3
 	{0x10000000, 0x30000000, MSA_IO,	PGA_RW|PGA_D |PGA_S|PGA_XN},
-	// DDR2 SDRAM, 64Mbyte
-	{0x30000000, 0x40000000, MSA_RAM,	PGA_RW|PGA_C},
+	// DDR2 SDRAM, 16Mbyte
+	{0x30000000, 0x32000000, MSA_RAM,	PGA_RW|PGA_C},
         // EM1 internal device (1)
 	{0x40000000, 0x70000000, MSA_IO,	PGA_RW|PGA_D |PGA_S|PGA_XN},
 	// Bank0
@@ -47,16 +48,16 @@ EXPORT	MEMSEG	MemSeg[] = {
 
 	{0x70000000, 0x70020000, MSA_MON,	0},
 	{0x70030000, 0x72000000, MSA_RDA,	0},
-	{0x30006000, 0x34000000, MSA_OS,	0},
+	{0x30006000, 0x31000000, MSA_OS,	0},
 };
 
 EXPORT	W	N_MemSeg = sizeof(MemSeg) / sizeof(MEMSEG);
 
 /* unused memory region definition */
 EXPORT	MEMSEG	NoMemSeg[] = {
-	{0x00000000, 0x10000000, 0,		0},
-	{0x72000000, 0xa0000000, 0,		0},
-	{0xd0000000, 0xf0000000, 0,		0},
+	{0x00400000, 0x10000000, 0,		0},
+	{0x70400000, 0x80000000, 0,		0},
+	{0x90000000, 0xb0000000, 0,		0},
 };
 
 EXPORT	W	N_NoMemSeg = sizeof(NoMemSeg) / sizeof(MEMSEG);
@@ -326,13 +327,13 @@ EXPORT	UW	DipSwStatus(void)
 	UW	d;
 
         /* read data from read port */
-	d = IICGPIORead(0xd9);
+	d = ~0;
 
         /* unnecessary bits are masked and then invert logic. */
 	d = (d ^ SW_MON) & SW_MON;
 
         /* check abort switch */
-	if (in_w(GIO_I(GIO_L)) & 0x00000100) d |= SW_ABT;
+	if (0) d |= SW_ABT;
 
 	return d;
 }
@@ -340,9 +341,7 @@ EXPORT	UW	DipSwStatus(void)
 /* USB power control */
 EXPORT	void	usbPower(BOOL power)
 {
-	pmicWrite(27, (pmicRead(27) & 0x0f) |
-		  		(power ? USBPowerOn : USBPowerOff));
-	pmicDelay();
+	return;
 }
 
 /* power off */
@@ -376,10 +375,7 @@ EXPORT	void	resetStart(void)
 EXPORT	void	initHardware(void)
 {
         /* enable abort switch interrupt */
-	out_w(GIO_IDT1(GIO_L), 0x00000008);	// asynchronous leading-edge high interrupt
-	out_w(GIO_IIR(GIO_L), 0x00000100);
-	out_w(GIO_IIA(GIO_L), 0x00000100);
-	out_w(GIO_IEN(GIO_L), 0x00000100);
+	// asynchronous leading-edge high interrupt
 
 	return;
 }
@@ -388,12 +384,14 @@ EXPORT	void	initHardware(void)
 EXPORT	void	cpuLED(UW v)
 {
 	UB	m, d, r, c;
-
+#if 0
 	m = ~((v >> 16) | 0xf0);	// mask (0:unmodified 1:modify)
 	d = ~((v >>  0) | 0xf0);	// set value (0:on 1:off)
 	r = IICGPIORead(0xb9);
 	c = (r ^ d) & m;		// modify flag (0:unmodified 1:modify)
 	IICGPIOWrite(0xb8, r ^ c);
+#endif
+
 }
 
 /*

@@ -267,6 +267,7 @@ undef_entry:
  *       ip = vector table address
  *       lr = indeterminate
  */
+ 	.globl	svc_entry
 svc_entry:
 	srsdb	sp!, #PSR_SVC		// save registers
 	stmfd	sp!, {ip}

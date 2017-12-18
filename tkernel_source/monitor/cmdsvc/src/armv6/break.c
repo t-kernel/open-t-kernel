@@ -272,6 +272,7 @@ EXPORT	void	dspBreak(void)
 */
 EXPORT	void	initBreak(void)
 {
+#if 0
         // clear all breakpoints
 	memset(&brkPt[0], 0, sizeof(brkPt));
 
@@ -284,6 +285,7 @@ EXPORT	void	initBreak(void)
         // SW break instruction (undefined instruction)
 	*((UH*)&sbpCode.b[2]) = BREAK_THUMB;
 	*((UW*)&sbpCode.b[4]) = BREAK_ARM;
+#endif
 }
 /*
         release breakpoint temporarily (monitor entry)

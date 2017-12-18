@@ -109,6 +109,7 @@ $(TARGET).mot:	$(TARGET)
 
 $(TARGET).bin:	$(TARGET)
 	$(OBJCOPY) -O binary $< $@
+	cp $@ /var/lib/tftpboot/t-monitor.bin
 
 $(TARGET).S:	$(TARGET)
 	$(OBJDUMP) -DS $< >$@
