@@ -125,11 +125,17 @@ startup_entry:
 // in effect: Force AP, TEX remap, Subpage AP
 	.DSB	r0
 	mrc	p15, 0, r0, c1, c0, 0
+#if __TRON_ARM_ARCH__ == 6
+	ldr	r1, =~0x01003f85
+	and	r0, r0, r1
+	ldr	r1, =0x30800000
+	orr	r0, r0, r1
+#else
 	ldr	r1, =0x00003005
 	bic	r0, r1
-	ldr	r1, =0x00000000
-	orr	r0, r0, r1
+#endif
 	mcr	p15, 0, r0, c1, c0, 0
+
 
 // Setup clock divider
 
@@ -165,11 +171,11 @@ setup_bcr:
 // initialization of DDR memory
 	bl	setup_ddr
 
-#if 0
+#if __TRON_ARM_ARCH__ == 6
 // creation of temporary page table
 	ldr	r0, =PAGETBL_BASE
 	ldr	r1, =0x00000000
-	ldr	r2, =0x00000012	// Kernel/RW, Strongly-order
+	ldr	r2, =0x00000402	// Kernel/RW, Strongly-order
 tmptable_loop:
 	orr	r3, r1, r2
 	str	r3, [r0], #4
@@ -186,11 +192,11 @@ tmptable_loop:
 	bne	tmptable_loop
 #endif
 
-#if 0
+#if __TRON_ARM_ARCH__ == 6
 // Mapping of FlashROM area (0x70000000 - 0x72000000 --> 0x00000000 -)
 	ldr	r0, =(PAGETBL_BASE + (0x700 << 2))
 	ldr	r1, =0x00000000
-	ldr	r2, =0x0000041e	// Kernel/RO, Normal WB/WA
+	ldr	r2, =0x0000940e	// Kernel/RO, Normal WB/WA
 flashtable_loop:
 	orr	r3, r1, r2
 	str	r3, [r0], #4
@@ -311,10 +317,16 @@ reset_entry:
 // in effect: Force AP, TEX remap, Subpage AP
 	.DSB	r0
 	mrc	p15, 0, r0, c1, c0, 0
-	ldr	r1, =~0x00003004
+
+#if __TRON_ARM_ARCH__ == 6
+	ldr	r1, =~0x01003f84
 	and	r0, r0, r1
-	ldr	r1, =0x00000000
+	ldr	r1, =0x30800000
 	orr	r0, r0, r1
+#else
+	ldr	r1, =0x00003004
+	bic	r0, r1
+#endif
 	mcr	p15, 0, r0, c1, c0, 0
 
 	.ISB	r0
