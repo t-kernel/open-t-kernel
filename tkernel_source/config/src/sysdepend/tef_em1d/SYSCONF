@@ -33,7 +33,7 @@ TSysName	T-Kernel	# System name
 #
 #	Kernel version information for tk_ref_ver(T_RVER*)
 #
-Maker		0x0000		# = "T-Engine Forum"
+Maker		0x0000		# = "Open T-Kernel"
 ProductID	0x0000		# Kernel Identifier
 SpecVer		0x7201		# = "T-Kernel" + "Ver 2.01"
 ProductVer	0x0202		# Product Version "Ver 2.02"
