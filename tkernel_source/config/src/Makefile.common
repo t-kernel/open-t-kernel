@@ -49,12 +49,15 @@ endef
 
 .PHONY: all clean install
 
-ALL = rominfo-rom.mot rominfo-ram.mot
+ALL = rominfo-rom.mot rominfo-ram.mot rominfo-rom.bin rominfo-ram.bin
 
 all: $(ALL) install
 
 %.mot: %
 	$(OBJCOPY) $(OUTPUT_SREC) $< $@
+
+%.bin: %
+	$(OBJCOPY) -O binary $< $@
 
 rominfo-rom: rominfo_rom.o sysconf.o devconf.o
 	$(LINK.o) -nostdlib -T rominfo$(_GCCVER).lnk $^ $(OUTPUT_OPTION)
