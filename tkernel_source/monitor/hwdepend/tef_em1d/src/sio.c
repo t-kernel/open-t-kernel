@@ -63,7 +63,11 @@ err_ret:
  */
 EXPORT void putSIO( UB c )
 {
+#if 0
 	if ( SIO.put != NULL ) (*SIO.put)(&SIO, c);
+#else
+	kputc(c);
+#endif
 }
 
 /*
@@ -76,5 +80,9 @@ EXPORT void putSIO( UB c )
  */
 EXPORT W getSIO( W tmo )
 {
+#if 0
 	return ( SIO.get != NULL )? (*SIO.get)(&SIO, tmo): -1;
+#else
+	return kgetc(100);
+#endif
 }

@@ -24,6 +24,113 @@ kputc:
 	pop	{r1, r2}
 	bx	lr
 
+
+	.globl kputch
+kputch:
+
+1:
+	ldr	r7, =0x80074018
+	ldr	r7, [r7]
+	tst	r7, #(1<<5)
+	bne	1b
+
+	ldr	r7, =0x80074000
+	strb	r0, [r7]
+
+	bx	lr
+
+
+/*
+ * void kputs(char *s);
+ */
+	.text
+	.balign	4
+	.globl	kputs
+	.type	kputs, %function
+kputs:
+	push	{r1, lr}
+
+	mov	r1, r0
+	b	1f
+
+2:	bl	kputc
+	add	r1, #1
+
+1:	ldrb	r0, [r1]
+	cmp	r0, #0
+	bne	2b
+
+	pop	{r1, pc}
+
+/*
+ * void kputhex(int hex);
+ */
+	.globl	kputhex
+kputhex:
+	push	{r1, r2, lr}
+
+	mov	r1, r0
+	mov	r2, #8
+
+1:	ror	r1, r1, #28
+	and	r0, r1, #15
+
+999:	cmp	r0, #9
+	addle	r0, #'0'
+	addgt	r0, #('A'-10)
+	bl	kputc
+
+	sub	r2, #1
+	cmp	r2, #0
+	bne	1b
+
+	mov	r0, #'\r'
+	bl	kputc
+	mov	r0, #'\n'
+	bl	kputc
+
+	pop	{r1, r2, pc}
+
+
+/*
+ * int kgetchar(void);
+ * int kgetc(int n);
+ */
+	.text
+	.balign	4
+	.globl	kgetchar
+	.type	kgetchar, %function
+kgetchar:
+
+__tsc:
+	ldr	r0, =0x80074018
+	ldr	r0, [r0]
+	tst	r0, #(1<<4)
+	bne	__tsc
+__getc:
+	ldr	r0, =0x80074000
+	ldrb	r0, [r0]
+
+	bx	lr
+
+
+	.globl	kgetc
+kgetc:
+	cmn	r0, #1
+	beq	kgetchar
+
+1:	ldr	r1, =0x80074018
+	ldr	r1, [r1]
+	tst	r1, #(1<<4)
+
+	beq	__getc
+
+	subs	r0, #1
+	bne	1b
+
+	mvn	r0, #0
+	bx	lr
+
 /*
  *----------------------------------------------------------------------
  *    T-Kernel 2.0 Software Package
