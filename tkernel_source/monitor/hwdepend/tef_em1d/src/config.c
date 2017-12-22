@@ -25,7 +25,7 @@
 #include <arm/em1d512.h>
 
 /* used device driver */
-IMPORT	ER	initSIO_ns16550(SIOCB *, const CFGSIO *, W speed);
+IMPORT	ER	initSIO_imx28x(SIOCB *, const CFGSIO *, W speed);
 IMPORT	ER	initMemDisk(DISKCB *, const CFGDISK *);
 
 /* memory region definition */
@@ -67,7 +67,7 @@ EXPORT	W	N_NoMemSeg = sizeof(NoMemSeg) / sizeof(MEMSEG);
  *       list in the order of port number
  */
 EXPORT	const	CFGSIO	ConfigSIO[] = {
-	{initSIO_ns16550, 0},
+	{initSIO_imx28x, 0},
 };
 
 EXPORT	const W	N_ConfigSIO = sizeof(ConfigSIO) / sizeof(CFGSIO);
@@ -327,7 +327,7 @@ EXPORT	UW	DipSwStatus(void)
 	UW	d;
 
         /* read data from read port */
-	d = ~0;
+	d = SW_MON|SW_ABT;
 
         /* unnecessary bits are masked and then invert logic. */
 	d = (d ^ SW_MON) & SW_MON;
