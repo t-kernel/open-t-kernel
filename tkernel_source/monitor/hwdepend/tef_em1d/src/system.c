@@ -164,6 +164,9 @@ EXPORT	void	resetSystem(W boot)
 	// CPU: FIQ disabled
 	// GPIO: interrupt disabled
 	// GPIO: FIQ interrupt disabled
+	out_w(0x80018144, 0x0000C000);
+	out_w(0x80018b24, 0x00000080);
+
 	// internal interrupt disabled
 	// inhibit interrupt polarity inversion
 	// CPU: GPIO interrupt enabled

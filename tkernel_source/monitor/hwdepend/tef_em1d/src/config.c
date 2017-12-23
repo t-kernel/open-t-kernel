@@ -391,7 +391,17 @@ EXPORT	void	cpuLED(UW v)
 	c = (r ^ d) & m;		// modify flag (0:unmodified 1:modify)
 	IICGPIOWrite(0xb8, r ^ c);
 #endif
-
+	switch (v) {
+	case LED_POWERUP:
+		out_w(0x80018728, (1<<7));
+		break;
+	case LED_MEMCLR:
+		out_w(0x80018724, (1<<7));
+		break;
+	default:
+		out_w(0x80018724, (1<<7));
+		break;
+	}
 }
 
 /*
