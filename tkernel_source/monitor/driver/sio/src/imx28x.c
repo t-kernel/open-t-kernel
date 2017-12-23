@@ -15,6 +15,7 @@
 
 /*
  *	base on monitor/driver/sio/src/ns16550.c
+ *
  *       serial port I/O
  */
 
@@ -80,10 +81,7 @@ LOCAL	W getSIO_imx28x(SIOCB *scb, W tmo )
 	W	sts, err, c = 0;
 
 	RSDRV_PWON();
-#if 1
-	c = kgetc(10);
-	return c;
-#endif
+
 	tmo *= 1000/20;		/* convert tmo to 20 usec units */
 
         /* receive as much data as possible in the receive buffer */
@@ -100,7 +98,7 @@ LOCAL	W getSIO_imx28x(SIOCB *scb, W tmo )
 		}
 
                 /* receive data input */
-		if (sts & 0x00000010 == 0) c = in_b(HW_UARTDBG_DR);
+		if (sts & RXFE == 0) c = in_b(HW_UARTDBG_DR);
 
                 /* error check */
 		if (err & 0x00000F00) continue;
