@@ -92,7 +92,7 @@ LOCAL	W getSIO_imx28x(SIOCB *scb, W tmo )
 		err = 0;
 
                 /* is there data in FIFO? */
-		if(sts & RXFE != 0 || err & 0x00000F00 ) {
+		if(sts & RXFE == 0 || err & 0x00000F00 ) {
 			if (scb->iptr != scb->optr) break;  /* already received */
 			if (tmo-- <= 0) break;		    /* timeout */
 			waitUsec(20);
