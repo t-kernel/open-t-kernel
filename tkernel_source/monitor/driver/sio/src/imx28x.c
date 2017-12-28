@@ -44,12 +44,61 @@ typedef struct {
 #define	RSDRV_PWON(siocb)		/* no operation */
 
 #define HW_UARTDBG_FR	0x80074018
-#define RXFE		0x00000010
-#define TXFE		0x00000080
+#define RXFE		(1<<4)
+#define TXFE		(1<<5)
 
 #define HW_UARTDBG_DR	0x80074000
 
+/*
+ * debug serial port
+ */
+int __tsc(int flag)
+{
+	volatile int *r1 = (void *)HW_UARTDBG_FR;
+	flag &= r1[0];
+	return flag;
+}
 
+int __kgetc(void)
+{
+	volatile unsigned char *r0 = (void *)HW_UARTDBG_DR;
+	return r0[0];
+}
+
+int __kputc(int ch)
+{
+	volatile unsigned char *r1 = (void *)HW_UARTDBG_DR;
+	r1[0] = ch;
+	return ch;
+}
+
+int kgetc(int tmo)
+{
+	do {
+		if(__tsc(RXFE) == 0) {
+			return __kgetc();
+		}
+		tmo--;
+	} while(tmo>0);
+
+	return -1;
+}
+
+int kputc(int ch)
+{
+	while(__tsc(TXFE) != 0);
+	return __kputc(ch);
+}
+
+int kputs(const char *s)
+{
+	char ch;
+	while(ch = *s++) {
+		kputc(ch);
+	}
+	kputc('\r');
+	kputc('\n');
+}
 
 /*
  * serial port I/O
