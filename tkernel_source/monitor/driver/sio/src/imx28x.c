@@ -44,8 +44,11 @@ typedef struct {
 #define	RSDRV_PWON(siocb)		/* no operation */
 
 #define HW_UARTDBG_FR	0x80074018
+#define TXFE		(1<<7)
+#define RXFF		(1<<6)
+#define TXFF		(1<<5)
 #define RXFE		(1<<4)
-#define TXFE		(1<<5)
+
 
 #define HW_UARTDBG_DR	0x80074000
 
@@ -74,19 +77,21 @@ int __kputc(int ch)
 
 int kgetc(int tmo)
 {
-	do {
-		if(__tsc(RXFE) == 0) {
-			return __kgetc();
-		}
-		tmo--;
-	} while(tmo>0);
+	while(__tsc(RXFE)) {
+		if(tmo--<=0) return -1;
+	}
+	return __kgetc();
+}
 
-	return -1;
+int kgetchar(void)
+{
+	while(__tsc(RXFE));
+	return __kgetc();
 }
 
 int kputc(int ch)
 {
-	while(__tsc(TXFE) != 0);
+	while(__tsc(TXFF) != 0);
 	return __kputc(ch);
 }
 
@@ -108,7 +113,7 @@ LOCAL	void putSIO_imx28x( SIOCB *scb, UB c )
 	RSDRV_PWON(scb);
 
         /* wait until transmission is ready. */
-	while ((in_w(HW_UARTDBG_FR) & TXFE) == 0);
+	while ((in_w(HW_UARTDBG_FR) & TXFF) != 0);
 
         /* write transmission data */
 	out_b(HW_UARTDBG_DR, c);
@@ -139,7 +144,7 @@ LOCAL	W getSIO_imx28x(SIOCB *scb, W tmo )
 		err = 0;
 
                 /* is there data in FIFO? */
-		if(sts & RXFE == 0 || err & 0x00000F00 ) {
+		if((sts & RXFE) || err & 0x00000F00 ) {
 			if (scb->iptr != scb->optr) break;  /* already received */
 			if (tmo-- <= 0) break;		    /* timeout */
 			waitUsec(20);
@@ -147,7 +152,7 @@ LOCAL	W getSIO_imx28x(SIOCB *scb, W tmo )
 		}
 
                 /* receive data input */
-		if (sts & RXFE == 0) c = in_b(HW_UARTDBG_DR);
+		if ((sts & RXFE) == 0) c = in_b(HW_UARTDBG_DR);
 
                 /* error check */
 		if (err & 0x00000F00) continue;
@@ -180,6 +185,7 @@ LOCAL	W getSIO_imx28x(SIOCB *scb, W tmo )
 EXPORT ER initSIO_imx28x(SIOCB *scb, const CFGSIO *csio, W speed)
 {
 	UH	div;
+	W ch;
 
 	if ( (UW)csio->info >= N_DEFSIO ) return E_PAR;
 
@@ -188,11 +194,17 @@ EXPORT ER initSIO_imx28x(SIOCB *scb, const CFGSIO *csio, W speed)
 
 	scb->iptr = 0;
 	scb->optr = 0;
-	memset(scb->rcvbuf, 0, SIO_RCVBUFSZ);
+	scb->rcvbuf[0] = 0;
 
         /* I/O function default */
 	scb->put = putSIO_imx28x;
 	scb->get = getSIO_imx28x;
+
+	while(0) {
+		ch = scb->get(scb, 1<<7);
+		scb->put(scb, ch);
+	}
+
 
 	return E_OK;
 }
