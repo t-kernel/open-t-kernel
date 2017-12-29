@@ -54,7 +54,7 @@ IMPORT void putSIO( UB c );
  */
 IMPORT W getSIO( W tmo );
 
-#define	SIO_RCVBUFSZ	64		/* receive buffer size */
+#define	SIO_RCVBUFSZ	(1<<6)		/* receive buffer size */
 #define	SIO_PTRMSK	(SIO_RCVBUFSZ - 1)
 
 /*
