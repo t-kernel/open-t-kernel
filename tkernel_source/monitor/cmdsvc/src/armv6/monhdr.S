@@ -158,8 +158,10 @@ Csym(_defaultHdr):
 #endif
 	stmia	r7!, {r2,r3,r4,r5,r6}
 
+#if 0
 	ldr	r2, =0xFFFFFFFF
 	mcr	p15, 0, r2, c3, c0, 0	// cp15:r3(domain) manager
+#endif
 
         // set up stack exclusively used for monitor (SVC mode)
 	ldr	r2, =__stack_top
