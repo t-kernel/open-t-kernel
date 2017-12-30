@@ -30,7 +30,7 @@ IMPORT UB SYSCONF[], DEVCONF[];
 #define RI_DEVCONF	(UB*)DEVCONF	/* DEVCONF top */
 
 /* User definition */
-#define RI_USERAREA_TOP	(void*)0x40000000	/* RAM user area top */
+#define RI_USERAREA_TOP	(void*)0x31000000	/* RAM user area top */
 #define RI_USERINIT	(FP)NULL	/* User initialization program */
 #define RI_RESETINIT	(FP)NULL	/* Reset initialization program */
 
