@@ -393,4 +393,28 @@ bss_loop:
 	svc	#0
 	b	resetLoop		// return will cause another reset
 
+	.globl	kphex
+kphex:
+	mov	r3, #8
+	mov	r2, r0
+	ldr	r1, =0x80074000
+
+__tsc:	ldr	r0, [r1, #0x18]
+	tst	r0, #(1<<5)
+	bne	__tsc
+
+	ror	r2, r2, #28
+	and	r0, r2, #15
+
+	cmp	r0, #9
+	addle	r0, #'0'
+	addgt	r0, #('A'-10)
+
+	strb	r0, [r1]
+
+	subs	r3, #1
+	bne	__tsc
+
+	bx	lr
+
 	.pool
