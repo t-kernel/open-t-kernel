@@ -38,6 +38,7 @@
 	.globl	Csym(FlushCache)
 	.type	Csym(FlushCache), %function
 Csym(FlushCache):
+#ifdef CONFIG_MMU
 	ldr	r2, =DCACHE_NWAY-1
   l_flush_dcache1:
 	ldr	r3, =DCACHE_NSEG-1
@@ -53,7 +54,7 @@ Csym(FlushCache):
 	ldr	ip, =0
 	mcr	p15, 0, ip, c7, c7, 0		// Invalidate I/D-Cache
 	mcr	p15, 0, ip, c7, c10, 4		// Drain Write Buffer
-
+#endif /* CONFIG_MMU */
 	bx	lr
 
 /*
@@ -65,6 +66,7 @@ Csym(FlushCache):
 	.globl	Csym(setCacheMMU)
 	.type	Csym(setCacheMMU), %function
 Csym(setCacheMMU):
+#ifdef CONFIG_MMU
 	stmfd	sp!, {r4, lr}			// save registers
 	mov	r4, r0				// save argument
 
@@ -87,4 +89,6 @@ Csym(setCacheMMU):
 	nop
 
 	ldmfd	sp!, {r4, lr}			// restore registers
+
+#endif /* CONFIG_MMU */
 	bx	lr
