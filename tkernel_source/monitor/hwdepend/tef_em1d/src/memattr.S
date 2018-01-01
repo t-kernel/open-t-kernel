@@ -65,12 +65,18 @@ changememattr_start:
 	ldr	r4, [ip]
 	ldr	r10, =attr_prev
 	str	r4, [r10]
+#if __TRON_ARM_ARCH__ == 6
 	ldr	r4, =0x00009402		// Strongly-order, Kernel/RO
+#else
+	ldr	r4, =0x00000412
+#endif
 	str	r4, [ip]
 
 	.DSB	r4
 	mcr	p15, 0, r4, c8, c7, 0		// I/D TLB invalidate
+#if __TRON_ARM_ARCH__ == 6
 	mcr	p15, 0, r4, c7, c5, 6		// invalidate BTC
+#endif
 	.DSB	r4
 	.ISB	r4
 
@@ -99,7 +105,9 @@ changememattr_loop:
         /* Jump to the address in the originally mapped area */
 	.DSB	r4
 	mcr	p15, 0, r4, c8, c7, 0		// I/D TLB invalidate
+#if __TRON_ARM_ARCH__ == 6
 	mcr	p15, 0, r4, c7, c5, 6		// invalidate BTC
+#endif
 	.DSB	r4
 	.ISB	r4
 
@@ -114,7 +122,9 @@ changememattr_finish:
 
 	.DSB	r4
 	mcr	p15, 0, r4, c8, c7, 0		// I/D TLB invalidate
+#if __TRON_ARM_ARCH__ == 6
 	mcr	p15, 0, r4, c7, c5, 6		// invalidate BTC
+#endif
 	.DSB	r4
 	.ISB	r4
 
