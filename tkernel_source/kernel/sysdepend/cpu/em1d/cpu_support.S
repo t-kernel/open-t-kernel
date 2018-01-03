@@ -32,6 +32,16 @@
 #include "tkdev_conf.h"
 #include "offset.h"
 
+	.macro	cpsie reg, reg
+#error "TODO: arm9 cpsie"
+	.endm
+
+	.macro	cpsid reg, reg
+	.endm
+
+	.macro	rfefd sp
+	.endm
+
 /* ------------------------------------------------------------------------ */
 /*
  * Dispatcher
