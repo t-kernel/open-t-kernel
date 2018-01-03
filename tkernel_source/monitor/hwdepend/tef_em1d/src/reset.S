@@ -236,6 +236,7 @@ ramtable_loop:
 
 // perform reset processing
 	ldr	pc, =reset_entry
+	b	.
 
 // initialization of DDR memory
 setup_ddr:
