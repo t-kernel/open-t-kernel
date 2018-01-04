@@ -397,21 +397,20 @@ bss_loop:
 	.globl	kphex
 kphex:
 	mov	r3, #8
-	mov	r2, r0
 	ldr	r1, =0x80074000
 
-__tsc:	ldr	r0, [r1, #0x18]
-	tst	r0, #(1<<5)
+__tsc:	ldr	r2, [r1, #0x18]
+	tst	r2, #(1<<5)
 	bne	__tsc
 
-	ror	r2, r2, #28
-	and	r0, r2, #15
+	ror	r0, r0, #28
+	and	r2, r0, #15
 
-	cmp	r0, #9
-	addle	r0, #'0'
-	addgt	r0, #('A'-10)
+	cmp	r2, #9
+	addle	r2, #'0'
+	addgt	r2, #('A'-10)
 
-	strb	r0, [r1]
+	strb	r2, [r1]
 
 	subs	r3, #1
 	bne	__tsc
