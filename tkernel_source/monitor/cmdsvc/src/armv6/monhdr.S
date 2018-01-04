@@ -42,7 +42,7 @@
 .endm
 .macro cpsid aif
 	mrs	r2, cpsr
-	orr	r2, #0xC000000
+	orr	r2, #0x00000C0
 	msr	cpsr, r2
 .endm
 #endif
