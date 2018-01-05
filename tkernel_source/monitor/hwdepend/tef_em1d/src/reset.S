@@ -396,6 +396,10 @@ bss_loop:
 
 	.globl	kphex
 kphex:
+	str	r1, 1f
+	str	r2, 2f
+	str	r3, 3f
+
 	mov	r3, #8
 	ldr	r1, =0x80074000
 
@@ -415,6 +419,14 @@ __tsc:	ldr	r2, [r1, #0x18]
 	subs	r3, #1
 	bne	__tsc
 
+	ldr	r1, 1f
+	ldr	r2, 2f
+	ldr	r3, 3f
+
 	bx	lr
+
+1:	.word	0x11111111
+2:	.word	0x22222222
+3:	.word	0x33333333
 
 	.pool
