@@ -27,9 +27,9 @@
 #if __TRON_ARM_ARCH__ < 6
 // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0802b/Cihfdedi.html
 .macro rfefd sp
-	ldr	lr, [sp, #0]
-	msr	spsr, lr
 	ldr	lr, [sp, #4]
+	msr	spsr, lr
+	ldr	lr, [sp, #0]
 	add	sp, #8
 	movs	pc, lr
 .endm
