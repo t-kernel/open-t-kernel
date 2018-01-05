@@ -136,10 +136,7 @@ Csym(_defaultHdr):
 
 	mrc	p15, 0, r2, c1, c0, 0	@ read control register
 	mrc	p15, 0, r3, c2, c0, 0	@ read TTBR
-#if __TRON_ARM_ARCH__ < 6
-	mov	r4, #0
-	mov	r5, #0
-#else
+#if __TRON_ARM_ARCH__ == 6
 	mrc	p15, 0, r4, c2, c0, 1
 	mrc	p15, 0, r5, c2, c0, 2
 #endif
@@ -148,17 +145,15 @@ Csym(_defaultHdr):
 
 	mrc	p15, 0, r2, c5, c0, 0	@ read DFSR
 	mrc	p15, 0, r3, c5, c0, 1	@ read IFSR
+
 	mrc	p15, 0, r4, c6, c0, 0	@ read FAR
-#if __TRON_ARM_ARCH__ < 6
-	mov	r5, #0
-	mov	r6, #0
-#else
+#if __TRON_ARM_ARCH__ == 6
 	mrc	p15, 0, r5, c6, c0, 2
-	mrc	p15, 0, r6, c13, c0, 1	// cp15: r5,r6,r13	@ Read context ID
 #endif
+	mrc	p15, 0, r6, c13, c0, 1	// cp15: r5,r6,r13	@ Read context ID
 	stmia	r7!, {r2,r3,r4,r5,r6}
 
-#if 0
+#ifdef CONFIG_MMU
 	ldr	r2, =0xFFFFFFFF
 	mcr	p15, 0, r2, c3, c0, 0	// cp15:r3(domain) manager
 #endif
@@ -182,8 +177,9 @@ Csym(_defaultHdr):
 	mcr	p15, 0, r4, c6, c0, 0		@ write FAR
 #if __TRON_ARM_ARCH__ == 6
 	mcr	p15, 0, r5, c6, c0, 2
-	mcr	p15, 0, r6, c13, c0, 1		@ Write context ID
 #endif
+	mcr	p15, 0, r6, c13, c0, 1		@ Write context ID
+
 
 	ldmdb	r7!, {r2,r3,r4,r5,r6}		// cp15: r1,r2,r3
 //	mcr	p15, 0, r2, cr1, cr0, 0		// already restored inside entMonitor
