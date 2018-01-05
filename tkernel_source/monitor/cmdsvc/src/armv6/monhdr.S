@@ -134,8 +134,8 @@ Csym(_defaultHdr):
 	mrs	r3, spsr
 	stmia	r7!, {r3, sp, lr}	// svc: spsr, sp, lr
 
-	mrc	p15, 0, r2, c1, c0, 0
-	mrc	p15, 0, r3, c2, c0, 0
+	mrc	p15, 0, r2, c1, c0, 0	@ read control register
+	mrc	p15, 0, r3, c2, c0, 0	@ read TTBR
 #if __TRON_ARM_ARCH__ < 6
 	mov	r4, #0
 	mov	r5, #0
@@ -143,18 +143,18 @@ Csym(_defaultHdr):
 	mrc	p15, 0, r4, c2, c0, 1
 	mrc	p15, 0, r5, c2, c0, 2
 #endif
-	mrc	p15, 0, r6, c3, c0, 0
+	mrc	p15, 0, r6, c3, c0, 0	@ read domain access permissions
 	stmia	r7!, {r2,r3,r4,r5,r6}		// cp15: r1,r2,r3
 
-	mrc	p15, 0, r2, c5, c0, 0
-	mrc	p15, 0, r3, c5, c0, 1
-	mrc	p15, 0, r4, c6, c0, 0
+	mrc	p15, 0, r2, c5, c0, 0	@ read DFSR
+	mrc	p15, 0, r3, c5, c0, 1	@ read IFSR
+	mrc	p15, 0, r4, c6, c0, 0	@ read FAR
 #if __TRON_ARM_ARCH__ < 6
 	mov	r5, #0
 	mov	r6, #0
 #else
 	mrc	p15, 0, r5, c6, c0, 2
-	mrc	p15, 0, r6, c13, c0, 1	// cp15: r5,r6,r13
+	mrc	p15, 0, r6, c13, c0, 1	// cp15: r5,r6,r13	@ Read context ID
 #endif
 	stmia	r7!, {r2,r3,r4,r5,r6}
 
@@ -177,12 +177,12 @@ Csym(_defaultHdr):
 	ldr	r7, =Csym(regStack) + ((39 + 10) * 4)
 
 	ldmdb	r7!, {r2,r3,r4,r5,r6}		// cp15: r5,r6,r13
-	mcr	p15, 0, r2, c5, c0, 0
-	mcr	p15, 0, r3, c5, c0, 1
-	mcr	p15, 0, r4, c6, c0, 0
+	mcr	p15, 0, r2, c5, c0, 0		@ write DFSR
+	mcr	p15, 0, r3, c5, c0, 1		@ write IFSR
+	mcr	p15, 0, r4, c6, c0, 0		@ write FAR
 #if __TRON_ARM_ARCH__ == 6
 	mcr	p15, 0, r5, c6, c0, 2
-	mcr	p15, 0, r6, c13, c0, 1
+	mcr	p15, 0, r6, c13, c0, 1		@ Write context ID
 #endif
 
 	ldmdb	r7!, {r2,r3,r4,r5,r6}		// cp15: r1,r2,r3
@@ -192,7 +192,7 @@ Csym(_defaultHdr):
 //RO	mcr	p15, 0, r4, cr2, cr0, 1
 //RO	mcr	p15, 0, r5, cr2, cr0, 2
 #endif
-	mcr	p15, 0, r6, c3, c0, 0
+	mcr	p15, 0, r6, c3, c0, 0		@ write domain access permissions
 
 	ldmdb	r7!, {r3, sp, lr}	// svc: spsr, sp, lr
 	msr	spsr_fsxc, r3
