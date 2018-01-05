@@ -188,7 +188,9 @@ Csym(_defaultHdr):
 //RO	mcr	p15, 0, r4, cr2, cr0, 1
 //RO	mcr	p15, 0, r5, cr2, cr0, 2
 #endif
+#ifdef CONFIG_MMU
 	mcr	p15, 0, r6, c3, c0, 0		@ write domain access permissions
+#endif
 
 	ldmdb	r7!, {r3, sp, lr}	// svc: spsr, sp, lr
 	msr	spsr_fsxc, r3
