@@ -210,6 +210,7 @@ EXPORT	void	resetSystem(W boot)
 	SCArea->intvec[EIT_IRQ(80)]	= _gio5Hdr;
 	SCArea->intvec[EIT_GPIO(8)]	= _defaultHdr;	// abort switch
 
+#if 0
         /* set up initial page table */
 	for (i = 0; i < N_MemSeg; ++i) {
 		mp = &MemSeg[i];
@@ -239,7 +240,6 @@ EXPORT	void	resetSystem(W boot)
 		}
 	}
 
-#if 0
 	DSB();
 	Asm("mcr p15, 0, %0, cr8, c7, 0":: "r"(0));	// I/D TLB invalidate
 	Asm("mcr p15, 0, %0, cr7, c5, 6":: "r"(0));	// invalidate BTC
